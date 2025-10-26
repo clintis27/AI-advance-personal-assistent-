@@ -1,66 +1,462 @@
 
-import { colors } from "@/styles/commonStyles";
-import { SafeAreaView } from "react-native-safe-area-context";
-import React from "react";
-import Animated, { FadeInDown } from "react-native-reanimated";
-import { IconSymbol } from "@/components/IconSymbol";
-import { useRouter } from "expo-router";
-import { View, Text, StyleSheet, ScrollView, Platform, Pressable } from "react-native";
+import React, { useState } from 'react';
+import { ScrollView, View, Text, StyleSheet, Image, Pressable } from 'react-native';
+import { Stack, useRouter } from 'expo-router';
+import { useTheme } from '@react-navigation/native';
+import { colors } from '@/styles/commonStyles';
+import { Card } from '@/components/ui/Card';
+import { AnimatedCard } from '@/components/ui/AnimatedCard';
+import { Button } from '@/components/ui/Button';
+import { Badge } from '@/components/ui/Badge';
+import { Switch } from '@/components/ui/Switch';
+import { Separator } from '@/components/ui/Separator';
+import { Progress } from '@/components/ui/Progress';
+import { IconSymbol } from '@/components/IconSymbol';
+
+interface ProfileStat {
+  id: string;
+  label: string;
+  value: string;
+  icon: string;
+  color: string;
+}
+
+interface Setting {
+  id: string;
+  title: string;
+  description: string;
+  icon: string;
+  enabled: boolean;
+  route?: string;
+}
+
+export default function ProfileScreen() {
+  const router = useRouter();
+  const theme = useTheme();
+
+  const [stats] = useState<ProfileStat[]>([
+    {
+      id: '1',
+      label: 'Tasks Completed',
+      value: '247',
+      icon: 'checkmark.circle.fill',
+      color: colors.success,
+    },
+    {
+      id: '2',
+      label: 'Meetings Scheduled',
+      value: '89',
+      icon: 'calendar',
+      color: colors.primary,
+    },
+    {
+      id: '3',
+      label: 'Emails Triaged',
+      value: '1,234',
+      icon: 'envelope.fill',
+      color: colors.violet,
+    },
+    {
+      id: '4',
+      label: 'Hours Saved',
+      value: '42',
+      icon: 'clock.fill',
+      color: colors.amber,
+    },
+  ]);
+
+  const [settings, setSettings] = useState<Setting[]>([
+    {
+      id: '1',
+      title: 'AI Predictions',
+      description: 'Enable task and behavior predictions',
+      icon: 'brain',
+      enabled: true,
+    },
+    {
+      id: '2',
+      title: 'Email Triage',
+      description: 'Automatically categorize incoming emails',
+      icon: 'envelope.badge',
+      enabled: true,
+    },
+    {
+      id: '3',
+      title: 'Meeting Scheduling',
+      description: 'Auto-schedule meetings based on availability',
+      icon: 'calendar.badge.plus',
+      enabled: false,
+    },
+    {
+      id: '4',
+      title: 'Voice Assistant',
+      description: 'Enable voice commands and responses',
+      icon: 'mic.fill',
+      enabled: true,
+    },
+  ]);
+
+  const [aiUsage] = useState({
+    daily: 85,
+    weekly: 72,
+    monthly: 68,
+  });
+
+  const toggleSetting = (id: string) => {
+    setSettings(settings.map(s => 
+      s.id === id ? { ...s, enabled: !s.enabled } : s
+    ));
+  };
+
+  const renderHeaderRight = () => (
+    <Pressable
+      onPress={() => router.push('/(tabs)/ai-config')}
+      style={{ marginRight: 16 }}
+    >
+      <IconSymbol
+        name="gearshape"
+        size={24}
+        color={theme.dark ? colors.textDark : colors.text}
+      />
+    </Pressable>
+  );
+
+  return (
+    <>
+      <Stack.Screen
+        options={{
+          title: 'Profile',
+          headerRight: renderHeaderRight,
+          headerStyle: {
+            backgroundColor: theme.dark ? colors.backgroundDark : colors.background,
+          },
+          headerTintColor: theme.dark ? colors.textDark : colors.text,
+        }}
+      />
+      <ScrollView
+        style={[
+          styles.container,
+          { backgroundColor: theme.dark ? colors.backgroundDark : colors.background },
+        ]}
+        contentContainerStyle={styles.contentContainer}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Profile Header */}
+        <AnimatedCard animation="fadeInDown" delay={0} variant="compact">
+          <View style={styles.profileHeader}>
+            <View style={styles.avatarContainer}>
+              <View style={[styles.avatar, { backgroundColor: colors.primary }]}>
+                <Text style={styles.avatarText}>JD</Text>
+              </View>
+              <View style={[styles.statusBadge, { backgroundColor: colors.success }]} />
+            </View>
+            <View style={styles.profileInfo}>
+              <Text style={[styles.profileName, { color: theme.dark ? colors.textDark : colors.text }]}>
+                John Doe
+              </Text>
+              <Text style={[styles.profileEmail, { color: theme.dark ? colors.textSecondaryDark : colors.textSecondary }]}>
+                john.doe@example.com
+              </Text>
+              <View style={styles.badgeRow}>
+                <Badge variant="primary" size="sm">Pro Plan</Badge>
+                <Badge variant="success" size="sm">Verified</Badge>
+              </View>
+            </View>
+          </View>
+        </AnimatedCard>
+
+        {/* Stats Grid */}
+        <View style={styles.section}>
+          <Text style={[styles.sectionTitle, { color: theme.dark ? colors.textDark : colors.text }]}>
+            Your Activity
+          </Text>
+          <View style={styles.statsGrid}>
+            {stats.map((stat, index) => (
+              <AnimatedCard
+                key={stat.id}
+                variant="small"
+                animation="zoomIn"
+                delay={100 + index * 50}
+                style={styles.statCard}
+              >
+                <View style={[styles.statIcon, { backgroundColor: `${stat.color}20` }]}>
+                  <IconSymbol name={stat.icon} size={20} color={stat.color} />
+                </View>
+                <Text style={[styles.statValue, { color: theme.dark ? colors.textDark : colors.text }]}>
+                  {stat.value}
+                </Text>
+                <Text style={[styles.statLabel, { color: theme.dark ? colors.textMutedDark : colors.textMuted }]}>
+                  {stat.label}
+                </Text>
+              </AnimatedCard>
+            ))}
+          </View>
+        </View>
+
+        <Separator />
+
+        {/* AI Usage */}
+        <View style={styles.section}>
+          <Text style={[styles.sectionTitle, { color: theme.dark ? colors.textDark : colors.text }]}>
+            AI Usage
+          </Text>
+          <AnimatedCard animation="fadeInLeft" delay={300}>
+            <View style={styles.usageItem}>
+              <View style={styles.usageHeader}>
+                <Text style={[styles.usageLabel, { color: theme.dark ? colors.textDark : colors.text }]}>
+                  Daily Average
+                </Text>
+                <Text style={[styles.usageValue, { color: colors.primary }]}>
+                  {aiUsage.daily}%
+                </Text>
+              </View>
+              <Progress value={aiUsage.daily} color={colors.primary} />
+            </View>
+            <View style={styles.usageItem}>
+              <View style={styles.usageHeader}>
+                <Text style={[styles.usageLabel, { color: theme.dark ? colors.textDark : colors.text }]}>
+                  Weekly Average
+                </Text>
+                <Text style={[styles.usageValue, { color: colors.violet }]}>
+                  {aiUsage.weekly}%
+                </Text>
+              </View>
+              <Progress value={aiUsage.weekly} color={colors.violet} />
+            </View>
+            <View style={styles.usageItem}>
+              <View style={styles.usageHeader}>
+                <Text style={[styles.usageLabel, { color: theme.dark ? colors.textDark : colors.text }]}>
+                  Monthly Average
+                </Text>
+                <Text style={[styles.usageValue, { color: colors.emerald }]}>
+                  {aiUsage.monthly}%
+                </Text>
+              </View>
+              <Progress value={aiUsage.monthly} color={colors.emerald} />
+            </View>
+          </AnimatedCard>
+        </View>
+
+        <Separator />
+
+        {/* Settings */}
+        <View style={styles.section}>
+          <Text style={[styles.sectionTitle, { color: theme.dark ? colors.textDark : colors.text }]}>
+            AI Features
+          </Text>
+          {settings.map((setting, index) => (
+            <AnimatedCard
+              key={setting.id}
+              variant="compact"
+              animation="fadeInRight"
+              delay={400 + index * 50}
+            >
+              <View style={styles.settingRow}>
+                <View style={[styles.settingIcon, { backgroundColor: `${colors.primary}20` }]}>
+                  <IconSymbol name={setting.icon} size={20} color={colors.primary} />
+                </View>
+                <View style={styles.settingInfo}>
+                  <Text style={[styles.settingTitle, { color: theme.dark ? colors.textDark : colors.text }]}>
+                    {setting.title}
+                  </Text>
+                  <Text style={[styles.settingDescription, { color: theme.dark ? colors.textSecondaryDark : colors.textSecondary }]}>
+                    {setting.description}
+                  </Text>
+                </View>
+                <Switch
+                  value={setting.enabled}
+                  onValueChange={() => toggleSetting(setting.id)}
+                />
+              </View>
+            </AnimatedCard>
+          ))}
+        </View>
+
+        <Separator />
+
+        {/* Quick Links */}
+        <View style={styles.section}>
+          <Text style={[styles.sectionTitle, { color: theme.dark ? colors.textDark : colors.text }]}>
+            Quick Links
+          </Text>
+          <AnimatedCard
+            variant="compact"
+            interactive
+            onPress={() => router.push('/(tabs)/integrations')}
+            animation="fadeInUp"
+            delay={600}
+          >
+            <View style={styles.linkRow}>
+              <IconSymbol name="link.circle" size={24} color={colors.primary} />
+              <Text style={[styles.linkText, { color: theme.dark ? colors.textDark : colors.text }]}>
+                Manage Integrations
+              </Text>
+              <IconSymbol name="chevron.right" size={20} color={theme.dark ? colors.textMutedDark : colors.textMuted} />
+            </View>
+          </AnimatedCard>
+          <AnimatedCard
+            variant="compact"
+            interactive
+            onPress={() => router.push('/(tabs)/privacy')}
+            animation="fadeInUp"
+            delay={650}
+          >
+            <View style={styles.linkRow}>
+              <IconSymbol name="lock.shield" size={24} color={colors.success} />
+              <Text style={[styles.linkText, { color: theme.dark ? colors.textDark : colors.text }]}>
+                Privacy & Security
+              </Text>
+              <IconSymbol name="chevron.right" size={20} color={theme.dark ? colors.textMutedDark : colors.textMuted} />
+            </View>
+          </AnimatedCard>
+          <AnimatedCard
+            variant="compact"
+            interactive
+            onPress={() => router.push('/(tabs)/ui-showcase')}
+            animation="fadeInUp"
+            delay={700}
+          >
+            <View style={styles.linkRow}>
+              <IconSymbol name="paintbrush" size={24} color={colors.violet} />
+              <Text style={[styles.linkText, { color: theme.dark ? colors.textDark : colors.text }]}>
+                UI Components Showcase
+              </Text>
+              <IconSymbol name="chevron.right" size={20} color={theme.dark ? colors.textMutedDark : colors.textMuted} />
+            </View>
+          </AnimatedCard>
+        </View>
+
+        {/* Action Buttons */}
+        <View style={styles.section}>
+          <Button variant="outline" fullWidth onPress={() => console.log('Edit profile')}>
+            Edit Profile
+          </Button>
+          <Button variant="destructive" fullWidth onPress={() => console.log('Sign out')}>
+            Sign Out
+          </Button>
+        </View>
+
+        {/* Bottom Padding */}
+        <View style={{ height: 100 }} />
+      </ScrollView>
+    </>
+  );
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
   },
-  scrollContent: {
+  contentContainer: {
     paddingHorizontal: 20,
     paddingTop: 20,
-    paddingBottom: 120,
   },
   profileHeader: {
+    flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 32,
+  },
+  avatarContainer: {
+    position: 'relative',
+    marginRight: 16,
   },
   avatar: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    backgroundColor: colors.primary + '20',
+    width: 80,
+    height: 80,
+    borderRadius: 40,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 16,
   },
-  name: {
-    fontSize: 24,
-    fontWeight: '800',
-    color: colors.text,
+  avatarText: {
+    fontSize: 28,
+    fontWeight: '700',
+    color: colors.primaryForeground,
+  },
+  statusBadge: {
+    position: 'absolute',
+    bottom: 2,
+    right: 2,
+    width: 16,
+    height: 16,
+    borderRadius: 8,
+    borderWidth: 3,
+    borderColor: colors.card,
+  },
+  profileInfo: {
+    flex: 1,
+  },
+  profileName: {
+    fontSize: 22,
+    fontWeight: '700',
     marginBottom: 4,
+    letterSpacing: -0.5,
   },
-  email: {
+  profileEmail: {
     fontSize: 14,
-    color: colors.textSecondary,
+    marginBottom: 8,
+  },
+  badgeRow: {
+    flexDirection: 'row',
+    gap: 8,
   },
   section: {
     marginBottom: 24,
   },
   sectionTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    marginBottom: 16,
+    letterSpacing: -0.5,
+  },
+  statsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 12,
+  },
+  statCard: {
+    width: '48%',
+    alignItems: 'center',
+    padding: 16,
+  },
+  statIcon: {
+    width: 48,
+    height: 48,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 12,
+  },
+  statValue: {
+    fontSize: 24,
+    fontWeight: '700',
+    marginBottom: 4,
+    letterSpacing: -0.5,
+  },
+  statLabel: {
+    fontSize: 12,
+    textAlign: 'center',
+  },
+  usageItem: {
+    marginBottom: 20,
+  },
+  usageHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  usageLabel: {
+    fontSize: 15,
+    fontWeight: '600',
+  },
+  usageValue: {
     fontSize: 16,
     fontWeight: '700',
-    color: colors.text,
-    marginBottom: 12,
-    paddingHorizontal: 4,
   },
-  menuItem: {
-    backgroundColor: colors.card,
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 8,
+  settingRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.06)',
-    elevation: 2,
   },
-  menuIconContainer: {
+  settingIcon: {
     width: 40,
     height: 40,
     borderRadius: 10,
@@ -68,270 +464,28 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginRight: 12,
   },
-  menuContent: {
+  settingInfo: {
     flex: 1,
   },
-  menuTitle: {
-    fontSize: 16,
+  settingTitle: {
+    fontSize: 15,
     fontWeight: '600',
-    color: colors.text,
     marginBottom: 2,
+    letterSpacing: -0.2,
   },
-  menuSubtitle: {
+  settingDescription: {
     fontSize: 13,
-    color: colors.textSecondary,
+    lineHeight: 18,
   },
-  menuChevron: {
-    marginLeft: 8,
+  linkRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
   },
-  badge: {
-    backgroundColor: colors.error,
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: 10,
-    marginLeft: 8,
-  },
-  badgeText: {
-    color: '#fff',
-    fontSize: 11,
-    fontWeight: '700',
+  linkText: {
+    flex: 1,
+    fontSize: 15,
+    fontWeight: '600',
+    letterSpacing: -0.2,
   },
 });
-
-export default function ProfileScreen() {
-  const router = useRouter();
-
-  return (
-    <SafeAreaView style={styles.container} edges={['top']}>
-      <ScrollView
-        style={styles.container}
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-      >
-        <Animated.View entering={FadeInDown.duration(400)} style={styles.profileHeader}>
-          <View style={styles.avatar}>
-            <IconSymbol name="person.fill" size={50} color={colors.primary} />
-          </View>
-          <Text style={styles.name}>Your Name</Text>
-          <Text style={styles.email}>your.email@example.com</Text>
-        </Animated.View>
-
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Settings</Text>
-
-          <Animated.View entering={FadeInDown.duration(400).delay(100)}>
-            <Pressable
-              style={styles.menuItem}
-              onPress={() => router.push('/(tabs)/integrations')}
-            >
-              <View style={[styles.menuIconContainer, { backgroundColor: colors.primary + '20' }]}>
-                <IconSymbol name="link.circle.fill" size={22} color={colors.primary} />
-              </View>
-              <View style={styles.menuContent}>
-                <Text style={styles.menuTitle}>App Integrations</Text>
-                <Text style={styles.menuSubtitle}>Connect your digital platforms</Text>
-              </View>
-              <IconSymbol
-                name="chevron.right"
-                size={20}
-                color={colors.textSecondary}
-                style={styles.menuChevron}
-              />
-            </Pressable>
-          </Animated.View>
-
-          <Animated.View entering={FadeInDown.duration(400).delay(150)}>
-            <Pressable
-              style={styles.menuItem}
-              onPress={() => router.push('/(tabs)/ai-config')}
-            >
-              <View style={[styles.menuIconContainer, { backgroundColor: colors.secondary + '20' }]}>
-                <IconSymbol name="brain" size={22} color={colors.secondary} />
-              </View>
-              <View style={styles.menuContent}>
-                <Text style={styles.menuTitle}>AI Configuration</Text>
-                <Text style={styles.menuSubtitle}>Manage AI features and autonomy</Text>
-              </View>
-              <IconSymbol
-                name="chevron.right"
-                size={20}
-                color={colors.textSecondary}
-                style={styles.menuChevron}
-              />
-            </Pressable>
-          </Animated.View>
-
-          <Animated.View entering={FadeInDown.duration(400).delay(200)}>
-            <Pressable
-              style={styles.menuItem}
-              onPress={() => router.push('/(tabs)/voice')}
-            >
-              <View style={[styles.menuIconContainer, { backgroundColor: colors.accent + '20' }]}>
-                <IconSymbol name="waveform" size={22} color={colors.accent} />
-              </View>
-              <View style={styles.menuContent}>
-                <Text style={styles.menuTitle}>Voice & Communication</Text>
-                <Text style={styles.menuSubtitle}>Configure voice features</Text>
-              </View>
-              <IconSymbol
-                name="chevron.right"
-                size={20}
-                color={colors.textSecondary}
-                style={styles.menuChevron}
-              />
-            </Pressable>
-          </Animated.View>
-
-          <Animated.View entering={FadeInDown.duration(400).delay(250)}>
-            <Pressable
-              style={styles.menuItem}
-              onPress={() => router.push('/(tabs)/privacy')}
-            >
-              <View style={[styles.menuIconContainer, { backgroundColor: colors.info + '20' }]}>
-                <IconSymbol name="lock.shield.fill" size={22} color={colors.info} />
-              </View>
-              <View style={styles.menuContent}>
-                <Text style={styles.menuTitle}>Privacy & Security</Text>
-                <Text style={styles.menuSubtitle}>Manage permissions and data</Text>
-              </View>
-              <IconSymbol
-                name="chevron.right"
-                size={20}
-                color={colors.textSecondary}
-                style={styles.menuChevron}
-              />
-            </Pressable>
-          </Animated.View>
-        </View>
-
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Features</Text>
-
-          <Animated.View entering={FadeInDown.duration(400).delay(300)}>
-            <Pressable
-              style={styles.menuItem}
-              onPress={() => router.push('/(tabs)/problem-solver')}
-            >
-              <View style={[styles.menuIconContainer, { backgroundColor: '#FF6B6B20' }]}>
-                <IconSymbol name="lightbulb.fill" size={22} color="#FF6B6B" />
-              </View>
-              <View style={styles.menuContent}>
-                <Text style={styles.menuTitle}>AI Problem Solver</Text>
-                <Text style={styles.menuSubtitle}>Intelligent task analysis</Text>
-              </View>
-              <IconSymbol
-                name="chevron.right"
-                size={20}
-                color={colors.textSecondary}
-                style={styles.menuChevron}
-              />
-            </Pressable>
-          </Animated.View>
-
-          <Animated.View entering={FadeInDown.duration(400).delay(350)}>
-            <Pressable
-              style={styles.menuItem}
-              onPress={() => router.push('/(tabs)/travel')}
-            >
-              <View style={[styles.menuIconContainer, { backgroundColor: '#4ECDC420' }]}>
-                <IconSymbol name="airplane.departure" size={22} color="#4ECDC4" />
-              </View>
-              <View style={styles.menuContent}>
-                <Text style={styles.menuTitle}>Travel Assistant</Text>
-                <Text style={styles.menuSubtitle}>Smart travel planning</Text>
-              </View>
-              <IconSymbol
-                name="chevron.right"
-                size={20}
-                color={colors.textSecondary}
-                style={styles.menuChevron}
-              />
-            </Pressable>
-          </Animated.View>
-
-          <Animated.View entering={FadeInDown.duration(400).delay(400)}>
-            <Pressable
-              style={styles.menuItem}
-              onPress={() => router.push('/(tabs)/routine')}
-            >
-              <View style={[styles.menuIconContainer, { backgroundColor: '#95E1D320' }]}>
-                <IconSymbol name="chart.line.uptrend.xyaxis" size={22} color="#95E1D3" />
-              </View>
-              <View style={styles.menuContent}>
-                <Text style={styles.menuTitle}>Daily Routine</Text>
-                <Text style={styles.menuSubtitle}>Schedule and patterns</Text>
-              </View>
-              <IconSymbol
-                name="chevron.right"
-                size={20}
-                color={colors.textSecondary}
-                style={styles.menuChevron}
-              />
-            </Pressable>
-          </Animated.View>
-
-          <Animated.View entering={FadeInDown.duration(400).delay(450)}>
-            <Pressable
-              style={styles.menuItem}
-              onPress={() => router.push('/(tabs)/behavior')}
-            >
-              <View style={[styles.menuIconContainer, { backgroundColor: colors.warning + '20' }]}>
-                <IconSymbol name="brain" size={22} color={colors.warning} />
-              </View>
-              <View style={styles.menuContent}>
-                <Text style={styles.menuTitle}>Behavior Intelligence</Text>
-                <Text style={styles.menuSubtitle}>Digital body language & ML</Text>
-              </View>
-              <IconSymbol
-                name="chevron.right"
-                size={20}
-                color={colors.textSecondary}
-                style={styles.menuChevron}
-              />
-            </Pressable>
-          </Animated.View>
-        </View>
-
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>About</Text>
-
-          <Animated.View entering={FadeInDown.duration(400).delay(500)}>
-            <Pressable style={styles.menuItem}>
-              <View style={[styles.menuIconContainer, { backgroundColor: colors.textSecondary + '20' }]}>
-                <IconSymbol name="info.circle.fill" size={22} color={colors.textSecondary} />
-              </View>
-              <View style={styles.menuContent}>
-                <Text style={styles.menuTitle}>Help & Support</Text>
-                <Text style={styles.menuSubtitle}>Get help and documentation</Text>
-              </View>
-              <IconSymbol
-                name="chevron.right"
-                size={20}
-                color={colors.textSecondary}
-                style={styles.menuChevron}
-              />
-            </Pressable>
-          </Animated.View>
-
-          <Animated.View entering={FadeInDown.duration(400).delay(550)}>
-            <Pressable style={styles.menuItem}>
-              <View style={[styles.menuIconContainer, { backgroundColor: colors.textSecondary + '20' }]}>
-                <IconSymbol name="doc.text.fill" size={22} color={colors.textSecondary} />
-              </View>
-              <View style={styles.menuContent}>
-                <Text style={styles.menuTitle}>Terms & Privacy</Text>
-                <Text style={styles.menuSubtitle}>Legal information</Text>
-              </View>
-              <IconSymbol
-                name="chevron.right"
-                size={20}
-                color={colors.textSecondary}
-                style={styles.menuChevron}
-              />
-            </Pressable>
-          </Animated.View>
-        </View>
-      </ScrollView>
-    </SafeAreaView>
-  );
-}

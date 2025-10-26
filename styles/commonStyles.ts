@@ -38,12 +38,16 @@ export const colors = {
   // Status colors - vibrant and clear
   success: '#22c55e',
   successLight: '#4ade80',
+  successDark: '#16a34a',
   error: '#ef4444',
   errorLight: '#f87171',
+  errorDark: '#dc2626',
   warning: '#f59e0b',
   warningLight: '#fbbf24',
+  warningDark: '#d97706',
   info: '#3b82f6',
   infoLight: '#60a5fa',
+  infoDark: '#2563eb',
   
   // UI elements - subtle and refined
   border: '#e4e4e7',
@@ -65,12 +69,25 @@ export const colors = {
   // Accent colors for variety
   violet: '#8b5cf6',
   violetLight: '#a78bfa',
+  violetDark: '#7c3aed',
   pink: '#ec4899',
   pinkLight: '#f472b6',
+  pinkDark: '#db2777',
   emerald: '#10b981',
   emeraldLight: '#34d399',
+  emeraldDark: '#059669',
   amber: '#f59e0b',
   amberLight: '#fbbf24',
+  amberDark: '#d97706',
+  indigo: '#6366f1',
+  indigoLight: '#818cf8',
+  indigoDark: '#4f46e5',
+  teal: '#14b8a6',
+  tealLight: '#2dd4bf',
+  tealDark: '#0d9488',
+  rose: '#f43f5e',
+  roseLight: '#fb7185',
+  roseDark: '#e11d48',
 };
 
 export const buttonStyles = StyleSheet.create({
@@ -136,6 +153,36 @@ export const buttonStyles = StyleSheet.create({
     color: colors.text,
     letterSpacing: -0.2,
   },
+  destructive: {
+    backgroundColor: colors.error,
+    borderRadius: 12,
+    paddingVertical: 14,
+    paddingHorizontal: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
+    boxShadow: `0px 2px 8px ${colors.shadowMedium}`,
+    elevation: 2,
+  },
+  destructiveText: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: colors.primaryForeground,
+    letterSpacing: -0.2,
+  },
+  link: {
+    backgroundColor: 'transparent',
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  linkText: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: colors.primary,
+    letterSpacing: -0.2,
+    textDecorationLine: 'underline',
+  },
 });
 
 export const commonStyles = StyleSheet.create({
@@ -172,6 +219,13 @@ export const commonStyles = StyleSheet.create({
     marginBottom: 8,
     letterSpacing: -0.5,
   },
+  heading: {
+    fontSize: 24,
+    fontWeight: '700',
+    color: colors.text,
+    marginBottom: 8,
+    letterSpacing: -0.8,
+  },
   text: {
     fontSize: 16,
     fontWeight: '400',
@@ -179,6 +233,18 @@ export const commonStyles = StyleSheet.create({
     marginBottom: 8,
     lineHeight: 24,
     textAlign: 'center',
+  },
+  textSmall: {
+    fontSize: 14,
+    fontWeight: '400',
+    color: colors.textMuted,
+    lineHeight: 20,
+  },
+  textLarge: {
+    fontSize: 18,
+    fontWeight: '500',
+    color: colors.text,
+    lineHeight: 28,
   },
   section: {
     width: '100%',
@@ -224,6 +290,17 @@ export const commonStyles = StyleSheet.create({
     boxShadow: `0px 2px 8px ${colors.shadow}`,
     elevation: 1,
   },
+  cardInteractive: {
+    backgroundColor: colors.card,
+    borderRadius: 16,
+    padding: 20,
+    marginVertical: 10,
+    width: '100%',
+    borderWidth: 1,
+    borderColor: colors.border,
+    boxShadow: `0px 4px 16px ${colors.shadow}`,
+    elevation: 2,
+  },
   icon: {
     width: 60,
     height: 60,
@@ -253,6 +330,58 @@ export const commonStyles = StyleSheet.create({
     textTransform: 'uppercase',
     letterSpacing: 0.5,
   },
+  badgePrimary: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 8,
+    backgroundColor: colors.primary,
+  },
+  badgePrimaryText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: colors.primaryForeground,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  badgeSuccess: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 8,
+    backgroundColor: colors.success,
+  },
+  badgeSuccessText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: colors.primaryForeground,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  badgeWarning: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 8,
+    backgroundColor: colors.warning,
+  },
+  badgeWarningText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: colors.primaryForeground,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  badgeError: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 8,
+    backgroundColor: colors.error,
+  },
+  badgeErrorText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: colors.primaryForeground,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
   input: {
     backgroundColor: colors.card,
     borderRadius: 12,
@@ -267,4 +396,48 @@ export const commonStyles = StyleSheet.create({
     borderColor: colors.primary,
     boxShadow: `0px 0px 0px 3px ${colors.primary}20`,
   },
+  divider: {
+    height: 1,
+    backgroundColor: colors.divider,
+    width: '100%',
+    marginVertical: 16,
+  },
+  dividerVertical: {
+    width: 1,
+    backgroundColor: colors.divider,
+    height: '100%',
+    marginHorizontal: 16,
+  },
 });
+
+// Animation presets for Framer Motion-style animations
+export const animationPresets = {
+  spring: {
+    damping: 25,
+    stiffness: 150,
+    mass: 0.8,
+  },
+  springBouncy: {
+    damping: 15,
+    stiffness: 200,
+    mass: 1,
+  },
+  springSmooth: {
+    damping: 30,
+    stiffness: 120,
+    mass: 0.6,
+  },
+  springGentle: {
+    damping: 35,
+    stiffness: 100,
+    mass: 0.5,
+  },
+};
+
+// Timing presets
+export const timingPresets = {
+  fast: 200,
+  normal: 300,
+  slow: 500,
+  verySlow: 800,
+};

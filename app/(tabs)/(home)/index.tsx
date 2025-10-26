@@ -5,6 +5,13 @@ import { colors } from "@/styles/commonStyles";
 import { ScrollView, Pressable, StyleSheet, View, Text, Platform } from "react-native";
 import React, { useState } from "react";
 import { IconSymbol } from "@/components/IconSymbol";
+import { useTheme } from "@react-navigation/native";
+import { Card } from "@/components/ui/Card";
+import { AnimatedCard } from "@/components/ui/AnimatedCard";
+import { Button } from "@/components/ui/Button";
+import { Badge } from "@/components/ui/Badge";
+import { Progress } from "@/components/ui/Progress";
+import { Separator } from "@/components/ui/Separator";
 
 interface PredictedTask {
   id: string;
@@ -30,308 +37,42 @@ interface Meeting {
   attendees: number;
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  scrollContent: {
-    paddingHorizontal: 20,
-    paddingTop: 20,
-    paddingBottom: 120,
-  },
-  header: {
-    marginBottom: 32,
-  },
-  greeting: {
-    fontSize: 15,
-    fontWeight: '500',
-    color: colors.textMuted,
-    marginBottom: 6,
-    letterSpacing: -0.2,
-  },
-  title: {
-    fontSize: 40,
-    fontWeight: '700',
-    color: colors.text,
-    letterSpacing: -1.5,
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 16,
-    fontWeight: '400',
-    color: colors.textSecondary,
-    lineHeight: 24,
-    letterSpacing: -0.2,
-  },
-  sectionHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 16,
-    marginTop: 12,
-  },
-  sectionTitle: {
-    fontSize: 22,
-    fontWeight: '700',
-    color: colors.text,
-    letterSpacing: -0.7,
-  },
-  seeAllButton: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 8,
-  },
-  seeAllText: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: colors.primary,
-    letterSpacing: -0.2,
-  },
-  statsGrid: {
-    flexDirection: 'row',
-    gap: 12,
-    marginBottom: 24,
-  },
-  statCard: {
-    flex: 1,
-    backgroundColor: colors.card,
-    borderRadius: 16,
-    padding: 20,
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: colors.border,
-    boxShadow: `0px 2px 8px ${colors.shadow}`,
-    elevation: 1,
-  },
-  statValue: {
-    fontSize: 32,
-    fontWeight: '700',
-    color: colors.text,
-    marginBottom: 4,
-    letterSpacing: -1,
-  },
-  statLabel: {
-    fontSize: 13,
-    fontWeight: '500',
-    color: colors.textSecondary,
-    textAlign: 'center',
-    letterSpacing: -0.2,
-  },
-  card: {
-    backgroundColor: colors.card,
-    borderRadius: 16,
-    padding: 20,
-    marginBottom: 16,
-    borderWidth: 1,
-    borderColor: colors.border,
-    boxShadow: `0px 4px 16px ${colors.shadow}`,
-    elevation: 2,
-  },
-  cardHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  cardTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: colors.text,
-    letterSpacing: -0.4,
-  },
-  cardIcon: {
-    width: 48,
-    height: 48,
-    borderRadius: 12,
-    backgroundColor: colors.backgroundSecondary,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  taskItem: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    paddingVertical: 14,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.divider,
-  },
-  taskItemLast: {
-    borderBottomWidth: 0,
-  },
-  taskPriority: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    marginTop: 6,
-    marginRight: 14,
-  },
-  taskContent: {
-    flex: 1,
-  },
-  taskTitle: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: colors.text,
-    marginBottom: 4,
-    letterSpacing: -0.3,
-  },
-  taskDescription: {
-    fontSize: 14,
-    fontWeight: '400',
-    color: colors.textSecondary,
-    lineHeight: 20,
-    marginBottom: 8,
-    letterSpacing: -0.2,
-  },
-  taskMeta: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-  },
-  taskTime: {
-    fontSize: 13,
-    fontWeight: '500',
-    color: colors.textMuted,
-    letterSpacing: -0.2,
-  },
-  taskConfidence: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: colors.primary,
-    letterSpacing: -0.2,
-  },
-  meetingItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 14,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.divider,
-  },
-  meetingItemLast: {
-    borderBottomWidth: 0,
-  },
-  meetingTime: {
-    width: 70,
-    marginRight: 16,
-  },
-  meetingTimeText: {
-    fontSize: 15,
-    fontWeight: '700',
-    color: colors.text,
-    letterSpacing: -0.3,
-  },
-  meetingDuration: {
-    fontSize: 12,
-    fontWeight: '500',
-    color: colors.textMuted,
-    marginTop: 2,
-    letterSpacing: -0.2,
-  },
-  meetingContent: {
-    flex: 1,
-  },
-  meetingTitle: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: colors.text,
-    marginBottom: 4,
-    letterSpacing: -0.3,
-  },
-  meetingAttendees: {
-    fontSize: 13,
-    fontWeight: '500',
-    color: colors.textSecondary,
-    letterSpacing: -0.2,
-  },
-  actionButton: {
-    backgroundColor: colors.primary,
-    borderRadius: 12,
-    paddingVertical: 14,
-    paddingHorizontal: 20,
-    alignItems: 'center',
-    marginTop: 12,
-    boxShadow: `0px 2px 8px ${colors.shadowMedium}`,
-    elevation: 2,
-  },
-  actionButtonText: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: colors.primaryForeground,
-    letterSpacing: -0.2,
-  },
-  quickActionCard: {
-    backgroundColor: colors.card,
-    borderRadius: 16,
-    padding: 24,
-    marginBottom: 24,
-    borderWidth: 1,
-    borderColor: colors.border,
-    boxShadow: `0px 4px 16px ${colors.shadow}`,
-    elevation: 2,
-  },
-  quickActionTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: colors.text,
-    marginBottom: 12,
-    letterSpacing: -0.4,
-  },
-  quickActionGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 12,
-  },
-  quickActionButton: {
-    flex: 1,
-    minWidth: '45%',
-    backgroundColor: colors.backgroundSecondary,
-    borderRadius: 12,
-    padding: 16,
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  quickActionIcon: {
-    marginBottom: 8,
-  },
-  quickActionLabel: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: colors.text,
-    textAlign: 'center',
-    letterSpacing: -0.2,
-  },
-});
+interface QuickAction {
+  id: string;
+  title: string;
+  icon: string;
+  color: string;
+  route: string;
+}
 
 export default function HomeScreen() {
   const router = useRouter();
-  
+  const theme = useTheme();
+
   const [predictedTasks] = useState<PredictedTask[]>([
     {
       id: '1',
       title: 'Review Q4 Budget',
-      description: 'Based on your calendar, this is typically done on Monday mornings',
+      description: 'Based on your calendar, this is due tomorrow',
       priority: 'high',
-      predictedTime: '9:00 AM',
+      predictedTime: '2:00 PM',
       confidence: 92,
     },
     {
       id: '2',
-      title: 'Team Standup Prep',
-      description: 'You usually prepare notes 15 minutes before the meeting',
+      title: 'Prepare for Team Standup',
+      description: 'You usually do this 30 minutes before',
       priority: 'medium',
-      predictedTime: '9:45 AM',
-      confidence: 88,
+      predictedTime: '9:30 AM',
+      confidence: 85,
     },
     {
       id: '3',
-      title: 'Lunch Break',
-      description: 'Your typical lunch time based on recent patterns',
+      title: 'Follow up with Sarah',
+      description: 'Email thread has been inactive for 3 days',
       priority: 'low',
-      predictedTime: '12:30 PM',
-      confidence: 95,
+      predictedTime: '4:00 PM',
+      confidence: 78,
     },
   ]);
 
@@ -345,17 +86,48 @@ export default function HomeScreen() {
   const [upcomingMeetings] = useState<Meeting[]>([
     {
       id: '1',
-      title: 'Team Standup',
+      title: 'Product Strategy Review',
       time: '10:00 AM',
-      duration: '15 min',
+      duration: '1h',
       attendees: 8,
     },
     {
       id: '2',
-      title: 'Product Review',
-      time: '2:00 PM',
-      duration: '1 hour',
-      attendees: 5,
+      title: '1:1 with Manager',
+      time: '2:30 PM',
+      duration: '30m',
+      attendees: 2,
+    },
+  ]);
+
+  const [quickActions] = useState<QuickAction[]>([
+    {
+      id: '1',
+      title: 'Problem Solver',
+      icon: 'lightbulb',
+      color: colors.amber,
+      route: '/(tabs)/problem-solver',
+    },
+    {
+      id: '2',
+      title: 'Travel',
+      icon: 'airplane',
+      color: colors.indigo,
+      route: '/(tabs)/travel',
+    },
+    {
+      id: '3',
+      title: 'Voice',
+      icon: 'mic',
+      color: colors.violet,
+      route: '/(tabs)/voice',
+    },
+    {
+      id: '4',
+      title: 'Behavior',
+      icon: 'chart.bar',
+      color: colors.teal,
+      route: '/(tabs)/behavior',
     },
   ]);
 
@@ -366,47 +138,42 @@ export default function HomeScreen() {
       case 'medium':
         return colors.warning;
       case 'low':
-        return colors.success;
+        return colors.info;
       default:
         return colors.textMuted;
     }
   };
 
+  const getPriorityVariant = (priority: string): 'error' | 'warning' | 'info' => {
+    switch (priority) {
+      case 'high':
+        return 'error';
+      case 'medium':
+        return 'warning';
+      case 'low':
+        return 'info';
+      default:
+        return 'info';
+    }
+  };
+
   const renderHeaderRight = () => (
     <Pressable
-      onPress={() => router.push('/profile')}
+      onPress={() => router.push('/(tabs)/ai-config')}
       style={{ marginRight: 16 }}
     >
-      <View style={{
-        width: 36,
-        height: 36,
-        borderRadius: 18,
-        backgroundColor: colors.backgroundSecondary,
-        alignItems: 'center',
-        justifyContent: 'center',
-        borderWidth: 1,
-        borderColor: colors.border,
-      }}>
-        <IconSymbol name="person.fill" size={20} color={colors.text} />
-      </View>
+      <IconSymbol
+        name="gearshape"
+        size={24}
+        color={theme.dark ? colors.textDark : colors.text}
+      />
     </Pressable>
   );
 
   const renderHeaderLeft = () => (
-    <View style={{ marginLeft: 16, flexDirection: 'row', alignItems: 'center' }}>
-      <View style={{
-        width: 32,
-        height: 32,
-        borderRadius: 8,
-        backgroundColor: colors.primary,
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginRight: 8,
-      }}>
-        <IconSymbol name="sparkles" size={18} color={colors.primaryForeground} />
-      </View>
-      <Text style={{ fontSize: 18, fontWeight: '700', color: colors.text, letterSpacing: -0.5 }}>
-        AI Assistant
+    <View style={{ marginLeft: 16 }}>
+      <Text style={[styles.greeting, { color: theme.dark ? colors.textDark : colors.text }]}>
+        Good Morning
       </Text>
     </View>
   );
@@ -416,167 +183,395 @@ export default function HomeScreen() {
       <Stack.Screen
         options={{
           title: '',
-          headerTransparent: true,
           headerLeft: renderHeaderLeft,
           headerRight: renderHeaderRight,
+          headerStyle: {
+            backgroundColor: theme.dark ? colors.backgroundDark : colors.background,
+          },
+          headerShadowVisible: false,
         }}
       />
-      <View style={styles.container}>
-        <ScrollView
-          style={{ flex: 1 }}
-          contentContainerStyle={styles.scrollContent}
-          showsVerticalScrollIndicator={false}
-        >
-          {/* Header */}
-          <Animated.View 
-            entering={FadeInDown.duration(500).delay(100)}
-            style={styles.header}
-          >
-            <Text style={styles.greeting}>Good morning,</Text>
-            <Text style={styles.title}>Welcome back</Text>
-            <Text style={styles.subtitle}>
-              Your AI assistant is ready to help you stay productive and organized.
+      <ScrollView
+        style={[
+          styles.container,
+          { backgroundColor: theme.dark ? colors.backgroundDark : colors.background },
+        ]}
+        contentContainerStyle={styles.contentContainer}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Hero Section */}
+        <Animated.View entering={FadeIn.duration(600)} style={styles.heroSection}>
+          <Text style={[styles.heroTitle, { color: theme.dark ? colors.textDark : colors.text }]}>
+            Your AI Personal Assistant
+          </Text>
+          <Text style={[styles.heroSubtitle, { color: theme.dark ? colors.textSecondaryDark : colors.textSecondary }]}>
+            Powered by GPT-5 + LangChain + Pinecone
+          </Text>
+        </Animated.View>
+
+        {/* Quick Actions */}
+        <View style={styles.section}>
+          <Text style={[styles.sectionTitle, { color: theme.dark ? colors.textDark : colors.text }]}>
+            Quick Actions
+          </Text>
+          <View style={styles.quickActionsGrid}>
+            {quickActions.map((action, index) => (
+              <AnimatedCard
+                key={action.id}
+                variant="compact"
+                interactive
+                onPress={() => router.push(action.route as any)}
+                animation="zoomIn"
+                delay={index * 100}
+                duration={400}
+                style={styles.quickActionCard}
+              >
+                <View style={[styles.quickActionIcon, { backgroundColor: `${action.color}20` }]}>
+                  <IconSymbol name={action.icon} size={24} color={action.color} />
+                </View>
+                <Text style={[styles.quickActionTitle, { color: theme.dark ? colors.textDark : colors.text }]}>
+                  {action.title}
+                </Text>
+              </AnimatedCard>
+            ))}
+          </View>
+        </View>
+
+        <Separator />
+
+        {/* Email Summary */}
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
+            <Text style={[styles.sectionTitle, { color: theme.dark ? colors.textDark : colors.text }]}>
+              Email Triage
             </Text>
-          </Animated.View>
-
-          {/* Stats Overview */}
-          <Animated.View entering={FadeInDown.duration(500).delay(200)}>
-            <View style={styles.sectionHeader}>
-              <Text style={styles.sectionTitle}>Today&apos;s Overview</Text>
-            </View>
-            <View style={styles.statsGrid}>
-              <Pressable style={styles.statCard} onPress={() => router.push('/email')}>
-                <Text style={styles.statValue}>{emailSummary.important}</Text>
-                <Text style={styles.statLabel}>Important</Text>
-              </Pressable>
-              <Pressable style={styles.statCard} onPress={() => router.push('/email')}>
-                <Text style={styles.statValue}>{emailSummary.unread}</Text>
-                <Text style={styles.statLabel}>Unread</Text>
-              </Pressable>
-              <Pressable style={styles.statCard} onPress={() => router.push('/meetings')}>
-                <Text style={styles.statValue}>{upcomingMeetings.length}</Text>
-                <Text style={styles.statLabel}>Meetings</Text>
-              </Pressable>
-            </View>
-          </Animated.View>
-
-          {/* Quick Actions */}
-          <Animated.View entering={FadeInDown.duration(500).delay(300)}>
-            <View style={styles.quickActionCard}>
-              <Text style={styles.quickActionTitle}>Quick Actions</Text>
-              <View style={styles.quickActionGrid}>
-                <Pressable 
-                  style={styles.quickActionButton}
-                  onPress={() => router.push('/email')}
-                >
-                  <View style={styles.quickActionIcon}>
-                    <IconSymbol name="envelope.fill" size={24} color={colors.primary} />
-                  </View>
-                  <Text style={styles.quickActionLabel}>Email</Text>
-                </Pressable>
-                <Pressable 
-                  style={styles.quickActionButton}
-                  onPress={() => router.push('/meetings')}
-                >
-                  <View style={styles.quickActionIcon}>
-                    <IconSymbol name="calendar" size={24} color={colors.violet} />
-                  </View>
-                  <Text style={styles.quickActionLabel}>Calendar</Text>
-                </Pressable>
-                <Pressable 
-                  style={styles.quickActionButton}
-                  onPress={() => router.push('/voice')}
-                >
-                  <View style={styles.quickActionIcon}>
-                    <IconSymbol name="mic.fill" size={24} color={colors.emerald} />
-                  </View>
-                  <Text style={styles.quickActionLabel}>Voice</Text>
-                </Pressable>
-                <Pressable 
-                  style={styles.quickActionButton}
-                  onPress={() => router.push('/travel')}
-                >
-                  <View style={styles.quickActionIcon}>
-                    <IconSymbol name="airplane" size={24} color={colors.amber} />
-                  </View>
-                  <Text style={styles.quickActionLabel}>Travel</Text>
-                </Pressable>
+            <Button
+              variant="ghost"
+              size="sm"
+              onPress={() => router.push('/(tabs)/email')}
+            >
+              View All
+            </Button>
+          </View>
+          <AnimatedCard variant="compact" animation="fadeInLeft" delay={200}>
+            <View style={styles.emailSummaryRow}>
+              <View style={styles.emailSummaryItem}>
+                <Badge variant="error" size="sm">
+                  {emailSummary.important}
+                </Badge>
+                <Text style={[styles.emailSummaryLabel, { color: theme.dark ? colors.textSecondaryDark : colors.textSecondary }]}>
+                  Important
+                </Text>
+              </View>
+              <View style={styles.emailSummaryItem}>
+                <Badge variant="info" size="sm">
+                  {emailSummary.informational}
+                </Badge>
+                <Text style={[styles.emailSummaryLabel, { color: theme.dark ? colors.textSecondaryDark : colors.textSecondary }]}>
+                  Info
+                </Text>
+              </View>
+              <View style={styles.emailSummaryItem}>
+                <Badge variant="warning" size="sm">
+                  {emailSummary.spam}
+                </Badge>
+                <Text style={[styles.emailSummaryLabel, { color: theme.dark ? colors.textSecondaryDark : colors.textSecondary }]}>
+                  Spam
+                </Text>
+              </View>
+              <View style={styles.emailSummaryItem}>
+                <Badge variant="outline" size="sm">
+                  {emailSummary.unread}
+                </Badge>
+                <Text style={[styles.emailSummaryLabel, { color: theme.dark ? colors.textSecondaryDark : colors.textSecondary }]}>
+                  Unread
+                </Text>
               </View>
             </View>
-          </Animated.View>
+          </AnimatedCard>
+        </View>
 
-          {/* Predicted Tasks */}
-          <Animated.View entering={FadeInDown.duration(500).delay(400)}>
-            <View style={styles.sectionHeader}>
-              <Text style={styles.sectionTitle}>Predicted Tasks</Text>
-              <Pressable style={styles.seeAllButton}>
-                <Text style={styles.seeAllText}>See all</Text>
-              </Pressable>
-            </View>
-            <View style={styles.card}>
-              {predictedTasks.map((task, index) => (
-                <View
-                  key={task.id}
-                  style={[
-                    styles.taskItem,
-                    index === predictedTasks.length - 1 && styles.taskItemLast,
-                  ]}
-                >
-                  <View
-                    style={[
-                      styles.taskPriority,
-                      { backgroundColor: getPriorityColor(task.priority) },
-                    ]}
-                  />
-                  <View style={styles.taskContent}>
-                    <Text style={styles.taskTitle}>{task.title}</Text>
-                    <Text style={styles.taskDescription}>{task.description}</Text>
-                    <View style={styles.taskMeta}>
-                      <Text style={styles.taskTime}>{task.predictedTime}</Text>
-                      <Text style={styles.taskConfidence}>{task.confidence}% confident</Text>
-                    </View>
-                  </View>
+        {/* Upcoming Meetings */}
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
+            <Text style={[styles.sectionTitle, { color: theme.dark ? colors.textDark : colors.text }]}>
+              Upcoming Meetings
+            </Text>
+            <Button
+              variant="ghost"
+              size="sm"
+              onPress={() => router.push('/(tabs)/meetings')}
+            >
+              View All
+            </Button>
+          </View>
+          {upcomingMeetings.map((meeting, index) => (
+            <AnimatedCard
+              key={meeting.id}
+              variant="small"
+              interactive
+              onPress={() => router.push('/(tabs)/meetings')}
+              animation="fadeInRight"
+              delay={300 + index * 100}
+            >
+              <View style={styles.meetingHeader}>
+                <View style={styles.meetingIconContainer}>
+                  <IconSymbol name="calendar" size={20} color={colors.primary} />
                 </View>
-              ))}
-            </View>
-          </Animated.View>
-
-          {/* Upcoming Meetings */}
-          <Animated.View entering={FadeInDown.duration(500).delay(500)}>
-            <View style={styles.sectionHeader}>
-              <Text style={styles.sectionTitle}>Upcoming Meetings</Text>
-              <Pressable style={styles.seeAllButton} onPress={() => router.push('/meetings')}>
-                <Text style={styles.seeAllText}>See all</Text>
-              </Pressable>
-            </View>
-            <View style={styles.card}>
-              {upcomingMeetings.map((meeting, index) => (
-                <View
-                  key={meeting.id}
-                  style={[
-                    styles.meetingItem,
-                    index === upcomingMeetings.length - 1 && styles.meetingItemLast,
-                  ]}
-                >
-                  <View style={styles.meetingTime}>
-                    <Text style={styles.meetingTimeText}>{meeting.time}</Text>
-                    <Text style={styles.meetingDuration}>{meeting.duration}</Text>
-                  </View>
-                  <View style={styles.meetingContent}>
-                    <Text style={styles.meetingTitle}>{meeting.title}</Text>
-                    <Text style={styles.meetingAttendees}>
-                      {meeting.attendees} attendees
+                <View style={styles.meetingInfo}>
+                  <Text style={[styles.meetingTitle, { color: theme.dark ? colors.textDark : colors.text }]}>
+                    {meeting.title}
+                  </Text>
+                  <View style={styles.meetingMeta}>
+                    <Text style={[styles.meetingTime, { color: theme.dark ? colors.textSecondaryDark : colors.textSecondary }]}>
+                      {meeting.time}
+                    </Text>
+                    <Text style={[styles.meetingDuration, { color: theme.dark ? colors.textMutedDark : colors.textMuted }]}>
+                      • {meeting.duration}
+                    </Text>
+                    <Text style={[styles.meetingAttendees, { color: theme.dark ? colors.textMutedDark : colors.textMuted }]}>
+                      • {meeting.attendees} attendees
                     </Text>
                   </View>
                 </View>
-              ))}
-              <Pressable style={styles.actionButton} onPress={() => router.push('/meetings')}>
-                <Text style={styles.actionButtonText}>Schedule New Meeting</Text>
-              </Pressable>
-            </View>
-          </Animated.View>
-        </ScrollView>
-      </View>
+              </View>
+            </AnimatedCard>
+          ))}
+        </View>
+
+        <Separator />
+
+        {/* Predicted Tasks */}
+        <View style={styles.section}>
+          <Text style={[styles.sectionTitle, { color: theme.dark ? colors.textDark : colors.text }]}>
+            Predicted Tasks
+          </Text>
+          <Text style={[styles.sectionSubtitle, { color: theme.dark ? colors.textSecondaryDark : colors.textSecondary }]}>
+            AI-powered task predictions based on your behavior
+          </Text>
+          {predictedTasks.map((task, index) => (
+            <AnimatedCard
+              key={task.id}
+              variant="compact"
+              interactive
+              animation="fadeInUp"
+              delay={400 + index * 100}
+            >
+              <View style={styles.taskHeader}>
+                <View style={styles.taskTitleRow}>
+                  <Text style={[styles.taskTitle, { color: theme.dark ? colors.textDark : colors.text }]}>
+                    {task.title}
+                  </Text>
+                  <Badge variant={getPriorityVariant(task.priority)} size="sm">
+                    {task.priority}
+                  </Badge>
+                </View>
+                <Text style={[styles.taskDescription, { color: theme.dark ? colors.textSecondaryDark : colors.textSecondary }]}>
+                  {task.description}
+                </Text>
+              </View>
+              <View style={styles.taskFooter}>
+                <View style={styles.taskTimeContainer}>
+                  <IconSymbol name="clock" size={14} color={theme.dark ? colors.textMutedDark : colors.textMuted} />
+                  <Text style={[styles.taskTime, { color: theme.dark ? colors.textMutedDark : colors.textMuted }]}>
+                    {task.predictedTime}
+                  </Text>
+                </View>
+                <View style={styles.confidenceContainer}>
+                  <Text style={[styles.confidenceLabel, { color: theme.dark ? colors.textMutedDark : colors.textMuted }]}>
+                    Confidence:
+                  </Text>
+                  <Progress
+                    value={task.confidence}
+                    height={6}
+                    style={styles.confidenceProgress}
+                  />
+                  <Text style={[styles.confidenceValue, { color: theme.dark ? colors.textDark : colors.text }]}>
+                    {task.confidence}%
+                  </Text>
+                </View>
+              </View>
+            </AnimatedCard>
+          ))}
+        </View>
+
+        {/* Bottom Padding for FloatingTabBar */}
+        <View style={{ height: 100 }} />
+      </ScrollView>
     </>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  contentContainer: {
+    paddingHorizontal: 20,
+    paddingTop: 20,
+  },
+  greeting: {
+    fontSize: 18,
+    fontWeight: '600',
+    letterSpacing: -0.5,
+  },
+  heroSection: {
+    marginBottom: 32,
+    alignItems: 'center',
+  },
+  heroTitle: {
+    fontSize: 28,
+    fontWeight: '700',
+    textAlign: 'center',
+    marginBottom: 8,
+    letterSpacing: -1,
+  },
+  heroSubtitle: {
+    fontSize: 14,
+    textAlign: 'center',
+    letterSpacing: -0.2,
+  },
+  section: {
+    marginBottom: 24,
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    letterSpacing: -0.5,
+  },
+  sectionSubtitle: {
+    fontSize: 14,
+    marginBottom: 16,
+    letterSpacing: -0.2,
+  },
+  quickActionsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 12,
+  },
+  quickActionCard: {
+    width: '48%',
+    alignItems: 'center',
+    padding: 20,
+  },
+  quickActionIcon: {
+    width: 56,
+    height: 56,
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 12,
+  },
+  quickActionTitle: {
+    fontSize: 14,
+    fontWeight: '600',
+    textAlign: 'center',
+    letterSpacing: -0.2,
+  },
+  emailSummaryRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+  },
+  emailSummaryItem: {
+    alignItems: 'center',
+    gap: 8,
+  },
+  emailSummaryLabel: {
+    fontSize: 12,
+    fontWeight: '500',
+  },
+  meetingHeader: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+  },
+  meetingIconContainer: {
+    width: 40,
+    height: 40,
+    borderRadius: 12,
+    backgroundColor: `${colors.primary}20`,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
+  },
+  meetingInfo: {
+    flex: 1,
+  },
+  meetingTitle: {
+    fontSize: 15,
+    fontWeight: '600',
+    marginBottom: 4,
+    letterSpacing: -0.2,
+  },
+  meetingMeta: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  meetingTime: {
+    fontSize: 13,
+    fontWeight: '500',
+  },
+  meetingDuration: {
+    fontSize: 13,
+  },
+  meetingAttendees: {
+    fontSize: 13,
+  },
+  taskHeader: {
+    marginBottom: 12,
+  },
+  taskTitleRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  taskTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    flex: 1,
+    marginRight: 8,
+    letterSpacing: -0.3,
+  },
+  taskDescription: {
+    fontSize: 14,
+    lineHeight: 20,
+  },
+  taskFooter: {
+    gap: 12,
+  },
+  taskTimeContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  taskTime: {
+    fontSize: 13,
+    fontWeight: '500',
+  },
+  confidenceContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  confidenceLabel: {
+    fontSize: 12,
+    fontWeight: '500',
+  },
+  confidenceProgress: {
+    flex: 1,
+  },
+  confidenceValue: {
+    fontSize: 12,
+    fontWeight: '600',
+    minWidth: 35,
+    textAlign: 'right',
+  },
+});
