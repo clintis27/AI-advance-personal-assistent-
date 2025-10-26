@@ -16,22 +16,22 @@ export default function TabLayout() {
       label: 'Home',
     },
     {
-      name: 'problem-solver',
-      route: '/(tabs)/problem-solver',
-      icon: 'lightbulb.fill',
-      label: 'Solver',
-    },
-    {
-      name: 'travel',
-      route: '/(tabs)/travel',
-      icon: 'airplane.departure',
-      label: 'Travel',
+      name: 'voice',
+      route: '/(tabs)/voice',
+      icon: 'waveform',
+      label: 'Voice',
     },
     {
       name: 'agent',
       route: '/(tabs)/agent',
       icon: 'person.crop.circle.badge.checkmark',
       label: 'Agent',
+    },
+    {
+      name: 'travel',
+      route: '/(tabs)/travel',
+      icon: 'airplane.departure',
+      label: 'Travel',
     },
     {
       name: 'profile',
@@ -49,17 +49,17 @@ export default function TabLayout() {
           <Icon sf="house.fill" drawable="ic_home" />
           <Label>Home</Label>
         </NativeTabs.Trigger>
-        <NativeTabs.Trigger name="problem-solver">
-          <Icon sf="lightbulb.fill" drawable="ic_solver" />
-          <Label>Solver</Label>
-        </NativeTabs.Trigger>
-        <NativeTabs.Trigger name="travel">
-          <Icon sf="airplane.departure" drawable="ic_travel" />
-          <Label>Travel</Label>
+        <NativeTabs.Trigger name="voice">
+          <Icon sf="waveform" drawable="ic_voice" />
+          <Label>Voice</Label>
         </NativeTabs.Trigger>
         <NativeTabs.Trigger name="agent">
           <Icon sf="person.crop.circle.badge.checkmark" drawable="ic_agent" />
           <Label>Agent</Label>
+        </NativeTabs.Trigger>
+        <NativeTabs.Trigger name="travel">
+          <Icon sf="airplane.departure" drawable="ic_travel" />
+          <Label>Travel</Label>
         </NativeTabs.Trigger>
         <NativeTabs.Trigger name="profile">
           <Icon sf="person.fill" drawable="ic_profile" />
@@ -79,6 +79,7 @@ export default function TabLayout() {
         }}
       >
         <Stack.Screen name="(home)" />
+        <Stack.Screen name="voice" />
         <Stack.Screen name="problem-solver" />
         <Stack.Screen name="travel" />
         <Stack.Screen name="email" />

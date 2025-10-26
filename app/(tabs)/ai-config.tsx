@@ -34,6 +34,15 @@ export default function AIConfigScreen() {
     { name: 'Claude', enabled: false, apiKey: '', icon: 'sparkles', color: colors.secondary },
   ]);
 
+  // Voice API configurations
+  const [voiceAPIs, setVoiceAPIs] = useState<APIConfig[]>([
+    { name: 'OpenAI Whisper (STT)', enabled: false, apiKey: '', icon: 'waveform.circle', color: colors.primary },
+    { name: 'OpenAI TTS', enabled: false, apiKey: '', icon: 'speaker.wave.3', color: colors.primary },
+    { name: 'ElevenLabs', enabled: false, apiKey: '', icon: 'person.wave.2', color: colors.accent },
+    { name: 'Deepgram', enabled: false, apiKey: '', icon: 'mic.fill', color: colors.secondary },
+    { name: 'Twilio', enabled: false, apiKey: '', icon: 'phone.fill', color: colors.error },
+  ]);
+
   // Preferences
   const [autoDetectTravel, setAutoDetectTravel] = useState(false);
   const [autoUpdateCalendar, setAutoUpdateCalendar] = useState(false);
@@ -41,11 +50,15 @@ export default function AIConfigScreen() {
   const [sustainabilityPriority, setSustainabilityPriority] = useState<'high' | 'medium' | 'low'>('medium');
   const [maxAutoBookAmount, setMaxAutoBookAmount] = useState('500');
 
-  const handleAPIToggle = (index: number, type: 'travel' | 'ai') => {
+  const handleAPIToggle = (index: number, type: 'travel' | 'ai' | 'voice') => {
     if (type === 'travel') {
       const updated = [...travelAPIs];
       updated[index].enabled = !updated[index].enabled;
       setTravelAPIs(updated);
+    } else if (type === 'voice') {
+      const updated = [...voiceAPIs];
+      updated[index].enabled = !updated[index].enabled;
+      setVoiceAPIs(updated);
     } else {
       const updated = [...aiServices];
       updated[index].enabled = !updated[index].enabled;
@@ -54,11 +67,15 @@ export default function AIConfigScreen() {
     console.log(`Toggled ${type} API at index ${index}`);
   };
 
-  const handleAPIKeyChange = (index: number, value: string, type: 'travel' | 'ai') => {
+  const handleAPIKeyChange = (index: number, value: string, type: 'travel' | 'ai' | 'voice') => {
     if (type === 'travel') {
       const updated = [...travelAPIs];
       updated[index].apiKey = value;
       setTravelAPIs(updated);
+    } else if (type === 'voice') {
+      const updated = [...voiceAPIs];
+      updated[index].apiKey = value;
+      setVoiceAPIs(updated);
     } else {
       const updated = [...aiServices];
       updated[index].apiKey = value;
@@ -323,13 +340,51 @@ export default function AIConfigScreen() {
               ))}
 
               <View style={styles.sectionHeader}>
+                <Text style={styles.sectionTitle}>Voice & Communication APIs</Text>
+              </View>
+
+              {voiceAPIs.map((api, index) => (
+                <Animated.View
+                  key={api.name}
+                  entering={FadeInDown.delay(300 + index * 100)}
+                  style={styles.apiCard}
+                >
+                  <View style={styles.apiHeader}>
+                    <View style={[styles.apiIcon, { backgroundColor: api.color + '20' }]}>
+                      <IconSymbol name={api.icon} size={24} color={api.color} />
+                    </View>
+                    <Text style={styles.apiName}>{api.name}</Text>
+                    <Switch
+                      value={api.enabled}
+                      onValueChange={() => handleAPIToggle(index, 'voice')}
+                      trackColor={{ false: colors.border, true: colors.success }}
+                      thumbColor={colors.card}
+                    />
+                  </View>
+                  {api.enabled && (
+                    <View style={styles.apiKeyContainer}>
+                      <TextInput
+                        style={styles.apiKeyInput}
+                        placeholder="Enter API Key"
+                        placeholderTextColor={colors.textSecondary}
+                        value={api.apiKey}
+                        onChangeText={(value) => handleAPIKeyChange(index, value, 'voice')}
+                        secureTextEntry
+                      />
+                      <IconSymbol name="key.fill" size={16} color={colors.textSecondary} />
+                    </View>
+                  )}
+                </Animated.View>
+              ))}
+
+              <View style={styles.sectionHeader}>
                 <Text style={styles.sectionTitle}>Travel APIs</Text>
               </View>
 
               {travelAPIs.map((api, index) => (
                 <Animated.View
                   key={api.name}
-                  entering={FadeInDown.delay(300 + index * 100)}
+                  entering={FadeInDown.delay(600 + index * 100)}
                   style={styles.apiCard}
                 >
                   <View style={styles.apiHeader}>

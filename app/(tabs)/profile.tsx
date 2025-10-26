@@ -131,6 +131,12 @@ export default function ProfileScreen() {
               <IconSymbol name="chevron.right" size={16} color={colors.textSecondary} />
             </Pressable>
             <View style={styles.divider} />
+            <Pressable style={styles.settingRow} onPress={() => router.push('/(tabs)/voice')}>
+              <IconSymbol name="waveform" size={20} color={colors.textSecondary} />
+              <Text style={styles.settingText}>Voice & Communication</Text>
+              <IconSymbol name="chevron.right" size={16} color={colors.textSecondary} />
+            </Pressable>
+            <View style={styles.divider} />
             <Pressable style={styles.settingRow} onPress={() => router.push('/(tabs)/agent')}>
               <IconSymbol name="person.crop.circle.badge.checkmark" size={20} color={colors.textSecondary} />
               <Text style={styles.settingText}>Autonomous Agent</Text>

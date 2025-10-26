@@ -1,0 +1,188 @@
+
+{
+  "speechToText": {
+    "enabled": false,
+    "provider": "openai-whisper",
+    "config": {
+      "language": "en-US",
+      "model": "whisper-1",
+      "realTime": false,
+      "apiKey": ""
+    },
+    "providers": {
+      "openai-whisper": {
+        "name": "OpenAI Whisper",
+        "description": "High-quality speech recognition",
+        "requiresApiKey": true,
+        "supportsRealtime": false
+      },
+      "openai-realtime": {
+        "name": "OpenAI Realtime API",
+        "description": "Real-time speech recognition and synthesis",
+        "requiresApiKey": true,
+        "supportsRealtime": true
+      },
+      "deepgram": {
+        "name": "Deepgram",
+        "description": "Fast and accurate speech recognition",
+        "requiresApiKey": true,
+        "supportsRealtime": true
+      },
+      "assemblyai": {
+        "name": "AssemblyAI",
+        "description": "Advanced speech recognition with speaker diarization",
+        "requiresApiKey": true,
+        "supportsRealtime": true
+      }
+    }
+  },
+  "textToSpeech": {
+    "enabled": false,
+    "provider": "openai",
+    "config": {
+      "voice": "alloy",
+      "voiceId": "",
+      "speed": 1.0,
+      "pitch": 1.0,
+      "language": "en-US",
+      "apiKey": ""
+    },
+    "providers": {
+      "openai": {
+        "name": "OpenAI TTS",
+        "description": "Natural-sounding text-to-speech",
+        "requiresApiKey": true,
+        "voices": ["alloy", "echo", "fable", "onyx", "nova", "shimmer"]
+      },
+      "elevenlabs": {
+        "name": "ElevenLabs",
+        "description": "Ultra-realistic voice synthesis",
+        "requiresApiKey": true,
+        "supportsVoiceCloning": true
+      },
+      "playht": {
+        "name": "Play.ht",
+        "description": "High-quality voice generation",
+        "requiresApiKey": true
+      },
+      "polly": {
+        "name": "Amazon Polly",
+        "description": "AWS text-to-speech service",
+        "requiresApiKey": true
+      },
+      "azure": {
+        "name": "Azure Neural Voice",
+        "description": "Microsoft's neural text-to-speech",
+        "requiresApiKey": true
+      }
+    }
+  },
+  "voiceCloning": {
+    "enabled": false,
+    "provider": "elevenlabs",
+    "config": {
+      "name": "",
+      "description": "",
+      "sampleAudioUrls": [],
+      "consentGiven": false,
+      "consentTimestamp": "",
+      "apiKey": ""
+    },
+    "providers": {
+      "elevenlabs": {
+        "name": "ElevenLabs",
+        "description": "Professional voice cloning",
+        "requiresApiKey": true,
+        "minSamples": 3,
+        "minDurationPerSample": 30
+      },
+      "resemble": {
+        "name": "Resemble.ai",
+        "description": "Custom voice creation",
+        "requiresApiKey": true,
+        "minSamples": 5,
+        "minDurationPerSample": 60
+      }
+    }
+  },
+  "realtimeVoice": {
+    "enabled": false,
+    "config": {
+      "mode": "conversation",
+      "enableInterruption": true,
+      "silenceThreshold": 1.5,
+      "maxDuration": 3600,
+      "useWebRTC": true
+    }
+  },
+  "callIntegration": {
+    "enabled": false,
+    "provider": "twilio",
+    "config": {
+      "phoneNumber": "",
+      "accountSid": "",
+      "authToken": "",
+      "apiKey": "",
+      "apiSecret": ""
+    },
+    "providers": {
+      "twilio": {
+        "name": "Twilio",
+        "description": "Comprehensive voice and SMS platform",
+        "requiresApiKey": true,
+        "features": ["voice", "sms", "voicemail", "recording"]
+      },
+      "vonage": {
+        "name": "Vonage",
+        "description": "Global communications platform",
+        "requiresApiKey": true,
+        "features": ["voice", "sms", "video"]
+      },
+      "signalwire": {
+        "name": "SignalWire",
+        "description": "Modern communications API",
+        "requiresApiKey": true,
+        "features": ["voice", "sms", "video", "messaging"]
+      }
+    }
+  },
+  "voiceAgent": {
+    "enabled": false,
+    "config": {
+      "autoAnswer": false,
+      "autoAnswerDelay": 3,
+      "voiceProfile": "professional-male",
+      "responseStyle": "professional",
+      "allowedContacts": [],
+      "blockedContacts": [],
+      "businessHours": {
+        "enabled": false,
+        "start": "09:00",
+        "end": "17:00",
+        "timezone": "America/New_York"
+      },
+      "greetingMessage": "Hello, this is the AI assistant. How can I help you?",
+      "awayMessage": "I'm currently unavailable. Please leave a message."
+    }
+  },
+  "privacy": {
+    "storeRecordings": false,
+    "storeTranscripts": true,
+    "retentionDays": 30,
+    "shareWithThirdParty": false,
+    "anonymizeData": true,
+    "voiceConsent": {
+      "voiceCloning": false,
+      "callRecording": false,
+      "transcriptStorage": false,
+      "voiceAsUser": false,
+      "timestamp": ""
+    }
+  },
+  "recording": {
+    "format": "m4a",
+    "quality": "high",
+    "maxDuration": 600,
+    "enableNoiseCancellation": true
+  }
+}
