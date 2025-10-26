@@ -1,8 +1,8 @@
 
 import { Stack, useRouter } from "expo-router";
-import Animated, { FadeInDown } from "react-native-reanimated";
+import Animated, { FadeInDown, FadeIn } from "react-native-reanimated";
 import { colors } from "@/styles/commonStyles";
-import { ScrollView, Pressable, StyleSheet, View, Text, Platform, Image } from "react-native";
+import { ScrollView, Pressable, StyleSheet, View, Text, Platform } from "react-native";
 import React, { useState } from "react";
 import { IconSymbol } from "@/components/IconSymbol";
 
@@ -36,106 +36,97 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
   },
   scrollContent: {
-    paddingHorizontal: 24,
-    paddingTop: 24,
+    paddingHorizontal: 20,
+    paddingTop: 20,
     paddingBottom: 120,
   },
   header: {
     marginBottom: 32,
   },
   greeting: {
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: '500',
-    color: colors.textSecondary,
-    marginBottom: 4,
+    color: colors.textMuted,
+    marginBottom: 6,
+    letterSpacing: -0.2,
   },
   title: {
-    fontSize: 36,
+    fontSize: 40,
     fontWeight: '700',
     color: colors.text,
-    letterSpacing: -1,
+    letterSpacing: -1.5,
     marginBottom: 8,
   },
   subtitle: {
     fontSize: 16,
     fontWeight: '400',
-    color: colors.textMuted,
+    color: colors.textSecondary,
     lineHeight: 24,
+    letterSpacing: -0.2,
   },
   sectionHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 16,
-    marginTop: 8,
+    marginTop: 12,
   },
   sectionTitle: {
-    fontSize: 20,
-    fontWeight: '600',
+    fontSize: 22,
+    fontWeight: '700',
     color: colors.text,
-    letterSpacing: -0.3,
+    letterSpacing: -0.7,
   },
   seeAllButton: {
     paddingHorizontal: 12,
     paddingVertical: 6,
+    borderRadius: 8,
   },
   seeAllText: {
     fontSize: 14,
     fontWeight: '600',
     color: colors.primary,
+    letterSpacing: -0.2,
   },
-  featuredCard: {
-    backgroundColor: colors.card,
-    borderRadius: 28,
-    padding: 0,
+  statsGrid: {
+    flexDirection: 'row',
+    gap: 12,
     marginBottom: 24,
-    overflow: 'hidden',
-    boxShadow: `0px 12px 32px ${colors.shadow}`,
-    elevation: 4,
   },
-  featuredImage: {
-    width: '100%',
-    height: 280,
-    backgroundColor: colors.cardSecondary,
+  statCard: {
+    flex: 1,
+    backgroundColor: colors.card,
+    borderRadius: 16,
+    padding: 20,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: colors.border,
+    boxShadow: `0px 2px 8px ${colors.shadow}`,
+    elevation: 1,
   },
-  featuredContent: {
-    padding: 24,
-  },
-  featuredBadge: {
-    alignSelf: 'flex-start',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 12,
-    backgroundColor: colors.cardSecondary,
-    marginBottom: 12,
-  },
-  featuredBadgeText: {
-    fontSize: 11,
-    fontWeight: '700',
-    color: colors.textSecondary,
-    textTransform: 'uppercase',
-    letterSpacing: 1,
-  },
-  featuredTitle: {
-    fontSize: 24,
+  statValue: {
+    fontSize: 32,
     fontWeight: '700',
     color: colors.text,
-    marginBottom: 8,
-    letterSpacing: -0.5,
+    marginBottom: 4,
+    letterSpacing: -1,
   },
-  featuredDescription: {
-    fontSize: 15,
-    fontWeight: '400',
+  statLabel: {
+    fontSize: 13,
+    fontWeight: '500',
     color: colors.textSecondary,
-    lineHeight: 22,
+    textAlign: 'center',
+    letterSpacing: -0.2,
   },
   card: {
     backgroundColor: colors.card,
-    borderRadius: 24,
+    borderRadius: 16,
     padding: 20,
     marginBottom: 16,
-    boxShadow: `0px 8px 24px ${colors.shadow}`,
-    elevation: 3,
+    borderWidth: 1,
+    borderColor: colors.border,
+    boxShadow: `0px 4px 16px ${colors.shadow}`,
+    elevation: 2,
   },
   cardHeader: {
     flexDirection: 'row',
@@ -147,20 +138,22 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '600',
     color: colors.text,
-    letterSpacing: -0.3,
+    letterSpacing: -0.4,
   },
   cardIcon: {
     width: 48,
     height: 48,
-    borderRadius: 16,
-    backgroundColor: colors.cardSecondary,
+    borderRadius: 12,
+    backgroundColor: colors.backgroundSecondary,
     alignItems: 'center',
     justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   taskItem: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    paddingVertical: 12,
+    paddingVertical: 14,
     borderBottomWidth: 1,
     borderBottomColor: colors.divider,
   },
@@ -168,11 +161,11 @@ const styles = StyleSheet.create({
     borderBottomWidth: 0,
   },
   taskPriority: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
+    width: 10,
+    height: 10,
+    borderRadius: 5,
     marginTop: 6,
-    marginRight: 12,
+    marginRight: 14,
   },
   taskContent: {
     flex: 1,
@@ -182,13 +175,15 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: colors.text,
     marginBottom: 4,
+    letterSpacing: -0.3,
   },
   taskDescription: {
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: '400',
     color: colors.textSecondary,
-    lineHeight: 18,
-    marginBottom: 6,
+    lineHeight: 20,
+    marginBottom: 8,
+    letterSpacing: -0.2,
   },
   taskMeta: {
     flexDirection: 'row',
@@ -196,45 +191,21 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   taskTime: {
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: '500',
     color: colors.textMuted,
+    letterSpacing: -0.2,
   },
   taskConfidence: {
-    fontSize: 12,
-    fontWeight: '500',
+    fontSize: 13,
+    fontWeight: '600',
     color: colors.primary,
-  },
-  statsGrid: {
-    flexDirection: 'row',
-    gap: 12,
-    marginBottom: 24,
-  },
-  statCard: {
-    flex: 1,
-    backgroundColor: colors.card,
-    borderRadius: 20,
-    padding: 20,
-    alignItems: 'center',
-    boxShadow: `0px 6px 20px ${colors.shadow}`,
-    elevation: 2,
-  },
-  statValue: {
-    fontSize: 28,
-    fontWeight: '700',
-    color: colors.text,
-    marginBottom: 4,
-  },
-  statLabel: {
-    fontSize: 12,
-    fontWeight: '500',
-    color: colors.textSecondary,
-    textAlign: 'center',
+    letterSpacing: -0.2,
   },
   meetingItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 12,
+    paddingVertical: 14,
     borderBottomWidth: 1,
     borderBottomColor: colors.divider,
   },
@@ -242,19 +213,21 @@ const styles = StyleSheet.create({
     borderBottomWidth: 0,
   },
   meetingTime: {
-    width: 60,
+    width: 70,
     marginRight: 16,
   },
   meetingTimeText: {
-    fontSize: 14,
-    fontWeight: '600',
+    fontSize: 15,
+    fontWeight: '700',
     color: colors.text,
+    letterSpacing: -0.3,
   },
   meetingDuration: {
-    fontSize: 11,
+    fontSize: 12,
     fontWeight: '500',
     color: colors.textMuted,
     marginTop: 2,
+    letterSpacing: -0.2,
   },
   meetingContent: {
     flex: 1,
@@ -264,26 +237,71 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: colors.text,
     marginBottom: 4,
+    letterSpacing: -0.3,
   },
   meetingAttendees: {
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: '500',
     color: colors.textSecondary,
+    letterSpacing: -0.2,
   },
   actionButton: {
     backgroundColor: colors.primary,
-    borderRadius: 20,
-    paddingVertical: 16,
-    paddingHorizontal: 24,
+    borderRadius: 12,
+    paddingVertical: 14,
+    paddingHorizontal: 20,
     alignItems: 'center',
-    marginTop: 8,
-    boxShadow: `0px 6px 20px ${colors.shadow}`,
-    elevation: 3,
+    marginTop: 12,
+    boxShadow: `0px 2px 8px ${colors.shadowMedium}`,
+    elevation: 2,
   },
   actionButtonText: {
     fontSize: 15,
     fontWeight: '600',
-    color: colors.card,
+    color: colors.primaryForeground,
+    letterSpacing: -0.2,
+  },
+  quickActionCard: {
+    backgroundColor: colors.card,
+    borderRadius: 16,
+    padding: 24,
+    marginBottom: 24,
+    borderWidth: 1,
+    borderColor: colors.border,
+    boxShadow: `0px 4px 16px ${colors.shadow}`,
+    elevation: 2,
+  },
+  quickActionTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: colors.text,
+    marginBottom: 12,
+    letterSpacing: -0.4,
+  },
+  quickActionGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 12,
+  },
+  quickActionButton: {
+    flex: 1,
+    minWidth: '45%',
+    backgroundColor: colors.backgroundSecondary,
+    borderRadius: 12,
+    padding: 16,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  quickActionIcon: {
+    marginBottom: 8,
+  },
+  quickActionLabel: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: colors.text,
+    textAlign: 'center',
+    letterSpacing: -0.2,
   },
 });
 
@@ -359,13 +377,37 @@ export default function HomeScreen() {
       onPress={() => router.push('/profile')}
       style={{ marginRight: 16 }}
     >
-      <IconSymbol name="person.circle.fill" size={28} color={colors.primary} />
+      <View style={{
+        width: 36,
+        height: 36,
+        borderRadius: 18,
+        backgroundColor: colors.backgroundSecondary,
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderWidth: 1,
+        borderColor: colors.border,
+      }}>
+        <IconSymbol name="person.fill" size={20} color={colors.text} />
+      </View>
     </Pressable>
   );
 
   const renderHeaderLeft = () => (
-    <View style={{ marginLeft: 16 }}>
-      <Text style={{ fontSize: 20, fontWeight: '700', color: colors.text }}>UNICORN</Text>
+    <View style={{ marginLeft: 16, flexDirection: 'row', alignItems: 'center' }}>
+      <View style={{
+        width: 32,
+        height: 32,
+        borderRadius: 8,
+        backgroundColor: colors.primary,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginRight: 8,
+      }}>
+        <IconSymbol name="sparkles" size={18} color={colors.primaryForeground} />
+      </View>
+      <Text style={{ fontSize: 18, fontWeight: '700', color: colors.text, letterSpacing: -0.5 }}>
+        AI Assistant
+      </Text>
     </View>
   );
 
@@ -387,59 +429,84 @@ export default function HomeScreen() {
         >
           {/* Header */}
           <Animated.View 
-            entering={FadeInDown.duration(600).delay(100)}
+            entering={FadeInDown.duration(500).delay(100)}
             style={styles.header}
           >
             <Text style={styles.greeting}>Good morning,</Text>
-            <Text style={styles.title}>Destiny.</Text>
+            <Text style={styles.title}>Welcome back</Text>
             <Text style={styles.subtitle}>
-              A voyage fueled by desire to know. Seeking for timeless wisdom.
+              Your AI assistant is ready to help you stay productive and organized.
             </Text>
           </Animated.View>
 
-          {/* Featured Card */}
-          <Animated.View entering={FadeInDown.duration(600).delay(200)}>
-            <Pressable style={styles.featuredCard}>
-              <Image
-                source={{ uri: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80' }}
-                style={styles.featuredImage}
-                resizeMode="cover"
-              />
-              <View style={styles.featuredContent}>
-                <View style={styles.featuredBadge}>
-                  <Text style={styles.featuredBadgeText}>Featured</Text>
-                </View>
-                <Text style={styles.featuredTitle}>The humming.</Text>
-                <Text style={styles.featuredDescription}>
-                  What is life without a little risk? It&apos;s time to fly and reach the sky!
-                </Text>
-              </View>
-            </Pressable>
-          </Animated.View>
-
-          {/* Email Stats */}
-          <Animated.View entering={FadeInDown.duration(600).delay(300)}>
+          {/* Stats Overview */}
+          <Animated.View entering={FadeInDown.duration(500).delay(200)}>
             <View style={styles.sectionHeader}>
               <Text style={styles.sectionTitle}>Today&apos;s Overview</Text>
             </View>
             <View style={styles.statsGrid}>
-              <View style={styles.statCard}>
+              <Pressable style={styles.statCard} onPress={() => router.push('/email')}>
                 <Text style={styles.statValue}>{emailSummary.important}</Text>
                 <Text style={styles.statLabel}>Important</Text>
-              </View>
-              <View style={styles.statCard}>
+              </Pressable>
+              <Pressable style={styles.statCard} onPress={() => router.push('/email')}>
                 <Text style={styles.statValue}>{emailSummary.unread}</Text>
                 <Text style={styles.statLabel}>Unread</Text>
-              </View>
-              <View style={styles.statCard}>
+              </Pressable>
+              <Pressable style={styles.statCard} onPress={() => router.push('/meetings')}>
                 <Text style={styles.statValue}>{upcomingMeetings.length}</Text>
                 <Text style={styles.statLabel}>Meetings</Text>
+              </Pressable>
+            </View>
+          </Animated.View>
+
+          {/* Quick Actions */}
+          <Animated.View entering={FadeInDown.duration(500).delay(300)}>
+            <View style={styles.quickActionCard}>
+              <Text style={styles.quickActionTitle}>Quick Actions</Text>
+              <View style={styles.quickActionGrid}>
+                <Pressable 
+                  style={styles.quickActionButton}
+                  onPress={() => router.push('/email')}
+                >
+                  <View style={styles.quickActionIcon}>
+                    <IconSymbol name="envelope.fill" size={24} color={colors.primary} />
+                  </View>
+                  <Text style={styles.quickActionLabel}>Email</Text>
+                </Pressable>
+                <Pressable 
+                  style={styles.quickActionButton}
+                  onPress={() => router.push('/meetings')}
+                >
+                  <View style={styles.quickActionIcon}>
+                    <IconSymbol name="calendar" size={24} color={colors.violet} />
+                  </View>
+                  <Text style={styles.quickActionLabel}>Calendar</Text>
+                </Pressable>
+                <Pressable 
+                  style={styles.quickActionButton}
+                  onPress={() => router.push('/voice')}
+                >
+                  <View style={styles.quickActionIcon}>
+                    <IconSymbol name="mic.fill" size={24} color={colors.emerald} />
+                  </View>
+                  <Text style={styles.quickActionLabel}>Voice</Text>
+                </Pressable>
+                <Pressable 
+                  style={styles.quickActionButton}
+                  onPress={() => router.push('/travel')}
+                >
+                  <View style={styles.quickActionIcon}>
+                    <IconSymbol name="airplane" size={24} color={colors.amber} />
+                  </View>
+                  <Text style={styles.quickActionLabel}>Travel</Text>
+                </Pressable>
               </View>
             </View>
           </Animated.View>
 
           {/* Predicted Tasks */}
-          <Animated.View entering={FadeInDown.duration(600).delay(400)}>
+          <Animated.View entering={FadeInDown.duration(500).delay(400)}>
             <View style={styles.sectionHeader}>
               <Text style={styles.sectionTitle}>Predicted Tasks</Text>
               <Pressable style={styles.seeAllButton}>
@@ -475,10 +542,10 @@ export default function HomeScreen() {
           </Animated.View>
 
           {/* Upcoming Meetings */}
-          <Animated.View entering={FadeInDown.duration(600).delay(500)}>
+          <Animated.View entering={FadeInDown.duration(500).delay(500)}>
             <View style={styles.sectionHeader}>
               <Text style={styles.sectionTitle}>Upcoming Meetings</Text>
-              <Pressable style={styles.seeAllButton}>
+              <Pressable style={styles.seeAllButton} onPress={() => router.push('/meetings')}>
                 <Text style={styles.seeAllText}>See all</Text>
               </Pressable>
             </View>
@@ -503,7 +570,7 @@ export default function HomeScreen() {
                   </View>
                 </View>
               ))}
-              <Pressable style={styles.actionButton}>
+              <Pressable style={styles.actionButton} onPress={() => router.push('/meetings')}>
                 <Text style={styles.actionButtonText}>Schedule New Meeting</Text>
               </Pressable>
             </View>

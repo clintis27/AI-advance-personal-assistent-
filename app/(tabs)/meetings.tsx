@@ -1,10 +1,10 @@
 
-import React, { useState } from "react";
-import { ScrollView, Pressable, StyleSheet, View, Text, Platform } from "react-native";
+import Animated, { FadeInDown } from "react-native-reanimated";
 import { Stack } from "expo-router";
-import { IconSymbol } from "@/components/IconSymbol";
 import { colors } from "@/styles/commonStyles";
-import Animated, { FadeInUp } from "react-native-reanimated";
+import { ScrollView, Pressable, StyleSheet, View, Text, Platform } from "react-native";
+import React, { useState } from "react";
+import { IconSymbol } from "@/components/IconSymbol";
 
 interface Meeting {
   id: string;
@@ -24,78 +24,276 @@ interface TimeSlot {
   score: number;
 }
 
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: colors.background,
+  },
+  scrollContent: {
+    paddingHorizontal: 20,
+    paddingTop: 20,
+    paddingBottom: 120,
+  },
+  header: {
+    marginBottom: 24,
+  },
+  title: {
+    fontSize: 32,
+    fontWeight: '700',
+    color: colors.text,
+    letterSpacing: -1,
+    marginBottom: 8,
+  },
+  subtitle: {
+    fontSize: 15,
+    fontWeight: '400',
+    color: colors.textSecondary,
+    lineHeight: 22,
+    letterSpacing: -0.2,
+  },
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: colors.text,
+    marginBottom: 16,
+    marginTop: 8,
+    letterSpacing: -0.5,
+  },
+  meetingCard: {
+    backgroundColor: colors.card,
+    borderRadius: 14,
+    padding: 20,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: colors.border,
+    boxShadow: `0px 2px 8px ${colors.shadow}`,
+    elevation: 1,
+  },
+  suggestedCard: {
+    borderLeftWidth: 3,
+    borderLeftColor: colors.primary,
+  },
+  meetingHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginBottom: 12,
+  },
+  meetingTitle: {
+    fontSize: 17,
+    fontWeight: '600',
+    color: colors.text,
+    flex: 1,
+    letterSpacing: -0.3,
+  },
+  typeBadge: {
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 8,
+    marginLeft: 8,
+  },
+  typeBadgeText: {
+    fontSize: 11,
+    fontWeight: '600',
+    letterSpacing: 0.3,
+    textTransform: 'uppercase',
+  },
+  meetingDetails: {
+    gap: 10,
+  },
+  detailRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  detailIcon: {
+    width: 20,
+    alignItems: 'center',
+  },
+  detailText: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: colors.textSecondary,
+    flex: 1,
+    letterSpacing: -0.2,
+  },
+  attendeesList: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 6,
+    marginTop: 4,
+  },
+  attendeeChip: {
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 8,
+    backgroundColor: colors.backgroundSecondary,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  attendeeText: {
+    fontSize: 12,
+    fontWeight: '500',
+    color: colors.text,
+    letterSpacing: -0.2,
+  },
+  actionButtons: {
+    flexDirection: 'row',
+    gap: 8,
+    marginTop: 16,
+  },
+  acceptButton: {
+    flex: 1,
+    backgroundColor: colors.primary,
+    borderRadius: 10,
+    paddingVertical: 12,
+    alignItems: 'center',
+    boxShadow: `0px 2px 8px ${colors.shadowMedium}`,
+    elevation: 2,
+  },
+  acceptButtonText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: colors.primaryForeground,
+    letterSpacing: -0.2,
+  },
+  declineButton: {
+    flex: 1,
+    backgroundColor: colors.backgroundSecondary,
+    borderRadius: 10,
+    paddingVertical: 12,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  declineButtonText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: colors.text,
+    letterSpacing: -0.2,
+  },
+  conflictWarning: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    backgroundColor: `${colors.warning}15`,
+    padding: 12,
+    borderRadius: 10,
+    marginTop: 12,
+    borderWidth: 1,
+    borderColor: `${colors.warning}30`,
+  },
+  conflictText: {
+    fontSize: 13,
+    fontWeight: '500',
+    color: colors.warning,
+    flex: 1,
+    letterSpacing: -0.2,
+  },
+  timeSlotsCard: {
+    backgroundColor: colors.card,
+    borderRadius: 14,
+    padding: 20,
+    marginBottom: 20,
+    borderWidth: 1,
+    borderColor: colors.border,
+    boxShadow: `0px 2px 8px ${colors.shadow}`,
+    elevation: 1,
+  },
+  timeSlotsTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: colors.text,
+    marginBottom: 16,
+    letterSpacing: -0.3,
+  },
+  timeSlotsList: {
+    gap: 8,
+  },
+  timeSlot: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 14,
+    borderRadius: 10,
+    backgroundColor: colors.backgroundSecondary,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  timeSlotAvailable: {
+    backgroundColor: `${colors.success}10`,
+    borderColor: `${colors.success}30`,
+  },
+  timeSlotTime: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: colors.text,
+    letterSpacing: -0.3,
+  },
+  timeSlotScore: {
+    fontSize: 13,
+    fontWeight: '500',
+    color: colors.textSecondary,
+    letterSpacing: -0.2,
+  },
+  timeSlotScoreHigh: {
+    color: colors.success,
+  },
+});
+
 export default function MeetingsScreen() {
-  const [meetings, setMeetings] = useState<Meeting[]>([
+  const [meetings] = useState<Meeting[]>([
     {
       id: '1',
       title: 'Team Standup',
       date: 'Today',
       time: '10:00 AM',
-      duration: '30 min',
-      attendees: ['Sarah', 'John', 'Mike', 'Emma', 'Lisa', 'Tom', 'Kate', 'Alex'],
-      location: 'Conference Room A',
+      duration: '15 min',
+      attendees: ['John', 'Sarah', 'Mike', 'Emily', 'David', 'Lisa', 'Tom', 'Anna'],
+      location: 'Zoom',
       type: 'scheduled',
     },
     {
       id: '2',
-      title: 'Client Presentation',
+      title: 'Product Review',
       date: 'Today',
-      time: '2:30 PM',
+      time: '2:00 PM',
       duration: '1 hour',
-      attendees: ['Client Team', 'Sarah', 'John', 'You'],
-      location: 'Virtual - Zoom',
+      attendees: ['Sarah', 'Mike', 'Emily', 'David', 'Lisa'],
+      location: 'Conference Room A',
       type: 'scheduled',
     },
     {
       id: '3',
-      title: 'Project Review with Marketing',
+      title: 'Budget Discussion with Finance',
       date: 'Tomorrow',
       time: '11:00 AM',
       duration: '45 min',
-      attendees: ['Marketing Team', 'You'],
-      location: 'Conference Room B',
+      attendees: ['Finance Team', 'You'],
+      location: 'Google Meet',
       type: 'suggested',
-      conflictScore: 85,
-    },
-    {
-      id: '4',
-      title: 'One-on-One with Manager',
-      date: 'Tomorrow',
-      time: '3:00 PM',
-      duration: '30 min',
-      attendees: ['Manager', 'You'],
-      location: 'Manager Office',
-      type: 'suggested',
-      conflictScore: 92,
+      conflictScore: 15,
     },
   ]);
 
-  const [suggestedSlots] = useState<TimeSlot[]>([
-    { time: '9:00 AM', available: true, score: 88 },
-    { time: '11:30 AM', available: true, score: 95 },
-    { time: '1:00 PM', available: false, score: 45 },
-    { time: '3:30 PM', available: true, score: 78 },
-    { time: '4:30 PM', available: true, score: 82 },
+  const [optimalTimeSlots] = useState<TimeSlot[]>([
+    { time: '9:00 AM - 9:30 AM', available: true, score: 95 },
+    { time: '11:30 AM - 12:00 PM', available: true, score: 88 },
+    { time: '3:00 PM - 3:30 PM', available: true, score: 82 },
+    { time: '4:30 PM - 5:00 PM', available: false, score: 45 },
   ]);
 
   const handleAcceptSuggestion = (meetingId: string) => {
-    setMeetings(meetings.map(meeting => 
-      meeting.id === meetingId ? { ...meeting, type: 'scheduled' as const } : meeting
-    ));
-    console.log('Meeting accepted:', meetingId);
+    console.log('Accepted meeting:', meetingId);
   };
 
   const handleDeclineSuggestion = (meetingId: string) => {
-    setMeetings(meetings.filter(meeting => meeting.id !== meetingId));
-    console.log('Meeting declined:', meetingId);
+    console.log('Declined meeting:', meetingId);
   };
 
   const renderHeaderRight = () => (
-    <Pressable
-      onPress={() => console.log('Add new meeting')}
-      style={styles.headerButtonContainer}
-    >
-      <IconSymbol name="plus" color={colors.primary} size={24} />
+    <Pressable style={{ marginRight: 16 }}>
+      <IconSymbol name="plus.circle.fill" size={28} color={colors.primary} />
     </Pressable>
   );
 
@@ -103,435 +301,185 @@ export default function MeetingsScreen() {
     <>
       <Stack.Screen
         options={{
-          title: "Meetings",
-          headerShown: Platform.OS === 'ios',
+          title: '',
+          headerTransparent: true,
           headerRight: renderHeaderRight,
         }}
       />
       <View style={styles.container}>
         <ScrollView
-          style={styles.scrollView}
+          style={{ flex: 1 }}
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
-          {/* Header for Android/Web */}
-          {Platform.OS !== 'ios' && (
-            <View style={styles.headerContainer}>
-              <View style={styles.headerTitleRow}>
-                <Text style={styles.headerTitle}>Meetings</Text>
-                <Pressable
-                  onPress={() => console.log('Add new meeting')}
-                  style={styles.headerButton}
-                >
-                  <IconSymbol name="plus" color={colors.primary} size={24} />
-                </Pressable>
-              </View>
-            </View>
-          )}
+          {/* Header */}
+          <Animated.View 
+            entering={FadeInDown.duration(500).delay(100)}
+            style={styles.header}
+          >
+            <Text style={styles.title}>Meetings</Text>
+            <Text style={styles.subtitle}>
+              AI-powered scheduling to find the best times for everyone.
+            </Text>
+          </Animated.View>
 
-          {/* AI Suggested Time Slots */}
-          <Animated.View entering={FadeInUp.delay(100)} style={styles.section}>
-            <View style={styles.sectionHeader}>
-              <IconSymbol name="sparkles" color={colors.secondary} size={24} />
-              <Text style={styles.sectionTitle}>AI Suggested Time Slots</Text>
-            </View>
-            <View style={styles.card}>
-              <Text style={styles.cardSubtitle}>
-                Based on your productivity patterns and calendar
-              </Text>
-              <View style={styles.slotsContainer}>
-                {suggestedSlots.map((slot, index) => (
-                  <View 
-                    key={index} 
+          {/* Optimal Time Slots */}
+          <Animated.View entering={FadeInDown.duration(500).delay(200)}>
+            <Text style={styles.sectionTitle}>Optimal Time Slots</Text>
+            <View style={styles.timeSlotsCard}>
+              <Text style={styles.timeSlotsTitle}>Best times for scheduling</Text>
+              <View style={styles.timeSlotsList}>
+                {optimalTimeSlots.map((slot, index) => (
+                  <Pressable
+                    key={index}
                     style={[
                       styles.timeSlot,
-                      !slot.available && styles.unavailableSlot
+                      slot.available && styles.timeSlotAvailable,
                     ]}
                   >
-                    <View style={styles.slotInfo}>
-                      <Text style={[
-                        styles.slotTime,
-                        !slot.available && styles.unavailableText
-                      ]}>
-                        {slot.time}
-                      </Text>
-                      {slot.available && (
-                        <View style={styles.scoreContainer}>
-                          <View style={styles.scoreBar}>
-                            <View 
-                              style={[
-                                styles.scoreFill,
-                                { width: `${slot.score}%` }
-                              ]} 
-                            />
-                          </View>
-                          <Text style={styles.scoreText}>{slot.score}%</Text>
-                        </View>
-                      )}
-                    </View>
-                    {slot.available ? (
-                      <IconSymbol name="checkmark.circle.fill" color={colors.accent} size={20} />
-                    ) : (
-                      <IconSymbol name="xmark.circle.fill" color={colors.textSecondary} size={20} />
-                    )}
-                  </View>
+                    <Text style={styles.timeSlotTime}>{slot.time}</Text>
+                    <Text
+                      style={[
+                        styles.timeSlotScore,
+                        slot.score > 80 && styles.timeSlotScoreHigh,
+                      ]}
+                    >
+                      {slot.score}% optimal
+                    </Text>
+                  </Pressable>
                 ))}
               </View>
             </View>
           </Animated.View>
 
-          {/* Scheduled Meetings */}
-          <Animated.View entering={FadeInUp.delay(200)} style={styles.section}>
-            <View style={styles.sectionHeader}>
-              <IconSymbol name="calendar" color={colors.primary} size={24} />
-              <Text style={styles.sectionTitle}>Your Schedule</Text>
-            </View>
-            {meetings.filter(m => m.type === 'scheduled').map((meeting, index) => (
-              <Pressable 
-                key={meeting.id} 
-                style={styles.meetingCard}
-                onPress={() => console.log('Meeting pressed:', meeting.title)}
+          {/* Meetings List */}
+          <Animated.View entering={FadeInDown.duration(500).delay(300)}>
+            <Text style={styles.sectionTitle}>Upcoming Meetings</Text>
+            {meetings.map((meeting, index) => (
+              <Animated.View
+                key={meeting.id}
+                entering={FadeInDown.duration(500).delay(400 + index * 50)}
               >
-                <View style={styles.meetingHeader}>
-                  <View style={styles.meetingTitleRow}>
-                    <View style={[styles.meetingDot, { backgroundColor: colors.primary }]} />
+                <View
+                  style={[
+                    styles.meetingCard,
+                    meeting.type === 'suggested' && styles.suggestedCard,
+                  ]}
+                >
+                  <View style={styles.meetingHeader}>
                     <Text style={styles.meetingTitle}>{meeting.title}</Text>
-                  </View>
-                </View>
-
-                <View style={styles.meetingDetails}>
-                  <View style={styles.detailRow}>
-                    <IconSymbol name="clock.fill" color={colors.textSecondary} size={16} />
-                    <Text style={styles.detailText}>
-                      {meeting.date} at {meeting.time} ({meeting.duration})
-                    </Text>
-                  </View>
-                  <View style={styles.detailRow}>
-                    <IconSymbol name="location.fill" color={colors.textSecondary} size={16} />
-                    <Text style={styles.detailText}>{meeting.location}</Text>
-                  </View>
-                  <View style={styles.detailRow}>
-                    <IconSymbol name="person.2.fill" color={colors.textSecondary} size={16} />
-                    <Text style={styles.detailText}>
-                      {meeting.attendees.length} attendees
-                    </Text>
-                  </View>
-                </View>
-
-                <View style={styles.attendeesPreview}>
-                  {meeting.attendees.slice(0, 3).map((attendee, idx) => (
-                    <View 
-                      key={idx} 
+                    <View
                       style={[
-                        styles.attendeeAvatar,
-                        { marginLeft: idx > 0 ? -8 : 0 }
+                        styles.typeBadge,
+                        {
+                          backgroundColor:
+                            meeting.type === 'suggested'
+                              ? `${colors.primary}15`
+                              : `${colors.success}15`,
+                        },
                       ]}
                     >
-                      <Text style={styles.attendeeInitial}>
-                        {attendee.charAt(0)}
+                      <Text
+                        style={[
+                          styles.typeBadgeText,
+                          {
+                            color:
+                              meeting.type === 'suggested'
+                                ? colors.primary
+                                : colors.success,
+                          },
+                        ]}
+                      >
+                        {meeting.type}
                       </Text>
-                    </View>
-                  ))}
-                  {meeting.attendees.length > 3 && (
-                    <View style={[styles.attendeeAvatar, { marginLeft: -8 }]}>
-                      <Text style={styles.attendeeInitial}>
-                        +{meeting.attendees.length - 3}
-                      </Text>
-                    </View>
-                  )}
-                </View>
-              </Pressable>
-            ))}
-          </Animated.View>
-
-          {/* AI Suggested Meetings */}
-          {meetings.filter(m => m.type === 'suggested').length > 0 && (
-            <Animated.View entering={FadeInUp.delay(300)} style={styles.section}>
-              <View style={styles.sectionHeader}>
-                <IconSymbol name="wand.and.stars" color={colors.accent} size={24} />
-                <Text style={styles.sectionTitle}>AI Suggestions</Text>
-              </View>
-              {meetings.filter(m => m.type === 'suggested').map((meeting) => (
-                <View key={meeting.id} style={[styles.meetingCard, styles.suggestedCard]}>
-                  <View style={styles.suggestionBadge}>
-                    <IconSymbol name="sparkles" color={colors.card} size={12} />
-                    <Text style={styles.suggestionBadgeText}>
-                      {meeting.conflictScore}% optimal
-                    </Text>
-                  </View>
-
-                  <View style={styles.meetingHeader}>
-                    <View style={styles.meetingTitleRow}>
-                      <View style={[styles.meetingDot, { backgroundColor: colors.accent }]} />
-                      <Text style={styles.meetingTitle}>{meeting.title}</Text>
                     </View>
                   </View>
 
                   <View style={styles.meetingDetails}>
                     <View style={styles.detailRow}>
-                      <IconSymbol name="clock.fill" color={colors.textSecondary} size={16} />
+                      <View style={styles.detailIcon}>
+                        <IconSymbol name="calendar" size={16} color={colors.textSecondary} />
+                      </View>
                       <Text style={styles.detailText}>
-                        {meeting.date} at {meeting.time} ({meeting.duration})
+                        {meeting.date} at {meeting.time}
                       </Text>
                     </View>
+
                     <View style={styles.detailRow}>
-                      <IconSymbol name="location.fill" color={colors.textSecondary} size={16} />
+                      <View style={styles.detailIcon}>
+                        <IconSymbol name="clock" size={16} color={colors.textSecondary} />
+                      </View>
+                      <Text style={styles.detailText}>{meeting.duration}</Text>
+                    </View>
+
+                    <View style={styles.detailRow}>
+                      <View style={styles.detailIcon}>
+                        <IconSymbol name="location" size={16} color={colors.textSecondary} />
+                      </View>
                       <Text style={styles.detailText}>{meeting.location}</Text>
                     </View>
+
+                    <View style={styles.detailRow}>
+                      <View style={styles.detailIcon}>
+                        <IconSymbol name="person.2" size={16} color={colors.textSecondary} />
+                      </View>
+                      <View style={{ flex: 1 }}>
+                        <Text style={styles.detailText}>
+                          {meeting.attendees.length} attendees
+                        </Text>
+                        <View style={styles.attendeesList}>
+                          {meeting.attendees.slice(0, 4).map((attendee, i) => (
+                            <View key={i} style={styles.attendeeChip}>
+                              <Text style={styles.attendeeText}>{attendee}</Text>
+                            </View>
+                          ))}
+                          {meeting.attendees.length > 4 && (
+                            <View style={styles.attendeeChip}>
+                              <Text style={styles.attendeeText}>
+                                +{meeting.attendees.length - 4}
+                              </Text>
+                            </View>
+                          )}
+                        </View>
+                      </View>
+                    </View>
                   </View>
 
-                  <View style={styles.suggestionActions}>
-                    <Pressable 
-                      style={[styles.actionButton, styles.declineButton]}
-                      onPress={() => handleDeclineSuggestion(meeting.id)}
-                    >
-                      <IconSymbol name="xmark" color={colors.error} size={16} />
-                      <Text style={[styles.actionButtonText, { color: colors.error }]}>
-                        Decline
+                  {meeting.conflictScore && meeting.conflictScore > 0 && (
+                    <View style={styles.conflictWarning}>
+                      <IconSymbol
+                        name="exclamationmark.triangle.fill"
+                        size={16}
+                        color={colors.warning}
+                      />
+                      <Text style={styles.conflictText}>
+                        {meeting.conflictScore}% chance of scheduling conflict
                       </Text>
-                    </Pressable>
-                    <Pressable 
-                      style={[styles.actionButton, styles.acceptButton]}
-                      onPress={() => handleAcceptSuggestion(meeting.id)}
-                    >
-                      <IconSymbol name="checkmark" color={colors.card} size={16} />
-                      <Text style={[styles.actionButtonText, { color: colors.card }]}>
-                        Accept
-                      </Text>
-                    </Pressable>
-                  </View>
+                    </View>
+                  )}
+
+                  {meeting.type === 'suggested' && (
+                    <View style={styles.actionButtons}>
+                      <Pressable
+                        style={styles.acceptButton}
+                        onPress={() => handleAcceptSuggestion(meeting.id)}
+                      >
+                        <Text style={styles.acceptButtonText}>Accept</Text>
+                      </Pressable>
+                      <Pressable
+                        style={styles.declineButton}
+                        onPress={() => handleDeclineSuggestion(meeting.id)}
+                      >
+                        <Text style={styles.declineButtonText}>Decline</Text>
+                      </Pressable>
+                    </View>
+                  )}
                 </View>
-              ))}
-            </Animated.View>
-          )}
-
-          <View style={styles.bottomPadding} />
+              </Animated.View>
+            ))}
+          </Animated.View>
         </ScrollView>
       </View>
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  scrollView: {
-    flex: 1,
-  },
-  scrollContent: {
-    paddingHorizontal: 16,
-    paddingTop: Platform.OS === 'ios' ? 16 : 0,
-  },
-  headerContainer: {
-    paddingVertical: 16,
-    paddingHorizontal: 4,
-    marginBottom: 8,
-  },
-  headerTitleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  headerTitle: {
-    fontSize: 28,
-    fontWeight: '700',
-    color: colors.text,
-  },
-  headerButton: {
-    padding: 8,
-    borderRadius: 20,
-    backgroundColor: colors.card,
-  },
-  section: {
-    marginBottom: 24,
-  },
-  sectionHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 12,
-    gap: 8,
-  },
-  sectionTitle: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: colors.text,
-  },
-  headerButtonContainer: {
-    padding: 8,
-  },
-  card: {
-    backgroundColor: colors.card,
-    borderRadius: 12,
-    padding: 16,
-    boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.06)',
-    elevation: 2,
-  },
-  cardSubtitle: {
-    fontSize: 13,
-    color: colors.textSecondary,
-    marginBottom: 16,
-  },
-  slotsContainer: {
-    gap: 8,
-  },
-  timeSlot: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 12,
-    backgroundColor: colors.background,
-    borderRadius: 8,
-  },
-  unavailableSlot: {
-    opacity: 0.5,
-  },
-  slotInfo: {
-    flex: 1,
-  },
-  slotTime: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: colors.text,
-    marginBottom: 4,
-  },
-  unavailableText: {
-    color: colors.textSecondary,
-  },
-  scoreContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  scoreBar: {
-    flex: 1,
-    height: 4,
-    backgroundColor: colors.border,
-    borderRadius: 2,
-    overflow: 'hidden',
-  },
-  scoreFill: {
-    height: '100%',
-    backgroundColor: colors.accent,
-    borderRadius: 2,
-  },
-  scoreText: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: colors.textSecondary,
-    minWidth: 35,
-  },
-  meetingCard: {
-    backgroundColor: colors.card,
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
-    boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.06)',
-    elevation: 2,
-  },
-  suggestedCard: {
-    borderWidth: 2,
-    borderColor: colors.accent,
-    position: 'relative',
-  },
-  suggestionBadge: {
-    position: 'absolute',
-    top: -10,
-    right: 16,
-    backgroundColor: colors.accent,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 12,
-  },
-  suggestionBadgeText: {
-    fontSize: 11,
-    fontWeight: '600',
-    color: colors.card,
-  },
-  meetingHeader: {
-    marginBottom: 12,
-  },
-  meetingTitleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  meetingDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-  },
-  meetingTitle: {
-    fontSize: 17,
-    fontWeight: '600',
-    color: colors.text,
-    flex: 1,
-  },
-  meetingDetails: {
-    gap: 8,
-    marginBottom: 12,
-  },
-  detailRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  detailText: {
-    fontSize: 14,
-    color: colors.textSecondary,
-  },
-  attendeesPreview: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 8,
-  },
-  attendeeAvatar: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: colors.primary,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 2,
-    borderColor: colors.card,
-  },
-  attendeeInitial: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: colors.card,
-  },
-  suggestionActions: {
-    flexDirection: 'row',
-    gap: 8,
-    marginTop: 12,
-    paddingTop: 12,
-    borderTopWidth: 1,
-    borderTopColor: colors.border,
-  },
-  actionButton: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 6,
-    paddingVertical: 10,
-    borderRadius: 8,
-  },
-  declineButton: {
-    backgroundColor: colors.background,
-  },
-  acceptButton: {
-    backgroundColor: colors.accent,
-  },
-  actionButtonText: {
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  bottomPadding: {
-    height: 100,
-  },
-});
