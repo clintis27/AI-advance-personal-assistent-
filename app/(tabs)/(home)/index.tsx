@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { Progress } from "@/components/ui/Progress";
 import { Separator } from "@/components/ui/Separator";
+import * as Haptics from "expo-haptics";
 
 interface PredictedTask {
   id: string;
@@ -158,6 +159,11 @@ export default function HomeScreen() {
     }
   };
 
+  const handleQuickActionPress = (route: string) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    router.push(route as any);
+  };
+
   const renderHeaderRight = () => (
     <Pressable
       onPress={() => router.push('/(tabs)/ai-config')}
@@ -213,30 +219,45 @@ export default function HomeScreen() {
           </View>
         </Animated.View>
 
-        {/* Quick Actions */}
+        {/* Quick Actions - Modern & Simple Design */}
         <View style={styles.section}>
           <Text style={[styles.sectionTitle, { color: theme.dark ? colors.textDark : colors.text }]}>
             Quick Actions
           </Text>
-          <View style={styles.quickActionsGrid}>
+          <View style={styles.quickActionsContainer}>
             {quickActions.map((action, index) => (
-              <AnimatedCard
+              <Animated.View
                 key={action.id}
-                variant="compact"
-                interactive
-                onPress={() => router.push(action.route as any)}
-                animation="zoomIn"
-                delay={index * 100}
-                duration={400}
-                style={styles.quickActionCard}
+                entering={FadeInDown.delay(index * 80).duration(400).springify()}
+                style={styles.quickActionWrapper}
               >
-                <View style={[styles.quickActionIcon, { backgroundColor: `${action.color}20` }]}>
-                  <IconSymbol name={action.icon} size={24} color={action.color} />
-                </View>
-                <Text style={[styles.quickActionTitle, { color: theme.dark ? colors.textDark : colors.text }]}>
-                  {action.title}
-                </Text>
-              </AnimatedCard>
+                <Pressable
+                  onPress={() => handleQuickActionPress(action.route)}
+                  style={({ pressed }) => [
+                    styles.quickAction,
+                    {
+                      backgroundColor: theme.dark ? colors.cardDark : colors.card,
+                      borderColor: theme.dark ? colors.borderDark : colors.border,
+                      transform: [{ scale: pressed ? 0.96 : 1 }],
+                    },
+                  ]}
+                >
+                  <View style={styles.quickActionContent}>
+                    <View style={[styles.iconContainer, { backgroundColor: `${action.color}15` }]}>
+                      <IconSymbol name={action.icon} size={28} color={action.color} />
+                    </View>
+                    <Text 
+                      style={[
+                        styles.quickActionLabel, 
+                        { color: theme.dark ? colors.textDark : colors.text }
+                      ]}
+                      numberOfLines={1}
+                    >
+                      {action.title}
+                    </Text>
+                  </View>
+                </Pressable>
+              </Animated.View>
             ))}
           </View>
         </View>
@@ -457,29 +478,54 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     letterSpacing: -0.2,
   },
-  quickActionsGrid: {
+  // Modern Quick Actions Design
+  quickActionsContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 12,
+    marginHorizontal: -6,
+    marginTop: 4,
   },
-  quickActionCard: {
-    width: '48%',
+  quickActionWrapper: {
+    width: '50%',
+    padding: 6,
+  },
+  quickAction: {
+    borderRadius: 20,
+    borderWidth: 1,
+    overflow: 'hidden',
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.04,
+        shadowRadius: 8,
+      },
+      android: {
+        elevation: 2,
+      },
+      web: {
+        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.04)',
+      },
+    }),
+  },
+  quickActionContent: {
     alignItems: 'center',
-    padding: 20,
+    paddingVertical: 24,
+    paddingHorizontal: 16,
   },
-  quickActionIcon: {
-    width: 56,
-    height: 56,
-    borderRadius: 16,
+  iconContainer: {
+    width: 64,
+    height: 64,
+    borderRadius: 18,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 12,
   },
-  quickActionTitle: {
-    fontSize: 14,
+  quickActionLabel: {
+    fontSize: 15,
     fontWeight: '600',
+    letterSpacing: -0.3,
     textAlign: 'center',
-    letterSpacing: -0.2,
   },
   emailSummaryRow: {
     flexDirection: 'row',
