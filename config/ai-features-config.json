@@ -1,0 +1,135 @@
+
+{
+  "problemSolver": {
+    "enabled": true,
+    "features": {
+      "autoDetection": {
+        "enabled": false,
+        "sources": ["email", "calendar", "messages", "tasks"],
+        "keywords": ["issue", "problem", "blocker", "stuck", "help", "urgent"]
+      },
+      "aiAnalysis": {
+        "provider": "openai",
+        "model": "gpt-4",
+        "temperature": 0.7,
+        "maxTokens": 1000
+      },
+      "solutionGeneration": {
+        "maxSolutions": 5,
+        "rankingFactors": ["impact", "effort", "time", "cost"],
+        "includeAlternatives": true
+      },
+      "integrations": {
+        "notion": {
+          "enabled": false,
+          "autoLog": false,
+          "workspace": ""
+        },
+        "trello": {
+          "enabled": false,
+          "autoLog": false,
+          "boardId": ""
+        },
+        "asana": {
+          "enabled": false,
+          "autoLog": false,
+          "projectId": ""
+        },
+        "clickup": {
+          "enabled": false,
+          "autoLog": false,
+          "spaceId": ""
+        },
+        "jira": {
+          "enabled": false,
+          "autoLog": false,
+          "projectKey": ""
+        }
+      },
+      "feedback": {
+        "enabled": true,
+        "adaptiveRanking": true,
+        "minimumFeedbackForAdaptation": 10
+      }
+    }
+  },
+  "travelAssistant": {
+    "enabled": true,
+    "features": {
+      "autoDetection": {
+        "enabled": false,
+        "sources": ["email", "calendar", "messages"],
+        "keywords": ["meeting", "trip", "travel", "visit", "conference", "demo", "flight", "hotel"]
+      },
+      "searchProviders": {
+        "flights": {
+          "amadeus": { "enabled": false, "apiKey": "" },
+          "skyscanner": { "enabled": false, "apiKey": "" },
+          "googleFlights": { "enabled": false, "apiKey": "" }
+        },
+        "hotels": {
+          "bookingCom": { "enabled": false, "apiKey": "" },
+          "hotels": { "enabled": false, "apiKey": "" },
+          "airbnb": { "enabled": false, "apiKey": "" }
+        },
+        "trains": {
+          "deutscheBahn": { "enabled": false, "apiKey": "" },
+          "eurostar": { "enabled": false, "apiKey": "" }
+        },
+        "carRental": {
+          "sixt": { "enabled": false, "apiKey": "" },
+          "hertz": { "enabled": false, "apiKey": "" }
+        }
+      },
+      "preferences": {
+        "defaultCurrency": "EUR",
+        "preferredAirlines": [],
+        "seatPreference": "window",
+        "mealPreference": "vegetarian",
+        "sustainabilityPriority": "medium",
+        "bufferTime": 120,
+        "maxLayovers": 1
+      },
+      "booking": {
+        "autonomyLevel": "semi-autonomous",
+        "autoBookThreshold": 0,
+        "requireConfirmation": true,
+        "maxAutoBookAmount": 500
+      },
+      "dashboard": {
+        "enabled": true,
+        "updateInterval": 300,
+        "notifications": {
+          "flightDelays": true,
+          "gateChanges": true,
+          "weatherAlerts": true,
+          "trafficUpdates": true
+        }
+      },
+      "calendar": {
+        "autoUpdate": false,
+        "includeBufferTime": true,
+        "sendInvites": false
+      }
+    }
+  },
+  "general": {
+    "aiProvider": "openai",
+    "apiKeys": {
+      "openai": "",
+      "claude": "",
+      "custom": ""
+    },
+    "privacy": {
+      "storeAnalysisHistory": true,
+      "retentionDays": 90,
+      "shareAnonymousData": false
+    },
+    "notifications": {
+      "problemsDetected": true,
+      "solutionsGenerated": true,
+      "travelOptionsFound": true,
+      "bookingConfirmations": true
+    }
+  }
+}

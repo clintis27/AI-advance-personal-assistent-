@@ -16,22 +16,22 @@ export default function TabLayout() {
       label: 'Home',
     },
     {
+      name: 'problem-solver',
+      route: '/(tabs)/problem-solver',
+      icon: 'lightbulb.fill',
+      label: 'Solver',
+    },
+    {
+      name: 'travel',
+      route: '/(tabs)/travel',
+      icon: 'airplane.departure',
+      label: 'Travel',
+    },
+    {
       name: 'agent',
       route: '/(tabs)/agent',
       icon: 'person.crop.circle.badge.checkmark',
       label: 'Agent',
-    },
-    {
-      name: 'routine',
-      route: '/(tabs)/routine',
-      icon: 'calendar.badge.clock',
-      label: 'Routine',
-    },
-    {
-      name: 'privacy',
-      route: '/(tabs)/privacy',
-      icon: 'lock.shield.fill',
-      label: 'Privacy',
     },
     {
       name: 'profile',
@@ -49,17 +49,17 @@ export default function TabLayout() {
           <Icon sf="house.fill" drawable="ic_home" />
           <Label>Home</Label>
         </NativeTabs.Trigger>
+        <NativeTabs.Trigger name="problem-solver">
+          <Icon sf="lightbulb.fill" drawable="ic_solver" />
+          <Label>Solver</Label>
+        </NativeTabs.Trigger>
+        <NativeTabs.Trigger name="travel">
+          <Icon sf="airplane.departure" drawable="ic_travel" />
+          <Label>Travel</Label>
+        </NativeTabs.Trigger>
         <NativeTabs.Trigger name="agent">
           <Icon sf="person.crop.circle.badge.checkmark" drawable="ic_agent" />
           <Label>Agent</Label>
-        </NativeTabs.Trigger>
-        <NativeTabs.Trigger name="routine">
-          <Icon sf="calendar.badge.clock" drawable="ic_routine" />
-          <Label>Routine</Label>
-        </NativeTabs.Trigger>
-        <NativeTabs.Trigger name="privacy">
-          <Icon sf="lock.shield.fill" drawable="ic_privacy" />
-          <Label>Privacy</Label>
         </NativeTabs.Trigger>
         <NativeTabs.Trigger name="profile">
           <Icon sf="person.fill" drawable="ic_profile" />
@@ -79,6 +79,8 @@ export default function TabLayout() {
         }}
       >
         <Stack.Screen name="(home)" />
+        <Stack.Screen name="problem-solver" />
+        <Stack.Screen name="travel" />
         <Stack.Screen name="email" />
         <Stack.Screen name="meetings" />
         <Stack.Screen name="agent" />

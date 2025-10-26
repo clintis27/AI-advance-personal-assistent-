@@ -332,6 +332,24 @@ export default function HomeScreen() {
             <View style={styles.quickActionsGrid}>
               <Pressable 
                 style={styles.quickActionCard}
+                onPress={() => router.push('/(tabs)/problem-solver')}
+              >
+                <View style={[styles.quickActionIcon, { backgroundColor: colors.secondary + '20' }]}>
+                  <IconSymbol name="lightbulb.fill" size={28} color={colors.secondary} />
+                </View>
+                <Text style={styles.quickActionLabel}>Problem Solver</Text>
+              </Pressable>
+              <Pressable 
+                style={styles.quickActionCard}
+                onPress={() => router.push('/(tabs)/travel')}
+              >
+                <View style={[styles.quickActionIcon, { backgroundColor: colors.info + '20' }]}>
+                  <IconSymbol name="airplane.departure" size={28} color={colors.info} />
+                </View>
+                <Text style={styles.quickActionLabel}>Travel</Text>
+              </Pressable>
+              <Pressable 
+                style={styles.quickActionCard}
                 onPress={() => router.push('/(tabs)/agent')}
               >
                 <View style={[styles.quickActionIcon, { backgroundColor: colors.primary + '20' }]}>
@@ -343,8 +361,8 @@ export default function HomeScreen() {
                 style={styles.quickActionCard}
                 onPress={() => router.push('/(tabs)/routine')}
               >
-                <View style={[styles.quickActionIcon, { backgroundColor: colors.secondary + '20' }]}>
-                  <IconSymbol name="calendar.badge.clock" size={28} color={colors.secondary} />
+                <View style={[styles.quickActionIcon, { backgroundColor: colors.accent + '20' }]}>
+                  <IconSymbol name="calendar.badge.clock" size={28} color={colors.accent} />
                 </View>
                 <Text style={styles.quickActionLabel}>My Routine</Text>
               </Pressable>
@@ -352,8 +370,8 @@ export default function HomeScreen() {
                 style={styles.quickActionCard}
                 onPress={() => router.push('/(tabs)/email')}
               >
-                <View style={[styles.quickActionIcon, { backgroundColor: colors.accent + '20' }]}>
-                  <IconSymbol name="envelope.fill" size={28} color={colors.accent} />
+                <View style={[styles.quickActionIcon, { backgroundColor: colors.warning + '20' }]}>
+                  <IconSymbol name="envelope.fill" size={28} color={colors.warning} />
                 </View>
                 <Text style={styles.quickActionLabel}>Email Triage</Text>
               </Pressable>
@@ -361,8 +379,8 @@ export default function HomeScreen() {
                 style={styles.quickActionCard}
                 onPress={() => router.push('/(tabs)/privacy')}
               >
-                <View style={[styles.quickActionIcon, { backgroundColor: colors.warning + '20' }]}>
-                  <IconSymbol name="lock.shield.fill" size={28} color={colors.warning} />
+                <View style={[styles.quickActionIcon, { backgroundColor: colors.error + '20' }]}>
+                  <IconSymbol name="lock.shield.fill" size={28} color={colors.error} />
                 </View>
                 <Text style={styles.quickActionLabel}>Privacy</Text>
               </Pressable>
