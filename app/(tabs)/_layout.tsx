@@ -90,6 +90,7 @@ export default function TabLayout() {
         <Stack.Screen name="behavior" />
         <Stack.Screen name="privacy" />
         <Stack.Screen name="ai-config" />
+        <Stack.Screen name="ai-dashboard" />
         <Stack.Screen name="profile" />
       </Stack>
       <FloatingTabBar tabs={tabs} />

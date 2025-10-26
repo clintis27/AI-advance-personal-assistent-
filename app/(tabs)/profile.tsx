@@ -312,9 +312,24 @@ export default function ProfileScreen() {
           <AnimatedCard
             variant="compact"
             interactive
-            onPress={() => router.push('/(tabs)/ui-showcase')}
+            onPress={() => router.push('/(tabs)/ai-dashboard' as any)}
             animation="fadeInUp"
             delay={700}
+          >
+            <View style={styles.linkRow}>
+              <IconSymbol name="chart.bar.xaxis" size={24} color={colors.indigo} />
+              <Text style={[styles.linkText, { color: theme.dark ? colors.textDark : colors.text }]}>
+                AI Dashboard
+              </Text>
+              <IconSymbol name="chevron.right" size={20} color={theme.dark ? colors.textMutedDark : colors.textMuted} />
+            </View>
+          </AnimatedCard>
+          <AnimatedCard
+            variant="compact"
+            interactive
+            onPress={() => router.push('/(tabs)/ui-showcase')}
+            animation="fadeInUp"
+            delay={750}
           >
             <View style={styles.linkRow}>
               <IconSymbol name="paintbrush" size={24} color={colors.violet} />

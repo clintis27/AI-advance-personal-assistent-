@@ -5,6 +5,7 @@ import { colors } from "@/styles/commonStyles";
 import { ScrollView, Pressable, StyleSheet, View, Text, Platform } from "react-native";
 import React, { useState } from "react";
 import { IconSymbol } from "@/components/IconSymbol";
+import { AIStatusIndicator } from "@/components/AIStatusIndicator";
 import { useTheme } from "@react-navigation/native";
 import { Card } from "@/components/ui/Card";
 import { AnimatedCard } from "@/components/ui/AnimatedCard";
@@ -207,6 +208,9 @@ export default function HomeScreen() {
           <Text style={[styles.heroSubtitle, { color: theme.dark ? colors.textSecondaryDark : colors.textSecondary }]}>
             Powered by GPT-5 + LangChain + Pinecone
           </Text>
+          <View style={styles.statusContainer}>
+            <AIStatusIndicator onPress={() => router.push('/(tabs)/ai-dashboard' as any)} />
+          </View>
         </Animated.View>
 
         {/* Quick Actions */}
@@ -418,6 +422,9 @@ const styles = StyleSheet.create({
   heroSection: {
     marginBottom: 32,
     alignItems: 'center',
+  },
+  statusContainer: {
+    marginTop: 16,
   },
   heroTitle: {
     fontSize: 28,
