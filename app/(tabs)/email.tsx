@@ -122,12 +122,32 @@ export default function EmailScreen() {
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
-          <View style={styles.header}>
-            <Text style={styles.headerTitle}>AI-Sorted Emails</Text>
-            <Text style={styles.headerSubtitle}>
-              Tap a category to reclassify emails and help the AI learn
-            </Text>
-          </View>
+          {/* Header for Android/Web */}
+          {Platform.OS !== 'ios' && (
+            <View style={styles.headerContainer}>
+              <View style={styles.headerTitleRow}>
+                <Text style={styles.headerTitle}>Email Triage</Text>
+                <Pressable
+                  onPress={() => console.log('Refresh emails')}
+                  style={styles.headerButton}
+                >
+                  <IconSymbol name="arrow.clockwise" color={colors.primary} size={24} />
+                </Pressable>
+              </View>
+              <Text style={styles.headerSubtitle}>
+                Tap a category to reclassify emails and help the AI learn
+              </Text>
+            </View>
+          )}
+
+          {/* Header subtitle for iOS */}
+          {Platform.OS === 'ios' && (
+            <View style={styles.header}>
+              <Text style={styles.headerSubtitle}>
+                Tap a category to reclassify emails and help the AI learn
+              </Text>
+            </View>
+          )}
 
           {emails.map((email, index) => (
             <Animated.View 
@@ -255,16 +275,31 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingHorizontal: 16,
-    paddingTop: 16,
+    paddingTop: Platform.OS === 'ios' ? 16 : 0,
   },
-  header: {
-    marginBottom: 20,
+  headerContainer: {
+    paddingVertical: 16,
+    paddingHorizontal: 4,
+    marginBottom: 8,
+  },
+  headerTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 8,
   },
   headerTitle: {
     fontSize: 28,
     fontWeight: '700',
     color: colors.text,
-    marginBottom: 8,
+  },
+  headerButton: {
+    padding: 8,
+    borderRadius: 20,
+    backgroundColor: colors.card,
+  },
+  header: {
+    marginBottom: 20,
   },
   headerSubtitle: {
     fontSize: 14,

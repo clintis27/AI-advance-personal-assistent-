@@ -136,6 +136,27 @@ export default function HomeScreen() {
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
+          {/* Header for Android/Web */}
+          {Platform.OS !== 'ios' && (
+            <View style={styles.headerContainer}>
+              <View style={styles.headerTitleRow}>
+                <Pressable
+                  onPress={() => console.log('Open settings')}
+                  style={styles.headerButton}
+                >
+                  <IconSymbol name="gear" color={colors.primary} size={24} />
+                </Pressable>
+                <Text style={styles.headerTitle}>AI Assistant</Text>
+                <Pressable
+                  onPress={() => console.log('Add new task')}
+                  style={styles.headerButton}
+                >
+                  <IconSymbol name="plus" color={colors.primary} size={24} />
+                </Pressable>
+              </View>
+            </View>
+          )}
+
           {/* Mood & Energy Section */}
           <Animated.View entering={FadeInDown.delay(100)} style={styles.section}>
             <View style={styles.sectionHeader}>
@@ -281,7 +302,27 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingHorizontal: 16,
-    paddingTop: 16,
+    paddingTop: Platform.OS === 'ios' ? 16 : 0,
+  },
+  headerContainer: {
+    paddingVertical: 16,
+    paddingHorizontal: 4,
+    marginBottom: 8,
+  },
+  headerTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  headerTitle: {
+    fontSize: 28,
+    fontWeight: '700',
+    color: colors.text,
+  },
+  headerButton: {
+    padding: 8,
+    borderRadius: 20,
+    backgroundColor: colors.card,
   },
   section: {
     marginBottom: 24,
