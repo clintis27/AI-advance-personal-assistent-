@@ -125,6 +125,12 @@ export default function ProfileScreen() {
         <Animated.View entering={FadeInDown.delay(500)} style={styles.section}>
           <Text style={styles.sectionTitle}>Settings</Text>
           <View style={styles.card}>
+            <Pressable style={styles.settingRow} onPress={() => router.push('/(tabs)/ai-config')}>
+              <IconSymbol name="gear" size={20} color={colors.primary} />
+              <Text style={styles.settingText}>AI Configuration</Text>
+              <IconSymbol name="chevron.right" size={16} color={colors.textSecondary} />
+            </Pressable>
+            <View style={styles.divider} />
             <Pressable style={styles.settingRow} onPress={() => router.push('/(tabs)/agent')}>
               <IconSymbol name="person.crop.circle.badge.checkmark" size={20} color={colors.textSecondary} />
               <Text style={styles.settingText}>Autonomous Agent</Text>
