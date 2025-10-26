@@ -1,44 +1,10 @@
 
-/**
- * AI Problem-Solving Engine
- * 
- * FEATURES:
- * - Analyze tasks, messages, and project descriptions to detect issues
- * - Generate contextual solutions with impact scores
- * - Suggest alternate approaches ranked by effort and impact
- * - Integrate with productivity tools (Notion, Trello, Asana, ClickUp, Jira)
- * - Learn from user feedback to adapt recommendations
- * - Output structured recommendations (summary + action list + impact score)
- * 
- * INTEGRATION POINTS:
- * - Email/Calendar: Auto-detect problems from incoming messages
- * - Task Managers: Log action items and track execution
- * - AI/ML Services: Connect to OpenAI, Claude, or custom models for analysis
- * - User Feedback: Track helpful/not helpful to improve suggestions
- * 
- * WORKFLOW:
- * 1. User inputs problem text or system auto-detects from integrations
- * 2. AI analyzes text to extract: objective, deadline, blockers
- * 3. System retrieves context from past tasks and similar issues
- * 4. AI generates multiple solution approaches
- * 5. Solutions ranked by impact score and effort level
- * 6. User selects solution and provides feedback
- * 7. System logs action to connected productivity tools
- * 
- * FUTURE ENHANCEMENTS:
- * - Real-time problem detection from email/calendar
- * - Automatic execution of low-risk solutions
- * - Integration with more productivity tools
- * - Advanced ML model for better solution generation
- * - Collaborative problem-solving with team members
- */
-
-import { colors } from "@/styles/commonStyles";
-import React, { useState } from "react";
 import Animated, { FadeInDown } from "react-native-reanimated";
-import { IconSymbol } from "@/components/IconSymbol";
 import { Stack } from "expo-router";
-import { View, Text, StyleSheet, ScrollView, Platform, Pressable, TextInput } from "react-native";
+import { colors } from "@/styles/commonStyles";
+import { View, Text, StyleSheet, ScrollView, Platform, Pressable, TextInput, Image } from "react-native";
+import React, { useState } from "react";
+import { IconSymbol } from "@/components/IconSymbol";
 
 interface Problem {
   id: string;
@@ -72,742 +38,165 @@ interface Integration {
   color: string;
 }
 
-export default function ProblemSolverScreen() {
-  const [activeTab, setActiveTab] = useState<'problems' | 'solutions' | 'integrations'>('problems');
-  const [inputText, setInputText] = useState('');
-  const [analyzing, setAnalyzing] = useState(false);
-
-  const [problems] = useState<Problem[]>([
-    {
-      id: '1',
-      title: 'Client report missing Q3 data',
-      description: 'We need to deliver the client report by Friday, but half the data is missing.',
-      detectedFrom: 'email',
-      timestamp: '2 hours ago',
-      status: 'new',
-      blockers: ['Missing Q3 sales data', 'Finance team not responding', 'Incomplete projections'],
-      deadline: 'Friday, 3:00 PM',
-    },
-    {
-      id: '2',
-      title: 'Project deadline conflict',
-      description: 'Two major projects have overlapping deadlines next week.',
-      detectedFrom: 'task',
-      timestamp: '5 hours ago',
-      status: 'analyzing',
-      blockers: ['Limited team resources', 'Client expectations', 'Technical dependencies'],
-      deadline: 'Next Monday',
-    },
-    {
-      id: '3',
-      title: 'Meeting scheduling conflict',
-      description: 'Three important meetings scheduled at the same time tomorrow.',
-      detectedFrom: 'calendar',
-      timestamp: '1 day ago',
-      status: 'solved',
-      blockers: ['Timezone confusion', 'Double booking'],
-      deadline: 'Tomorrow, 10:00 AM',
-    },
-  ]);
-
-  const [solutions] = useState<Solution[]>([
-    {
-      id: '1',
-      problemId: '1',
-      title: 'Pull data from CRM',
-      description: 'Extract the last 3 months of sales data directly from the CRM system.',
-      impact: 'high',
-      effort: 'low',
-      impactScore: 92,
-      steps: [
-        'Access CRM dashboard',
-        'Export Q3 sales report',
-        'Validate data completeness',
-        'Import into client report template',
-      ],
-      estimatedTime: '30 minutes',
-      helpful: undefined,
-    },
-    {
-      id: '2',
-      problemId: '1',
-      title: 'Request data from finance team',
-      description: 'Send automated follow-up request to finance team with deadline.',
-      impact: 'high',
-      effort: 'low',
-      impactScore: 85,
-      steps: [
-        'Draft urgent request email',
-        'CC relevant stakeholders',
-        'Set follow-up reminder',
-        'Prepare backup plan',
-      ],
-      estimatedTime: '15 minutes',
-      helpful: undefined,
-    },
-    {
-      id: '3',
-      problemId: '1',
-      title: 'Generate estimates from projections',
-      description: 'Use historical data and current projections to estimate missing values.',
-      impact: 'medium',
-      effort: 'medium',
-      impactScore: 70,
-      steps: [
-        'Analyze historical trends',
-        'Apply growth projections',
-        'Calculate estimates',
-        'Add disclaimer note',
-      ],
-      estimatedTime: '1 hour',
-      helpful: undefined,
-    },
-  ]);
-
-  const [integrations] = useState<Integration[]>([
-    { id: '1', name: 'Notion', icon: 'doc.text.fill', connected: true, color: colors.text },
-    { id: '2', name: 'Trello', icon: 'square.grid.2x2.fill', connected: true, color: '#0079BF' },
-    { id: '3', name: 'Asana', icon: 'checkmark.circle.fill', connected: false, color: '#F06A6A' },
-    { id: '4', name: 'ClickUp', icon: 'square.stack.3d.up.fill', connected: false, color: '#7B68EE' },
-    { id: '5', name: 'Jira', icon: 'list.bullet.rectangle', connected: true, color: '#0052CC' },
-  ]);
-
-  const getSourceIcon = (source: string) => {
-    switch (source) {
-      case 'email': return 'envelope.fill';
-      case 'task': return 'checkmark.circle.fill';
-      case 'message': return 'message.fill';
-      case 'calendar': return 'calendar';
-      default: return 'doc.text.fill';
-    }
-  };
-
-  const getSourceColor = (source: string) => {
-    switch (source) {
-      case 'email': return colors.accent;
-      case 'task': return colors.primary;
-      case 'message': return colors.secondary;
-      case 'calendar': return colors.warning;
-      default: return colors.textSecondary;
-    }
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'new': return colors.error;
-      case 'analyzing': return colors.warning;
-      case 'solved': return colors.success;
-      case 'dismissed': return colors.textSecondary;
-      default: return colors.textSecondary;
-    }
-  };
-
-  const getImpactColor = (impact: string) => {
-    switch (impact) {
-      case 'high': return colors.success;
-      case 'medium': return colors.warning;
-      case 'low': return colors.textSecondary;
-      default: return colors.textSecondary;
-    }
-  };
-
-  const getEffortColor = (effort: string) => {
-    switch (effort) {
-      case 'high': return colors.error;
-      case 'medium': return colors.warning;
-      case 'low': return colors.success;
-      default: return colors.textSecondary;
-    }
-  };
-
-  const handleAnalyze = () => {
-    if (!inputText.trim()) return;
-    
-    setAnalyzing(true);
-    console.log('Analyzing problem:', inputText);
-    
-    // Simulate AI analysis
-    setTimeout(() => {
-      setAnalyzing(false);
-      setInputText('');
-      console.log('Analysis complete');
-    }, 2000);
-  };
-
-  const handleSolutionFeedback = (solutionId: string, helpful: boolean) => {
-    console.log(`Solution ${solutionId} marked as ${helpful ? 'helpful' : 'not helpful'}`);
-    // Update solution feedback state
-  };
-
-  const handleExecuteSolution = (solution: Solution) => {
-    console.log('Executing solution:', solution.title);
-    // Navigate to integration or execute action
-  };
-
-  const renderHeaderRight = () => (
-    <Pressable
-      onPress={() => console.log('Open problem solver settings')}
-      style={styles.headerButtonContainer}
-    >
-      <IconSymbol name="gear" color={colors.primary} size={24} />
-    </Pressable>
-  );
-
-  return (
-    <>
-      {Platform.OS === 'ios' && (
-        <Stack.Screen
-          options={{
-            title: "Problem Solver",
-            headerRight: renderHeaderRight,
-          }}
-        />
-      )}
-      <View style={styles.container}>
-        {/* Header for Android/Web */}
-        {Platform.OS !== 'ios' && (
-          <View style={styles.headerContainer}>
-            <View style={styles.headerTitleRow}>
-              <Text style={styles.headerTitle}>Problem Solver</Text>
-              <Pressable
-                onPress={() => console.log('Open problem solver settings')}
-                style={styles.headerButton}
-              >
-                <IconSymbol name="gear" color={colors.primary} size={24} />
-              </Pressable>
-            </View>
-          </View>
-        )}
-
-        {/* Tab Navigation */}
-        <View style={styles.tabContainer}>
-          <Pressable
-            style={[styles.tab, activeTab === 'problems' && styles.activeTab]}
-            onPress={() => setActiveTab('problems')}
-          >
-            <IconSymbol 
-              name="exclamationmark.triangle.fill" 
-              size={20} 
-              color={activeTab === 'problems' ? colors.primary : colors.textSecondary} 
-            />
-            <Text style={[styles.tabText, activeTab === 'problems' && styles.activeTabText]}>
-              Problems
-            </Text>
-          </Pressable>
-          <Pressable
-            style={[styles.tab, activeTab === 'solutions' && styles.activeTab]}
-            onPress={() => setActiveTab('solutions')}
-          >
-            <IconSymbol 
-              name="lightbulb.fill" 
-              size={20} 
-              color={activeTab === 'solutions' ? colors.primary : colors.textSecondary} 
-            />
-            <Text style={[styles.tabText, activeTab === 'solutions' && styles.activeTabText]}>
-              Solutions
-            </Text>
-          </Pressable>
-          <Pressable
-            style={[styles.tab, activeTab === 'integrations' && styles.activeTab]}
-            onPress={() => setActiveTab('integrations')}
-          >
-            <IconSymbol 
-              name="link.circle.fill" 
-              size={20} 
-              color={activeTab === 'integrations' ? colors.primary : colors.textSecondary} 
-            />
-            <Text style={[styles.tabText, activeTab === 'integrations' && styles.activeTabText]}>
-              Tools
-            </Text>
-          </Pressable>
-        </View>
-
-        <ScrollView
-          style={styles.scrollView}
-          contentContainerStyle={styles.scrollContent}
-          showsVerticalScrollIndicator={false}
-        >
-          {/* Input Section */}
-          {activeTab === 'problems' && (
-            <Animated.View entering={FadeInDown.delay(100)} style={styles.inputSection}>
-              <View style={styles.inputHeader}>
-                <IconSymbol name="brain" color={colors.secondary} size={24} />
-                <Text style={styles.inputTitle}>Describe a Problem</Text>
-              </View>
-              <TextInput
-                style={styles.textInput}
-                placeholder="Paste an email, task, or describe an issue..."
-                placeholderTextColor={colors.textSecondary}
-                multiline
-                numberOfLines={4}
-                value={inputText}
-                onChangeText={setInputText}
-              />
-              <Pressable
-                style={[styles.analyzeButton, analyzing && styles.analyzingButton]}
-                onPress={handleAnalyze}
-                disabled={analyzing || !inputText.trim()}
-              >
-                {analyzing ? (
-                  <>
-                    <IconSymbol name="arrow.triangle.2.circlepath" size={20} color={colors.card} />
-                    <Text style={styles.analyzeButtonText}>Analyzing...</Text>
-                  </>
-                ) : (
-                  <>
-                    <IconSymbol name="sparkles" size={20} color={colors.card} />
-                    <Text style={styles.analyzeButtonText}>Analyze Problem</Text>
-                  </>
-                )}
-              </Pressable>
-            </Animated.View>
-          )}
-
-          {/* Problems Tab */}
-          {activeTab === 'problems' && (
-            <>
-              <View style={styles.sectionHeader}>
-                <Text style={styles.sectionTitle}>Detected Issues</Text>
-                <View style={styles.badge}>
-                  <Text style={styles.badgeText}>{problems.filter(p => p.status === 'new').length}</Text>
-                </View>
-              </View>
-
-              {problems.map((problem, index) => (
-                <Animated.View
-                  key={problem.id}
-                  entering={FadeInDown.delay(200 + index * 100)}
-                >
-                  <Pressable
-                    style={styles.card}
-                    onPress={() => console.log('Problem pressed:', problem.title)}
-                  >
-                    <View style={styles.problemHeader}>
-                      <View style={styles.problemTitleRow}>
-                        <View style={[styles.sourceIcon, { backgroundColor: getSourceColor(problem.detectedFrom) + '20' }]}>
-                          <IconSymbol name={getSourceIcon(problem.detectedFrom)} size={16} color={getSourceColor(problem.detectedFrom)} />
-                        </View>
-                        <Text style={styles.problemTitle}>{problem.title}</Text>
-                      </View>
-                      <View style={[styles.statusBadge, { backgroundColor: getStatusColor(problem.status) + '20' }]}>
-                        <Text style={[styles.statusText, { color: getStatusColor(problem.status) }]}>
-                          {problem.status}
-                        </Text>
-                      </View>
-                    </View>
-
-                    <Text style={styles.problemDescription}>{problem.description}</Text>
-
-                    {problem.blockers.length > 0 && (
-                      <View style={styles.blockersSection}>
-                        <Text style={styles.blockersTitle}>Blockers:</Text>
-                        {problem.blockers.map((blocker, idx) => (
-                          <View key={idx} style={styles.blockerItem}>
-                            <View style={styles.blockerDot} />
-                            <Text style={styles.blockerText}>{blocker}</Text>
-                          </View>
-                        ))}
-                      </View>
-                    )}
-
-                    <View style={styles.problemFooter}>
-                      <View style={styles.timeContainer}>
-                        <IconSymbol name="clock" color={colors.textSecondary} size={14} />
-                        <Text style={styles.timeText}>{problem.timestamp}</Text>
-                      </View>
-                      {problem.deadline && (
-                        <View style={styles.deadlineContainer}>
-                          <IconSymbol name="calendar.badge.exclamationmark" color={colors.error} size={14} />
-                          <Text style={styles.deadlineText}>{problem.deadline}</Text>
-                        </View>
-                      )}
-                    </View>
-                  </Pressable>
-                </Animated.View>
-              ))}
-            </>
-          )}
-
-          {/* Solutions Tab */}
-          {activeTab === 'solutions' && (
-            <>
-              <View style={styles.sectionHeader}>
-                <Text style={styles.sectionTitle}>Recommended Solutions</Text>
-                <View style={styles.badge}>
-                  <Text style={styles.badgeText}>{solutions.length}</Text>
-                </View>
-              </View>
-
-              {solutions.map((solution, index) => (
-                <Animated.View
-                  key={solution.id}
-                  entering={FadeInDown.delay(100 + index * 100)}
-                >
-                  <View style={styles.card}>
-                    <View style={styles.solutionHeader}>
-                      <Text style={styles.solutionTitle}>{solution.title}</Text>
-                      <View style={styles.impactScoreBadge}>
-                        <Text style={styles.impactScoreText}>{solution.impactScore}</Text>
-                      </View>
-                    </View>
-
-                    <Text style={styles.solutionDescription}>{solution.description}</Text>
-
-                    <View style={styles.metricsRow}>
-                      <View style={styles.metric}>
-                        <Text style={styles.metricLabel}>Impact</Text>
-                        <View style={[styles.metricBadge, { backgroundColor: getImpactColor(solution.impact) + '20' }]}>
-                          <Text style={[styles.metricValue, { color: getImpactColor(solution.impact) }]}>
-                            {solution.impact}
-                          </Text>
-                        </View>
-                      </View>
-                      <View style={styles.metric}>
-                        <Text style={styles.metricLabel}>Effort</Text>
-                        <View style={[styles.metricBadge, { backgroundColor: getEffortColor(solution.effort) + '20' }]}>
-                          <Text style={[styles.metricValue, { color: getEffortColor(solution.effort) }]}>
-                            {solution.effort}
-                          </Text>
-                        </View>
-                      </View>
-                      <View style={styles.metric}>
-                        <Text style={styles.metricLabel}>Time</Text>
-                        <Text style={styles.metricValue}>{solution.estimatedTime}</Text>
-                      </View>
-                    </View>
-
-                    <View style={styles.stepsSection}>
-                      <Text style={styles.stepsTitle}>Action Steps:</Text>
-                      {solution.steps.map((step, idx) => (
-                        <View key={idx} style={styles.stepItem}>
-                          <View style={styles.stepNumber}>
-                            <Text style={styles.stepNumberText}>{idx + 1}</Text>
-                          </View>
-                          <Text style={styles.stepText}>{step}</Text>
-                        </View>
-                      ))}
-                    </View>
-
-                    <View style={styles.solutionActions}>
-                      <Pressable
-                        style={styles.executeButton}
-                        onPress={() => handleExecuteSolution(solution)}
-                      >
-                        <IconSymbol name="play.fill" size={16} color={colors.card} />
-                        <Text style={styles.executeButtonText}>Execute</Text>
-                      </Pressable>
-                      <View style={styles.feedbackButtons}>
-                        <Pressable
-                          style={[styles.feedbackButton, solution.helpful === true && styles.feedbackButtonActive]}
-                          onPress={() => handleSolutionFeedback(solution.id, true)}
-                        >
-                          <IconSymbol name="hand.thumbsup.fill" size={16} color={solution.helpful === true ? colors.success : colors.textSecondary} />
-                        </Pressable>
-                        <Pressable
-                          style={[styles.feedbackButton, solution.helpful === false && styles.feedbackButtonActive]}
-                          onPress={() => handleSolutionFeedback(solution.id, false)}
-                        >
-                          <IconSymbol name="hand.thumbsdown.fill" size={16} color={solution.helpful === false ? colors.error : colors.textSecondary} />
-                        </Pressable>
-                      </View>
-                    </View>
-                  </View>
-                </Animated.View>
-              ))}
-            </>
-          )}
-
-          {/* Integrations Tab */}
-          {activeTab === 'integrations' && (
-            <>
-              <View style={styles.sectionHeader}>
-                <Text style={styles.sectionTitle}>Productivity Tools</Text>
-              </View>
-
-              <Animated.View entering={FadeInDown.delay(100)} style={styles.infoCard}>
-                <IconSymbol name="info.circle.fill" size={24} color={colors.info} />
-                <Text style={styles.infoText}>
-                  Connect your productivity tools to automatically log and execute action items from AI-generated solutions.
-                </Text>
-              </Animated.View>
-
-              {integrations.map((integration, index) => (
-                <Animated.View
-                  key={integration.id}
-                  entering={FadeInDown.delay(200 + index * 100)}
-                >
-                  <Pressable
-                    style={styles.integrationCard}
-                    onPress={() => console.log('Toggle integration:', integration.name)}
-                  >
-                    <View style={styles.integrationLeft}>
-                      <View style={[styles.integrationIcon, { backgroundColor: integration.color + '20' }]}>
-                        <IconSymbol name={integration.icon} size={24} color={integration.color} />
-                      </View>
-                      <View style={styles.integrationInfo}>
-                        <Text style={styles.integrationName}>{integration.name}</Text>
-                        <Text style={styles.integrationStatus}>
-                          {integration.connected ? 'Connected' : 'Not connected'}
-                        </Text>
-                      </View>
-                    </View>
-                    <View style={[styles.connectionIndicator, { backgroundColor: integration.connected ? colors.success : colors.textSecondary }]} />
-                  </Pressable>
-                </Animated.View>
-              ))}
-
-              <Animated.View entering={FadeInDown.delay(700)} style={styles.addIntegrationCard}>
-                <IconSymbol name="plus.circle.fill" size={32} color={colors.primary} />
-                <Text style={styles.addIntegrationText}>Add More Tools</Text>
-              </Animated.View>
-            </>
-          )}
-
-          {/* Bottom padding for floating tab bar */}
-          <View style={styles.bottomPadding} />
-        </ScrollView>
-      </View>
-    </>
-  );
-}
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.background,
   },
-  scrollView: {
-    flex: 1,
-  },
   scrollContent: {
-    paddingHorizontal: 16,
-    paddingTop: 16,
+    paddingHorizontal: 24,
+    paddingTop: 24,
+    paddingBottom: 120,
   },
-  headerContainer: {
-    paddingVertical: 16,
-    paddingHorizontal: 20,
-    backgroundColor: colors.background,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
-  },
-  headerTitleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  headerTitle: {
-    fontSize: 28,
-    fontWeight: '700',
-    color: colors.text,
-  },
-  headerButton: {
-    padding: 8,
-    borderRadius: 20,
-    backgroundColor: colors.card,
-  },
-  headerButtonContainer: {
-    padding: 8,
-  },
-  tabContainer: {
-    flexDirection: 'row',
-    backgroundColor: colors.card,
-    marginHorizontal: 16,
-    marginVertical: 12,
-    borderRadius: 12,
-    padding: 4,
-    boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.06)',
-    elevation: 2,
-  },
-  tab: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 12,
-    paddingHorizontal: 8,
-    borderRadius: 8,
-    gap: 6,
-  },
-  activeTab: {
-    backgroundColor: colors.primary + '15',
-  },
-  tabText: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: colors.textSecondary,
-  },
-  activeTabText: {
-    color: colors.primary,
-  },
-  inputSection: {
-    backgroundColor: colors.card,
-    borderRadius: 12,
-    padding: 16,
+  header: {
     marginBottom: 24,
-    boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.06)',
-    elevation: 2,
   },
-  inputHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    marginBottom: 12,
-  },
-  inputTitle: {
-    fontSize: 18,
+  title: {
+    fontSize: 32,
     fontWeight: '700',
     color: colors.text,
+    letterSpacing: -0.8,
+    marginBottom: 8,
   },
-  textInput: {
-    backgroundColor: colors.background,
-    borderRadius: 8,
-    padding: 12,
+  subtitle: {
     fontSize: 15,
-    color: colors.text,
-    minHeight: 100,
-    textAlignVertical: 'top',
+    fontWeight: '400',
+    color: colors.textSecondary,
+    lineHeight: 22,
+  },
+  featuredCard: {
+    backgroundColor: colors.card,
+    borderRadius: 28,
+    overflow: 'hidden',
+    marginBottom: 24,
+    boxShadow: `0px 12px 32px ${colors.shadow}`,
+    elevation: 4,
+  },
+  featuredImage: {
+    width: '100%',
+    height: 220,
+    backgroundColor: colors.cardSecondary,
+  },
+  featuredContent: {
+    padding: 24,
+  },
+  featuredBadge: {
+    alignSelf: 'flex-start',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 12,
+    backgroundColor: colors.cardSecondary,
     marginBottom: 12,
   },
-  analyzeButton: {
-    backgroundColor: colors.primary,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 14,
-    borderRadius: 8,
-    gap: 8,
+  featuredBadgeText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: colors.textSecondary,
+    textTransform: 'uppercase',
+    letterSpacing: 1,
   },
-  analyzingButton: {
-    opacity: 0.7,
+  featuredTitle: {
+    fontSize: 22,
+    fontWeight: '700',
+    color: colors.text,
+    marginBottom: 8,
+    letterSpacing: -0.5,
   },
-  analyzeButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: colors.card,
+  featuredDescription: {
+    fontSize: 14,
+    fontWeight: '400',
+    color: colors.textSecondary,
+    lineHeight: 20,
   },
   sectionHeader: {
     flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'space-between',
+    alignItems: 'center',
     marginBottom: 16,
+    marginTop: 8,
   },
   sectionTitle: {
     fontSize: 20,
-    fontWeight: '700',
+    fontWeight: '600',
     color: colors.text,
-  },
-  badge: {
-    backgroundColor: colors.primary,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 12,
-  },
-  badgeText: {
-    fontSize: 13,
-    fontWeight: '700',
-    color: colors.card,
+    letterSpacing: -0.3,
   },
   card: {
     backgroundColor: colors.card,
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
-    boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.06)',
+    borderRadius: 24,
+    padding: 24,
+    marginBottom: 16,
+    boxShadow: `0px 8px 24px ${colors.shadow}`,
+    elevation: 3,
+  },
+  cardCompact: {
+    backgroundColor: colors.card,
+    borderRadius: 20,
+    padding: 20,
+    marginBottom: 16,
+    boxShadow: `0px 6px 20px ${colors.shadow}`,
     elevation: 2,
+  },
+  problemItem: {
+    paddingVertical: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.divider,
+  },
+  problemItemLast: {
+    borderBottomWidth: 0,
   },
   problemHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    marginBottom: 12,
-  },
-  problemTitleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
-    gap: 10,
-  },
-  sourceIcon: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  problemTitle: {
-    fontSize: 17,
-    fontWeight: '600',
-    color: colors.text,
-    flex: 1,
-  },
-  statusBadge: {
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 12,
-  },
-  statusText: {
-    fontSize: 12,
-    fontWeight: '600',
-    textTransform: 'capitalize',
-  },
-  problemDescription: {
-    fontSize: 15,
-    color: colors.text,
-    lineHeight: 22,
-    marginBottom: 12,
-  },
-  blockersSection: {
-    backgroundColor: colors.background,
-    borderRadius: 8,
-    padding: 12,
-    marginBottom: 12,
-  },
-  blockersTitle: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: colors.textSecondary,
     marginBottom: 8,
   },
-  blockerItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    marginBottom: 6,
-  },
-  blockerDot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: colors.error,
-  },
-  blockerText: {
-    fontSize: 14,
-    color: colors.text,
+  problemTitle: {
     flex: 1,
-  },
-  problemFooter: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  timeContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-  },
-  timeText: {
-    fontSize: 13,
-    color: colors.textSecondary,
-  },
-  deadlineContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-  },
-  deadlineText: {
-    fontSize: 13,
+    fontSize: 16,
     fontWeight: '600',
-    color: colors.error,
+    color: colors.text,
+    marginRight: 12,
+  },
+  badge: {
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 10,
+  },
+  badgeText: {
+    fontSize: 11,
+    fontWeight: '600',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  problemDescription: {
+    fontSize: 14,
+    fontWeight: '400',
+    color: colors.textSecondary,
+    lineHeight: 20,
+    marginBottom: 12,
+  },
+  problemMeta: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    flexWrap: 'wrap',
+  },
+  metaItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  metaText: {
+    fontSize: 12,
+    fontWeight: '500',
+    color: colors.textMuted,
+  },
+  solutionCard: {
+    backgroundColor: colors.cardSecondary,
+    borderRadius: 20,
+    padding: 20,
+    marginBottom: 16,
   },
   solutionHeader: {
     flexDirection: 'row',
@@ -816,202 +205,499 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   solutionTitle: {
+    flex: 1,
     fontSize: 17,
     fontWeight: '600',
     color: colors.text,
-    flex: 1,
     marginRight: 12,
   },
-  impactScoreBadge: {
-    backgroundColor: colors.success,
+  impactBadge: {
     paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 16,
-    minWidth: 44,
-    alignItems: 'center',
-  },
-  impactScoreText: {
-    fontSize: 15,
-    fontWeight: '700',
-    color: colors.card,
+    paddingVertical: 5,
+    borderRadius: 10,
   },
   solutionDescription: {
-    fontSize: 15,
-    color: colors.text,
-    lineHeight: 22,
+    fontSize: 14,
+    fontWeight: '400',
+    color: colors.textSecondary,
+    lineHeight: 20,
     marginBottom: 16,
   },
-  metricsRow: {
+  solutionStats: {
     flexDirection: 'row',
-    gap: 12,
+    gap: 16,
     marginBottom: 16,
   },
-  metric: {
+  statItem: {
     flex: 1,
   },
-  metricLabel: {
-    fontSize: 12,
-    color: colors.textSecondary,
-    marginBottom: 6,
-  },
-  metricBadge: {
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 8,
-    alignItems: 'center',
-  },
-  metricValue: {
-    fontSize: 13,
+  statLabel: {
+    fontSize: 11,
     fontWeight: '600',
-    textTransform: 'capitalize',
+    color: colors.textMuted,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+    marginBottom: 4,
   },
-  stepsSection: {
-    backgroundColor: colors.background,
-    borderRadius: 8,
-    padding: 12,
+  statValue: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: colors.text,
+  },
+  stepsList: {
+    gap: 8,
     marginBottom: 16,
-  },
-  stepsTitle: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: colors.textSecondary,
-    marginBottom: 12,
   },
   stepItem: {
     flexDirection: 'row',
     alignItems: 'flex-start',
     gap: 10,
-    marginBottom: 10,
   },
   stepNumber: {
     width: 24,
     height: 24,
     borderRadius: 12,
-    backgroundColor: colors.primary,
-    justifyContent: 'center',
+    backgroundColor: colors.primary + '20',
     alignItems: 'center',
+    justifyContent: 'center',
   },
   stepNumberText: {
     fontSize: 12,
     fontWeight: '700',
-    color: colors.card,
+    color: colors.primary,
   },
   stepText: {
-    fontSize: 14,
-    color: colors.text,
     flex: 1,
+    fontSize: 14,
+    fontWeight: '400',
+    color: colors.text,
     lineHeight: 20,
+    paddingTop: 2,
   },
-  solutionActions: {
+  actionButtons: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
     gap: 12,
   },
-  executeButton: {
+  actionButton: {
     flex: 1,
-    backgroundColor: colors.primary,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
     paddingVertical: 12,
-    borderRadius: 8,
-    gap: 6,
+    borderRadius: 14,
+    alignItems: 'center',
+    borderWidth: 1,
   },
-  executeButtonText: {
-    fontSize: 15,
+  actionButtonPrimary: {
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
+  },
+  actionButtonSecondary: {
+    backgroundColor: 'transparent',
+    borderColor: colors.border,
+  },
+  actionButtonText: {
+    fontSize: 14,
     fontWeight: '600',
+  },
+  actionButtonTextPrimary: {
     color: colors.card,
   },
-  feedbackButtons: {
-    flexDirection: 'row',
-    gap: 8,
-  },
-  feedbackButton: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: colors.background,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  feedbackButtonActive: {
-    backgroundColor: colors.highlight,
-  },
-  infoCard: {
-    backgroundColor: colors.info + '15',
-    borderRadius: 12,
-    padding: 16,
-    flexDirection: 'row',
-    gap: 12,
-    marginBottom: 16,
-  },
-  infoText: {
-    flex: 1,
-    fontSize: 14,
+  actionButtonTextSecondary: {
     color: colors.text,
-    lineHeight: 20,
+  },
+  integrationsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 12,
   },
   integrationCard: {
+    width: '47%',
     backgroundColor: colors.card,
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    borderRadius: 20,
+    padding: 20,
     alignItems: 'center',
-    boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.06)',
+    boxShadow: `0px 6px 20px ${colors.shadow}`,
     elevation: 2,
-  },
-  integrationLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    flex: 1,
   },
   integrationIcon: {
     width: 48,
     height: 48,
-    borderRadius: 24,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  integrationInfo: {
-    flex: 1,
-  },
-  integrationName: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: colors.text,
-    marginBottom: 4,
-  },
-  integrationStatus: {
-    fontSize: 13,
-    color: colors.textSecondary,
-  },
-  connectionIndicator: {
-    width: 12,
-    height: 12,
-    borderRadius: 6,
-  },
-  addIntegrationCard: {
-    backgroundColor: colors.card,
-    borderRadius: 12,
-    padding: 24,
+    borderRadius: 16,
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 2,
-    borderColor: colors.border,
-    borderStyle: 'dashed',
     marginBottom: 12,
   },
-  addIntegrationText: {
-    fontSize: 16,
+  integrationName: {
+    fontSize: 14,
     fontWeight: '600',
-    color: colors.primary,
-    marginTop: 8,
+    color: colors.text,
+    textAlign: 'center',
+    marginBottom: 6,
   },
-  bottomPadding: {
-    height: 100,
+  integrationStatus: {
+    fontSize: 11,
+    fontWeight: '500',
+    color: colors.textMuted,
   },
 });
+
+export default function ProblemSolverScreen() {
+  const [problems] = useState<Problem[]>([
+    {
+      id: '1',
+      title: 'Budget Approval Delayed',
+      description: 'Q4 budget needs approval from finance team before Friday',
+      detectedFrom: 'email',
+      timestamp: '2 hours ago',
+      status: 'new',
+      blockers: ['Finance team unavailable', 'Missing cost breakdown'],
+      deadline: 'Dec 15, 2024',
+    },
+    {
+      id: '2',
+      title: 'Project Timeline Conflict',
+      description: 'Two major deliverables scheduled for the same week',
+      detectedFrom: 'calendar',
+      timestamp: '5 hours ago',
+      status: 'analyzing',
+      blockers: ['Resource constraints', 'Client expectations'],
+    },
+  ]);
+
+  const [solutions] = useState<Solution[]>([
+    {
+      id: '1',
+      problemId: '1',
+      title: 'Expedite Approval Process',
+      description: 'Schedule urgent meeting with finance team and prepare detailed cost breakdown',
+      impact: 'high',
+      effort: 'medium',
+      impactScore: 85,
+      steps: [
+        'Prepare detailed cost breakdown document',
+        'Schedule 30-min meeting with finance team',
+        'Send pre-read materials 24 hours before meeting',
+        'Follow up with action items immediately after',
+      ],
+      estimatedTime: '2 hours',
+    },
+    {
+      id: '2',
+      problemId: '1',
+      title: 'Request Extension',
+      description: 'Negotiate deadline extension with stakeholders',
+      impact: 'medium',
+      effort: 'low',
+      impactScore: 65,
+      steps: [
+        'Identify key stakeholders',
+        'Draft extension request email',
+        'Propose new timeline with buffer',
+        'Get written confirmation',
+      ],
+      estimatedTime: '1 hour',
+    },
+  ]);
+
+  const [integrations] = useState<Integration[]>([
+    { id: '1', name: 'Gmail', icon: 'envelope', connected: true, color: colors.error },
+    { id: '2', name: 'Slack', icon: 'message', connected: true, color: colors.primary },
+    { id: '3', name: 'Notion', icon: 'doc', connected: false, color: colors.text },
+    { id: '4', name: 'Asana', icon: 'checkmark.circle', connected: false, color: colors.accent },
+  ]);
+
+  const getSourceIcon = (source: string) => {
+    switch (source) {
+      case 'email':
+        return 'envelope';
+      case 'task':
+        return 'checkmark.circle';
+      case 'message':
+        return 'message';
+      case 'calendar':
+        return 'calendar';
+      default:
+        return 'doc';
+    }
+  };
+
+  const getSourceColor = (source: string) => {
+    switch (source) {
+      case 'email':
+        return colors.error;
+      case 'task':
+        return colors.success;
+      case 'message':
+        return colors.info;
+      case 'calendar':
+        return colors.warning;
+      default:
+        return colors.textMuted;
+    }
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'solved':
+        return colors.success;
+      case 'analyzing':
+        return colors.info;
+      case 'new':
+        return colors.warning;
+      case 'dismissed':
+        return colors.textMuted;
+      default:
+        return colors.textMuted;
+    }
+  };
+
+  const getImpactColor = (impact: string) => {
+    switch (impact) {
+      case 'high':
+        return colors.success;
+      case 'medium':
+        return colors.warning;
+      case 'low':
+        return colors.textMuted;
+      default:
+        return colors.textMuted;
+    }
+  };
+
+  const getEffortColor = (effort: string) => {
+    switch (effort) {
+      case 'high':
+        return colors.error;
+      case 'medium':
+        return colors.warning;
+      case 'low':
+        return colors.success;
+      default:
+        return colors.textMuted;
+    }
+  };
+
+  const handleAnalyze = () => {
+    console.log('Analyzing problems...');
+  };
+
+  const handleSolutionFeedback = (solutionId: string, helpful: boolean) => {
+    console.log(`Solution ${solutionId} marked as ${helpful ? 'helpful' : 'not helpful'}`);
+  };
+
+  const handleExecuteSolution = (solution: Solution) => {
+    console.log('Executing solution:', solution.title);
+  };
+
+  const renderHeaderRight = () => (
+    <Pressable style={{ marginRight: 16 }} onPress={handleAnalyze}>
+      <IconSymbol name="sparkles" size={28} color={colors.primary} />
+    </Pressable>
+  );
+
+  return (
+    <>
+      <Stack.Screen
+        options={{
+          title: '',
+          headerTransparent: true,
+          headerRight: renderHeaderRight,
+        }}
+      />
+      <View style={styles.container}>
+        <ScrollView
+          style={{ flex: 1 }}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+        >
+          {/* Header */}
+          <Animated.View entering={FadeInDown.duration(600).delay(100)} style={styles.header}>
+            <Text style={styles.title}>Problem Solver</Text>
+            <Text style={styles.subtitle}>
+              AI-powered problem detection and solution generation. We analyze your workflow and suggest actionable solutions.
+            </Text>
+          </Animated.View>
+
+          {/* Featured Insight */}
+          <Animated.View entering={FadeInDown.duration(600).delay(200)}>
+            <View style={styles.featuredCard}>
+              <Image
+                source={{ uri: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800&q=80' }}
+                style={styles.featuredImage}
+                resizeMode="cover"
+              />
+              <View style={styles.featuredContent}>
+                <View style={styles.featuredBadge}>
+                  <Text style={styles.featuredBadgeText}>Insight</Text>
+                </View>
+                <Text style={styles.featuredTitle}>Blue blood.</Text>
+                <Text style={styles.featuredDescription}>
+                  With the best things in life are unexpected because they were never no expectations.
+                </Text>
+              </View>
+            </View>
+          </Animated.View>
+
+          {/* Detected Problems */}
+          <Animated.View entering={FadeInDown.duration(600).delay(300)}>
+            <View style={styles.sectionHeader}>
+              <Text style={styles.sectionTitle}>Detected Problems</Text>
+            </View>
+            <View style={styles.card}>
+              {problems.map((problem, index) => (
+                <View
+                  key={problem.id}
+                  style={[
+                    styles.problemItem,
+                    index === problems.length - 1 && styles.problemItemLast,
+                  ]}
+                >
+                  <View style={styles.problemHeader}>
+                    <Text style={styles.problemTitle}>{problem.title}</Text>
+                    <View
+                      style={[
+                        styles.badge,
+                        { backgroundColor: getStatusColor(problem.status) + '20' },
+                      ]}
+                    >
+                      <Text
+                        style={[
+                          styles.badgeText,
+                          { color: getStatusColor(problem.status) },
+                        ]}
+                      >
+                        {problem.status}
+                      </Text>
+                    </View>
+                  </View>
+                  <Text style={styles.problemDescription}>{problem.description}</Text>
+                  <View style={styles.problemMeta}>
+                    <View style={styles.metaItem}>
+                      <IconSymbol
+                        name={getSourceIcon(problem.detectedFrom)}
+                        size={14}
+                        color={getSourceColor(problem.detectedFrom)}
+                      />
+                      <Text style={styles.metaText}>{problem.detectedFrom}</Text>
+                    </View>
+                    <View style={styles.metaItem}>
+                      <IconSymbol name="clock" size={14} color={colors.textMuted} />
+                      <Text style={styles.metaText}>{problem.timestamp}</Text>
+                    </View>
+                    {problem.deadline && (
+                      <View style={styles.metaItem}>
+                        <IconSymbol name="calendar" size={14} color={colors.textMuted} />
+                        <Text style={styles.metaText}>{problem.deadline}</Text>
+                      </View>
+                    )}
+                  </View>
+                </View>
+              ))}
+            </View>
+          </Animated.View>
+
+          {/* Suggested Solutions */}
+          <Animated.View entering={FadeInDown.duration(600).delay(400)}>
+            <View style={styles.sectionHeader}>
+              <Text style={styles.sectionTitle}>Suggested Solutions</Text>
+            </View>
+            {solutions.map((solution) => (
+              <View key={solution.id} style={styles.solutionCard}>
+                <View style={styles.solutionHeader}>
+                  <Text style={styles.solutionTitle}>{solution.title}</Text>
+                  <View
+                    style={[
+                      styles.impactBadge,
+                      { backgroundColor: getImpactColor(solution.impact) + '20' },
+                    ]}
+                  >
+                    <Text
+                      style={[
+                        styles.badgeText,
+                        { color: getImpactColor(solution.impact) },
+                      ]}
+                    >
+                      {solution.impact}
+                    </Text>
+                  </View>
+                </View>
+                <Text style={styles.solutionDescription}>{solution.description}</Text>
+                <View style={styles.solutionStats}>
+                  <View style={styles.statItem}>
+                    <Text style={styles.statLabel}>Impact Score</Text>
+                    <Text style={styles.statValue}>{solution.impactScore}%</Text>
+                  </View>
+                  <View style={styles.statItem}>
+                    <Text style={styles.statLabel}>Effort</Text>
+                    <Text style={[styles.statValue, { color: getEffortColor(solution.effort) }]}>
+                      {solution.effort}
+                    </Text>
+                  </View>
+                  <View style={styles.statItem}>
+                    <Text style={styles.statLabel}>Time</Text>
+                    <Text style={styles.statValue}>{solution.estimatedTime}</Text>
+                  </View>
+                </View>
+                <View style={styles.stepsList}>
+                  {solution.steps.map((step, index) => (
+                    <View key={index} style={styles.stepItem}>
+                      <View style={styles.stepNumber}>
+                        <Text style={styles.stepNumberText}>{index + 1}</Text>
+                      </View>
+                      <Text style={styles.stepText}>{step}</Text>
+                    </View>
+                  ))}
+                </View>
+                <View style={styles.actionButtons}>
+                  <Pressable
+                    style={[styles.actionButton, styles.actionButtonPrimary]}
+                    onPress={() => handleExecuteSolution(solution)}
+                  >
+                    <Text style={[styles.actionButtonText, styles.actionButtonTextPrimary]}>
+                      Execute
+                    </Text>
+                  </Pressable>
+                  <Pressable
+                    style={[styles.actionButton, styles.actionButtonSecondary]}
+                    onPress={() => handleSolutionFeedback(solution.id, false)}
+                  >
+                    <Text style={[styles.actionButtonText, styles.actionButtonTextSecondary]}>
+                      Dismiss
+                    </Text>
+                  </Pressable>
+                </View>
+              </View>
+            ))}
+          </Animated.View>
+
+          {/* Integrations */}
+          <Animated.View entering={FadeInDown.duration(600).delay(500)}>
+            <View style={styles.sectionHeader}>
+              <Text style={styles.sectionTitle}>Connected Tools</Text>
+            </View>
+            <View style={styles.integrationsGrid}>
+              {integrations.map((integration) => (
+                <View key={integration.id} style={styles.integrationCard}>
+                  <View
+                    style={[
+                      styles.integrationIcon,
+                      { backgroundColor: integration.color + '20' },
+                    ]}
+                  >
+                    <IconSymbol
+                      name={integration.icon}
+                      size={24}
+                      color={integration.color}
+                    />
+                  </View>
+                  <Text style={styles.integrationName}>{integration.name}</Text>
+                  <Text style={styles.integrationStatus}>
+                    {integration.connected ? 'Connected' : 'Not connected'}
+                  </Text>
+                </View>
+              ))}
+            </View>
+          </Animated.View>
+        </ScrollView>
+      </View>
+    </>
+  );
+}
