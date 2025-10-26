@@ -1,6 +1,44 @@
 
+/**
+ * AI Personal Assistant - Home Screen
+ * 
+ * CORE FEATURES:
+ * - Seamless integration with email, calendar, meetings, and social apps
+ * - Autonomous spoken agent for calls/messages/meetings
+ * - Automatic schedule updates based on daily routine
+ * - Digital behavior modeling ("digital body language")
+ * - Strict privacy, consent, and audit trails
+ * 
+ * ARCHITECTURE:
+ * - Tab-based navigation with 5 main screens:
+ *   1. Home: Dashboard with predicted tasks, mood detection, email summary
+ *   2. Agent: Autonomous agent controls and recent actions
+ *   3. Routine: Daily patterns, schedule automation, behavior insights
+ *   4. Privacy: Permissions, audit trail, data management
+ *   5. Profile: User info, AI preferences, statistics
+ * 
+ * DATA FLOW:
+ * - Mock data currently used for demonstration
+ * - Ready for backend integration (Supabase recommended)
+ * - All AI features are UI-ready for ML model integration
+ * 
+ * PRIVACY & SECURITY:
+ * - Granular permission controls per service
+ * - Complete audit trail of all AI actions
+ * - End-to-end encryption support
+ * - Data retention policies
+ * - GDPR/CCPA compliant design
+ * 
+ * FUTURE INTEGRATIONS:
+ * - Email APIs (Gmail, Outlook, etc.)
+ * - Calendar APIs (Google Calendar, iCal, etc.)
+ * - Meeting platforms (Zoom, Teams, Meet)
+ * - Voice/Speech APIs (for autonomous agent)
+ * - ML models for behavior prediction
+ */
+
 import React, { useState } from "react";
-import { Stack } from "expo-router";
+import { Stack, useRouter } from "expo-router";
 import { ScrollView, Pressable, StyleSheet, View, Text, Platform } from "react-native";
 import { IconSymbol } from "@/components/IconSymbol";
 import { colors } from "@/styles/commonStyles";
@@ -31,6 +69,7 @@ interface Meeting {
 }
 
 export default function HomeScreen() {
+  const router = useRouter();
   const [predictedTasks] = useState<PredictedTask[]>([
     {
       id: '1',
@@ -282,6 +321,82 @@ export default function HomeScreen() {
                 </View>
               </Pressable>
             ))}
+          </Animated.View>
+
+          {/* Quick Actions */}
+          <Animated.View entering={FadeInDown.delay(500)} style={styles.section}>
+            <View style={styles.sectionHeader}>
+              <IconSymbol name="bolt.fill" color={colors.warning} size={24} />
+              <Text style={styles.sectionTitle}>Quick Actions</Text>
+            </View>
+            <View style={styles.quickActionsGrid}>
+              <Pressable 
+                style={styles.quickActionCard}
+                onPress={() => router.push('/(tabs)/agent')}
+              >
+                <View style={[styles.quickActionIcon, { backgroundColor: colors.primary + '20' }]}>
+                  <IconSymbol name="person.crop.circle.badge.checkmark" size={28} color={colors.primary} />
+                </View>
+                <Text style={styles.quickActionLabel}>Agent Status</Text>
+              </Pressable>
+              <Pressable 
+                style={styles.quickActionCard}
+                onPress={() => router.push('/(tabs)/routine')}
+              >
+                <View style={[styles.quickActionIcon, { backgroundColor: colors.secondary + '20' }]}>
+                  <IconSymbol name="calendar.badge.clock" size={28} color={colors.secondary} />
+                </View>
+                <Text style={styles.quickActionLabel}>My Routine</Text>
+              </Pressable>
+              <Pressable 
+                style={styles.quickActionCard}
+                onPress={() => router.push('/(tabs)/email')}
+              >
+                <View style={[styles.quickActionIcon, { backgroundColor: colors.accent + '20' }]}>
+                  <IconSymbol name="envelope.fill" size={28} color={colors.accent} />
+                </View>
+                <Text style={styles.quickActionLabel}>Email Triage</Text>
+              </Pressable>
+              <Pressable 
+                style={styles.quickActionCard}
+                onPress={() => router.push('/(tabs)/privacy')}
+              >
+                <View style={[styles.quickActionIcon, { backgroundColor: colors.warning + '20' }]}>
+                  <IconSymbol name="lock.shield.fill" size={28} color={colors.warning} />
+                </View>
+                <Text style={styles.quickActionLabel}>Privacy</Text>
+              </Pressable>
+            </View>
+          </Animated.View>
+
+          {/* Integration Status */}
+          <Animated.View entering={FadeInDown.delay(600)} style={styles.section}>
+            <View style={styles.integrationBanner}>
+              <View style={styles.integrationHeader}>
+                <IconSymbol name="link.circle.fill" size={24} color={colors.info} />
+                <Text style={styles.integrationTitle}>Connected Services</Text>
+              </View>
+              <View style={styles.integrationList}>
+                <View style={styles.integrationItem}>
+                  <IconSymbol name="envelope.fill" size={16} color={colors.accent} />
+                  <Text style={styles.integrationText}>Email</Text>
+                  <View style={[styles.integrationStatus, { backgroundColor: colors.accent }]} />
+                </View>
+                <View style={styles.integrationItem}>
+                  <IconSymbol name="calendar" size={16} color={colors.accent} />
+                  <Text style={styles.integrationText}>Calendar</Text>
+                  <View style={[styles.integrationStatus, { backgroundColor: colors.accent }]} />
+                </View>
+                <View style={styles.integrationItem}>
+                  <IconSymbol name="message.fill" size={16} color={colors.textSecondary} />
+                  <Text style={styles.integrationText}>Messages</Text>
+                  <View style={[styles.integrationStatus, { backgroundColor: colors.textSecondary }]} />
+                </View>
+              </View>
+              <Text style={styles.integrationNote}>
+                Tap to manage integrations and permissions
+              </Text>
+            </View>
           </Animated.View>
 
           {/* Bottom padding for floating tab bar */}
@@ -550,6 +665,84 @@ const styles = StyleSheet.create({
   meetingDuration: {
     fontSize: 13,
     color: colors.textSecondary,
+  },
+  quickActionsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 12,
+  },
+  quickActionCard: {
+    flex: 1,
+    minWidth: '47%',
+    backgroundColor: colors.card,
+    borderRadius: 12,
+    padding: 16,
+    alignItems: 'center',
+    boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.06)',
+    elevation: 2,
+  },
+  quickActionIcon: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  quickActionLabel: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: colors.text,
+    textAlign: 'center',
+  },
+  integrationBanner: {
+    backgroundColor: colors.card,
+    borderRadius: 12,
+    padding: 16,
+    boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.06)',
+    elevation: 2,
+  },
+  integrationHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 16,
+  },
+  integrationTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: colors.text,
+  },
+  integrationList: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 12,
+    marginBottom: 12,
+  },
+  integrationItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    backgroundColor: colors.background,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 20,
+  },
+  integrationText: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: colors.text,
+  },
+  integrationStatus: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+  },
+  integrationNote: {
+    fontSize: 12,
+    color: colors.textSecondary,
+    textAlign: 'center',
+    marginTop: 8,
   },
   bottomPadding: {
     height: 100,

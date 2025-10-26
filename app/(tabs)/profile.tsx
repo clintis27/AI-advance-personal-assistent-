@@ -2,11 +2,13 @@
 import React from "react";
 import { View, Text, StyleSheet, ScrollView, Platform, Pressable } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useRouter } from "expo-router";
 import { IconSymbol } from "@/components/IconSymbol";
 import { colors } from "@/styles/commonStyles";
 import Animated, { FadeInDown } from "react-native-reanimated";
 
 export default function ProfileScreen() {
+  const router = useRouter();
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>
       <ScrollView
@@ -123,15 +125,27 @@ export default function ProfileScreen() {
         <Animated.View entering={FadeInDown.delay(500)} style={styles.section}>
           <Text style={styles.sectionTitle}>Settings</Text>
           <View style={styles.card}>
-            <Pressable style={styles.settingRow} onPress={() => console.log('Notifications pressed')}>
-              <IconSymbol name="bell.fill" size={20} color={colors.textSecondary} />
-              <Text style={styles.settingText}>Notifications</Text>
+            <Pressable style={styles.settingRow} onPress={() => router.push('/(tabs)/agent')}>
+              <IconSymbol name="person.crop.circle.badge.checkmark" size={20} color={colors.textSecondary} />
+              <Text style={styles.settingText}>Autonomous Agent</Text>
               <IconSymbol name="chevron.right" size={16} color={colors.textSecondary} />
             </Pressable>
             <View style={styles.divider} />
-            <Pressable style={styles.settingRow} onPress={() => console.log('Privacy pressed')}>
-              <IconSymbol name="lock.fill" size={20} color={colors.textSecondary} />
+            <Pressable style={styles.settingRow} onPress={() => router.push('/(tabs)/routine')}>
+              <IconSymbol name="calendar.badge.clock" size={20} color={colors.textSecondary} />
+              <Text style={styles.settingText}>Daily Routine</Text>
+              <IconSymbol name="chevron.right" size={16} color={colors.textSecondary} />
+            </Pressable>
+            <View style={styles.divider} />
+            <Pressable style={styles.settingRow} onPress={() => router.push('/(tabs)/privacy')}>
+              <IconSymbol name="lock.shield.fill" size={20} color={colors.textSecondary} />
               <Text style={styles.settingText}>Privacy & Security</Text>
+              <IconSymbol name="chevron.right" size={16} color={colors.textSecondary} />
+            </Pressable>
+            <View style={styles.divider} />
+            <Pressable style={styles.settingRow} onPress={() => console.log('Notifications pressed')}>
+              <IconSymbol name="bell.fill" size={20} color={colors.textSecondary} />
+              <Text style={styles.settingText}>Notifications</Text>
               <IconSymbol name="chevron.right" size={16} color={colors.textSecondary} />
             </Pressable>
             <View style={styles.divider} />

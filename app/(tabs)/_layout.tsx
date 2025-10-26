@@ -16,16 +16,22 @@ export default function TabLayout() {
       label: 'Home',
     },
     {
-      name: 'email',
-      route: '/(tabs)/email',
-      icon: 'envelope.fill',
-      label: 'Email',
+      name: 'agent',
+      route: '/(tabs)/agent',
+      icon: 'person.crop.circle.badge.checkmark',
+      label: 'Agent',
     },
     {
-      name: 'meetings',
-      route: '/(tabs)/meetings',
-      icon: 'calendar',
-      label: 'Meetings',
+      name: 'routine',
+      route: '/(tabs)/routine',
+      icon: 'calendar.badge.clock',
+      label: 'Routine',
+    },
+    {
+      name: 'privacy',
+      route: '/(tabs)/privacy',
+      icon: 'lock.shield.fill',
+      label: 'Privacy',
     },
     {
       name: 'profile',
@@ -43,13 +49,17 @@ export default function TabLayout() {
           <Icon sf="house.fill" drawable="ic_home" />
           <Label>Home</Label>
         </NativeTabs.Trigger>
-        <NativeTabs.Trigger name="email">
-          <Icon sf="envelope.fill" drawable="ic_email" />
-          <Label>Email</Label>
+        <NativeTabs.Trigger name="agent">
+          <Icon sf="person.crop.circle.badge.checkmark" drawable="ic_agent" />
+          <Label>Agent</Label>
         </NativeTabs.Trigger>
-        <NativeTabs.Trigger name="meetings">
-          <Icon sf="calendar" drawable="ic_calendar" />
-          <Label>Meetings</Label>
+        <NativeTabs.Trigger name="routine">
+          <Icon sf="calendar.badge.clock" drawable="ic_routine" />
+          <Label>Routine</Label>
+        </NativeTabs.Trigger>
+        <NativeTabs.Trigger name="privacy">
+          <Icon sf="lock.shield.fill" drawable="ic_privacy" />
+          <Label>Privacy</Label>
         </NativeTabs.Trigger>
         <NativeTabs.Trigger name="profile">
           <Icon sf="person.fill" drawable="ic_profile" />
@@ -71,6 +81,9 @@ export default function TabLayout() {
         <Stack.Screen name="(home)" />
         <Stack.Screen name="email" />
         <Stack.Screen name="meetings" />
+        <Stack.Screen name="agent" />
+        <Stack.Screen name="routine" />
+        <Stack.Screen name="privacy" />
         <Stack.Screen name="profile" />
       </Stack>
       <FloatingTabBar tabs={tabs} />
