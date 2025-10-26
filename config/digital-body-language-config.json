@@ -1,0 +1,269 @@
+
+{
+  "version": "1.0.0",
+  "enabled": true,
+  "inputStreams": {
+    "calendarEvents": {
+      "enabled": true,
+      "samplingFrequency": "realtime",
+      "privacyLevel": "medium",
+      "consentRequired": true,
+      "dataRetentionDays": 30,
+      "anonymizeDetails": true
+    },
+    "emailLatency": {
+      "enabled": true,
+      "samplingFrequency": "continuous",
+      "privacyLevel": "high",
+      "consentRequired": true,
+      "dataRetentionDays": 7,
+      "trackContentOnly": false
+    },
+    "audioTone": {
+      "enabled": false,
+      "samplingFrequency": "intermittent",
+      "privacyLevel": "high",
+      "consentRequired": true,
+      "dataRetentionDays": 1,
+      "processLocally": true,
+      "deleteImmediately": true
+    },
+    "deviceUnlock": {
+      "enabled": true,
+      "samplingFrequency": "on_event",
+      "privacyLevel": "low",
+      "consentRequired": false,
+      "dataRetentionDays": 14
+    },
+    "appUsage": {
+      "enabled": true,
+      "samplingFrequency": "on_event",
+      "privacyLevel": "medium",
+      "consentRequired": true,
+      "dataRetentionDays": 14,
+      "trackCategories": true,
+      "trackSpecificApps": false
+    }
+  },
+  "featureExtraction": {
+    "enabled": true,
+    "updateInterval": 300,
+    "batchProcessing": true,
+    "caching": {
+      "enabled": true,
+      "ttl": 60
+    },
+    "features": {
+      "calendar": {
+        "timeSinceLastMeeting": true,
+        "upcomingMeetingCount": true,
+        "averageMeetingDuration": true,
+        "meetingDensity": true
+      },
+      "email": {
+        "avgEmailLatencyLastHour": true,
+        "latencyChangeFromBaseline": true,
+        "emailVelocity": true
+      },
+      "audio": {
+        "frustrationScore": false,
+        "speechRate": false,
+        "pauseFrequency": false
+      },
+      "device": {
+        "unlockFrequency": true,
+        "timeSinceLastUnlock": true,
+        "averageSessionDuration": true
+      },
+      "appUsage": {
+        "productivityAppTime": true,
+        "appSwitchFrequency": true,
+        "focusScore": true
+      },
+      "derived": {
+        "contextualBusyness": true,
+        "cognitiveLoad": true,
+        "interruptibility": true
+      }
+    }
+  },
+  "inferenceEngine": {
+    "modelType": "ensemble",
+    "confidenceThreshold": 0.7,
+    "transitionCooldown": 300,
+    "enableHybridApproach": true,
+    "weights": {
+      "calendar": 0.25,
+      "email": 0.2,
+      "audio": 0.15,
+      "device": 0.2,
+      "appUsage": 0.2
+    },
+    "stateThresholds": {
+      "Idle": 0.6,
+      "Focus-Deep": 0.75,
+      "Focus-Shallow": 0.65,
+      "Travelling": 0.7,
+      "InCall": 0.8,
+      "InMeeting": 0.75,
+      "Overloaded": 0.7,
+      "ReadyForBooking": 0.65,
+      "Available": 0.6
+    },
+    "updateFrequency": 30,
+    "historySize": 100
+  },
+  "actionMapping": {
+    "enabled": true,
+    "defaultAutonomyLevel": "Semi-Autonomous",
+    "actionConfidenceThresholds": {
+      "postpone_notifications": 0.75,
+      "auto_reply": 0.9,
+      "suggest_break": 0.7,
+      "schedule_booking": 0.85,
+      "enable_dnd": 0.8,
+      "summarize_meetings": 0.75,
+      "prioritize_tasks": 0.7,
+      "prepare_briefing": 0.75,
+      "block_calendar": 0.85,
+      "send_status_update": 0.85
+    },
+    "actionCooldowns": {
+      "postpone_notifications": 3600,
+      "auto_reply": 7200,
+      "suggest_break": 1800,
+      "schedule_booking": 86400,
+      "enable_dnd": 1800,
+      "summarize_meetings": 3600,
+      "prioritize_tasks": 3600,
+      "prepare_briefing": 3600,
+      "block_calendar": 7200,
+      "send_status_update": 3600
+    },
+    "maxActionsPerHour": {
+      "Suggest-Only": 10,
+      "Semi-Autonomous": 5,
+      "Fully-Autonomous": 3
+    }
+  },
+  "feedbackLearning": {
+    "enabled": true,
+    "learningRate": 0.01,
+    "adaptiveWeights": true,
+    "minFeedbackForUpdate": 5,
+    "updateFrequency": "daily",
+    "feedbackRetention": 100,
+    "performanceTracking": {
+      "enabled": true,
+      "metrics": ["accuracy", "precision", "recall", "f1Score"],
+      "reportingInterval": "weekly"
+    }
+  },
+  "privacy": {
+    "dataEncryption": true,
+    "processingLocation": "local",
+    "anonymization": true,
+    "dataRetentionDays": 30,
+    "allowDataExport": true,
+    "allowDataDeletion": true,
+    "consentManagement": {
+      "enabled": true,
+      "granularControl": true,
+      "consentExpiration": false,
+      "easyRevocation": true
+    },
+    "auditLogging": {
+      "enabled": true,
+      "logRetentionDays": 90,
+      "includeOperations": [
+        "collect",
+        "process",
+        "store",
+        "delete",
+        "export"
+      ]
+    }
+  },
+  "transparency": {
+    "enabled": true,
+    "dataInspection": true,
+    "actionHistory": true,
+    "undoCapability": true,
+    "explainableAI": true,
+    "reportGeneration": {
+      "enabled": true,
+      "frequency": "weekly",
+      "includeMetrics": true,
+      "includeActions": true,
+      "includeFeedback": true
+    }
+  },
+  "performance": {
+    "batchProcessing": {
+      "enabled": true,
+      "batchSize": 50,
+      "interval": 300
+    },
+    "caching": {
+      "enabled": true,
+      "ttl": 60,
+      "maxSize": 100
+    },
+    "optimization": {
+      "compressData": true,
+      "lazyLoading": true,
+      "prefetch": false
+    },
+    "monitoring": {
+      "enabled": true,
+      "trackLatency": true,
+      "trackMemoryUsage": true,
+      "trackBatteryImpact": true
+    }
+  },
+  "ui": {
+    "animations": true,
+    "refreshInterval": 30,
+    "chartType": "line",
+    "theme": "auto",
+    "compactMode": false,
+    "showConfidence": true,
+    "showProbabilities": true,
+    "showFeatures": true
+  },
+  "experimental": {
+    "voiceToneAnalysis": false,
+    "biometricIntegration": false,
+    "crossDeviceSync": false,
+    "teamInsights": false,
+    "predictiveScheduling": false,
+    "deepLearningModels": false,
+    "federatedLearning": false
+  },
+  "notifications": {
+    "enabled": true,
+    "stateChangeNotifications": false,
+    "actionExecutionNotifications": true,
+    "feedbackReminders": true,
+    "performanceReports": true,
+    "quietHours": {
+      "enabled": true,
+      "start": "22:00",
+      "end": "07:00"
+    }
+  },
+  "integrations": {
+    "calendar": {
+      "enabled": false,
+      "providers": ["google", "outlook", "apple"]
+    },
+    "email": {
+      "enabled": false,
+      "providers": ["gmail", "outlook"]
+    },
+    "communication": {
+      "enabled": false,
+      "providers": ["slack", "teams", "zoom"]
+    }
+  }
+}

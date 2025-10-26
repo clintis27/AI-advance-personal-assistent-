@@ -105,31 +105,31 @@ export default function HomeScreen() {
   const [quickActions] = useState<QuickAction[]>([
     {
       id: '1',
+      title: 'Body Language',
+      icon: 'brain',
+      color: colors.violet,
+      route: '/(tabs)/digital-body-language',
+    },
+    {
+      id: '2',
       title: 'Problem Solver',
       icon: 'lightbulb',
       color: colors.amber,
       route: '/(tabs)/problem-solver',
     },
     {
-      id: '2',
+      id: '3',
       title: 'Travel',
       icon: 'airplane',
       color: colors.indigo,
       route: '/(tabs)/travel',
     },
     {
-      id: '3',
+      id: '4',
       title: 'Voice',
       icon: 'mic',
-      color: colors.violet,
+      color: colors.rose,
       route: '/(tabs)/voice',
-    },
-    {
-      id: '4',
-      title: 'Behavior',
-      icon: 'chart.bar',
-      color: colors.teal,
-      route: '/(tabs)/behavior',
     },
   ]);
 

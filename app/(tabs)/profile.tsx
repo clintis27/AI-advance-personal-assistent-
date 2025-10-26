@@ -327,12 +327,27 @@ export default function ProfileScreen() {
           <AnimatedCard
             variant="compact"
             interactive
-            onPress={() => router.push('/(tabs)/ui-showcase')}
+            onPress={() => router.push('/(tabs)/digital-body-language')}
             animation="fadeInUp"
             delay={750}
           >
             <View style={styles.linkRow}>
-              <IconSymbol name="paintbrush" size={24} color={colors.violet} />
+              <IconSymbol name="brain" size={24} color={colors.violet} />
+              <Text style={[styles.linkText, { color: theme.dark ? colors.textDark : colors.text }]}>
+                Digital Body Language
+              </Text>
+              <IconSymbol name="chevron.right" size={20} color={theme.dark ? colors.textMutedDark : colors.textMuted} />
+            </View>
+          </AnimatedCard>
+          <AnimatedCard
+            variant="compact"
+            interactive
+            onPress={() => router.push('/(tabs)/ui-showcase')}
+            animation="fadeInUp"
+            delay={800}
+          >
+            <View style={styles.linkRow}>
+              <IconSymbol name="paintbrush" size={24} color={colors.rose} />
               <Text style={[styles.linkText, { color: theme.dark ? colors.textDark : colors.text }]}>
                 UI Components Showcase
               </Text>

@@ -88,6 +88,7 @@ export default function TabLayout() {
         <Stack.Screen name="agent" />
         <Stack.Screen name="routine" />
         <Stack.Screen name="behavior" />
+        <Stack.Screen name="digital-body-language" />
         <Stack.Screen name="privacy" />
         <Stack.Screen name="ai-config" />
         <Stack.Screen name="ai-dashboard" />
