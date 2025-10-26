@@ -1,17 +1,21 @@
 
-import React, { useState } from 'react';
-import { ScrollView, View, Text, StyleSheet, Image, Pressable } from 'react-native';
-import { Stack, useRouter } from 'expo-router';
+import { IconSymbol } from '@/components/IconSymbol';
+import React, { useState, useEffect } from 'react';
+import { ScrollView, View, Text, StyleSheet, Image, Pressable, Alert } from 'react-native';
+import { Switch } from '@/components/ui/Switch';
 import { useTheme } from '@react-navigation/native';
+import { Stack, useRouter } from 'expo-router';
 import { colors } from '@/styles/commonStyles';
-import { Card } from '@/components/ui/Card';
 import { AnimatedCard } from '@/components/ui/AnimatedCard';
+import { Progress } from '@/components/ui/Progress';
+import { Separator } from '@/components/ui/Separator';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
-import { Switch } from '@/components/ui/Switch';
-import { Separator } from '@/components/ui/Separator';
-import { Progress } from '@/components/ui/Progress';
-import { IconSymbol } from '@/components/IconSymbol';
+import { Card } from '@/components/ui/Card';
+import { authService } from '@/services/authService';
+import { syncService } from '@/services/syncService';
+import { User, UserDevice } from '@/types/auth';
+import * as Haptics from 'expo-haptics';
 
 interface ProfileStat {
   id: string;
@@ -31,93 +35,105 @@ interface Setting {
 }
 
 export default function ProfileScreen() {
-  const router = useRouter();
   const theme = useTheme();
+  const router = useRouter();
+  const [user, setUser] = useState<User | null>(null);
+  const [devices, setDevices] = useState<UserDevice[]>([]);
+
+  useEffect(() => {
+    loadUserData();
+  }, []);
+
+  const loadUserData = () => {
+    const currentUser = authService.getCurrentUser();
+    setUser(currentUser);
+    
+    if (currentUser) {
+      setDevices(currentUser.devices);
+    }
+  };
 
   const [stats] = useState<ProfileStat[]>([
-    {
-      id: '1',
-      label: 'Tasks Completed',
-      value: '247',
-      icon: 'checkmark.circle.fill',
-      color: colors.success,
-    },
-    {
-      id: '2',
-      label: 'Meetings Scheduled',
-      value: '89',
-      icon: 'calendar',
-      color: colors.primary,
-    },
-    {
-      id: '3',
-      label: 'Emails Triaged',
-      value: '1,234',
-      icon: 'envelope.fill',
-      color: colors.violet,
-    },
-    {
-      id: '4',
-      label: 'Hours Saved',
-      value: '42',
-      icon: 'clock.fill',
-      color: colors.amber,
-    },
+    { id: '1', label: 'Tasks Completed', value: '127', icon: 'checkmark.circle.fill', color: colors.success },
+    { id: '2', label: 'Meetings Scheduled', value: '43', icon: 'calendar', color: colors.info },
+    { id: '3', label: 'Emails Processed', value: '892', icon: 'envelope.fill', color: colors.warning },
+    { id: '4', label: 'Travel Bookings', value: '12', icon: 'airplane.departure', color: colors.violet },
   ]);
 
   const [settings, setSettings] = useState<Setting[]>([
     {
       id: '1',
-      title: 'AI Predictions',
-      description: 'Enable task and behavior predictions',
-      icon: 'brain',
+      title: 'Push Notifications',
+      description: 'Receive notifications for important updates',
+      icon: 'bell.fill',
       enabled: true,
     },
     {
       id: '2',
-      title: 'Email Triage',
-      description: 'Automatically categorize incoming emails',
-      icon: 'envelope.badge',
-      enabled: true,
-    },
-    {
-      id: '3',
-      title: 'Meeting Scheduling',
-      description: 'Auto-schedule meetings based on availability',
-      icon: 'calendar.badge.plus',
-      enabled: false,
-    },
-    {
-      id: '4',
       title: 'Voice Assistant',
       description: 'Enable voice commands and responses',
       icon: 'mic.fill',
       enabled: true,
     },
+    {
+      id: '3',
+      title: 'Auto-Sync',
+      description: 'Automatically sync data across devices',
+      icon: 'arrow.triangle.2.circlepath',
+      enabled: true,
+    },
+    {
+      id: '4',
+      title: 'Offline Mode',
+      description: 'Work offline and sync later',
+      icon: 'wifi.slash',
+      enabled: false,
+    },
   ]);
 
-  const [aiUsage] = useState({
-    daily: 85,
-    weekly: 72,
-    monthly: 68,
-  });
-
   const toggleSetting = (id: string) => {
-    setSettings(settings.map(s => 
-      s.id === id ? { ...s, enabled: !s.enabled } : s
-    ));
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    setSettings(settings.map(s => (s.id === id ? { ...s, enabled: !s.enabled } : s)));
+  };
+
+  const handleLogout = async () => {
+    Alert.alert(
+      'Logout',
+      'Are you sure you want to logout? Your data will remain synced across devices.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Logout',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await authService.logout();
+              router.replace('/(tabs)/auth/login' as any);
+            } catch (error) {
+              console.error('Logout error:', error);
+              Alert.alert('Error', 'Failed to logout');
+            }
+          },
+        },
+      ]
+    );
+  };
+
+  const handleSyncNow = async () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    
+    try {
+      await syncService.syncNow();
+      Alert.alert('Success', 'Data synced successfully');
+    } catch (error) {
+      console.error('Sync error:', error);
+      Alert.alert('Error', 'Failed to sync data');
+    }
   };
 
   const renderHeaderRight = () => (
-    <Pressable
-      onPress={() => router.push('/(tabs)/ai-config')}
-      style={{ marginRight: 16 }}
-    >
-      <IconSymbol
-        name="gearshape"
-        size={24}
-        color={theme.dark ? colors.textDark : colors.text}
-      />
+    <Pressable onPress={() => router.push('/(tabs)/ai-config' as any)} style={{ marginRight: 16 }}>
+      <IconSymbol name="gearshape.fill" size={24} color={colors.text} />
     </Pressable>
   );
 
@@ -126,248 +142,170 @@ export default function ProfileScreen() {
       <Stack.Screen
         options={{
           title: 'Profile',
+          headerShown: true,
+          headerStyle: { backgroundColor: theme.colors.background },
+          headerTintColor: theme.colors.text,
           headerRight: renderHeaderRight,
-          headerStyle: {
-            backgroundColor: theme.dark ? colors.backgroundDark : colors.background,
-          },
-          headerTintColor: theme.dark ? colors.textDark : colors.text,
         }}
       />
-      <ScrollView
-        style={[
-          styles.container,
-          { backgroundColor: theme.dark ? colors.backgroundDark : colors.background },
-        ]}
-        contentContainerStyle={styles.contentContainer}
-        showsVerticalScrollIndicator={false}
-      >
+      <ScrollView style={styles.container} contentContainerStyle={styles.content}>
         {/* Profile Header */}
-        <AnimatedCard animation="fadeInDown" delay={0} variant="compact">
-          <View style={styles.profileHeader}>
-            <View style={styles.avatarContainer}>
-              <View style={[styles.avatar, { backgroundColor: colors.primary }]}>
-                <Text style={styles.avatarText}>JD</Text>
-              </View>
-              <View style={[styles.statusBadge, { backgroundColor: colors.success }]} />
+        <AnimatedCard delay={100} style={styles.profileCard}>
+          <View style={styles.avatarContainer}>
+            <View style={styles.avatar}>
+              <IconSymbol name="person.fill" size={48} color={colors.primary} />
             </View>
-            <View style={styles.profileInfo}>
-              <Text style={[styles.profileName, { color: theme.dark ? colors.textDark : colors.text }]}>
-                John Doe
-              </Text>
-              <Text style={[styles.profileEmail, { color: theme.dark ? colors.textSecondaryDark : colors.textSecondary }]}>
-                john.doe@example.com
-              </Text>
-              <View style={styles.badgeRow}>
-                <Badge variant="primary" size="sm">Pro Plan</Badge>
-                <Badge variant="success" size="sm">Verified</Badge>
-              </View>
-            </View>
+            <View style={styles.onlineIndicator} />
+          </View>
+          <Text style={styles.name}>{user?.name || 'User'}</Text>
+          <Text style={styles.email}>{user?.email || 'user@example.com'}</Text>
+          <View style={styles.providerBadge}>
+            <IconSymbol
+              name={
+                user?.provider === 'google'
+                  ? 'g.circle.fill'
+                  : user?.provider === 'apple'
+                  ? 'apple.logo'
+                  : user?.provider === 'microsoft'
+                  ? 'microsoft.logo'
+                  : 'envelope.fill'
+              }
+              size={16}
+              color={colors.text}
+            />
+            <Text style={styles.providerText}>
+              {user?.provider === 'email' ? 'Email' : user?.provider || 'Email'}
+            </Text>
           </View>
         </AnimatedCard>
 
-        {/* Stats Grid */}
-        <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: theme.dark ? colors.textDark : colors.text }]}>
-            Your Activity
-          </Text>
-          <View style={styles.statsGrid}>
-            {stats.map((stat, index) => (
-              <AnimatedCard
-                key={stat.id}
-                variant="small"
-                animation="zoomIn"
-                delay={100 + index * 50}
-                style={styles.statCard}
-              >
-                <View style={[styles.statIcon, { backgroundColor: `${stat.color}20` }]}>
-                  <IconSymbol name={stat.icon} size={20} color={stat.color} />
-                </View>
-                <Text style={[styles.statValue, { color: theme.dark ? colors.textDark : colors.text }]}>
-                  {stat.value}
-                </Text>
-                <Text style={[styles.statLabel, { color: theme.dark ? colors.textMutedDark : colors.textMuted }]}>
-                  {stat.label}
-                </Text>
-              </AnimatedCard>
-            ))}
-          </View>
-        </View>
-
-        <Separator />
-
-        {/* AI Usage */}
-        <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: theme.dark ? colors.textDark : colors.text }]}>
-            AI Usage
-          </Text>
-          <AnimatedCard animation="fadeInLeft" delay={300}>
-            <View style={styles.usageItem}>
-              <View style={styles.usageHeader}>
-                <Text style={[styles.usageLabel, { color: theme.dark ? colors.textDark : colors.text }]}>
-                  Daily Average
-                </Text>
-                <Text style={[styles.usageValue, { color: colors.primary }]}>
-                  {aiUsage.daily}%
-                </Text>
+        {/* Stats */}
+        <View style={styles.statsGrid}>
+          {stats.map((stat, index) => (
+            <AnimatedCard key={stat.id} delay={200 + index * 50} style={styles.statCard}>
+              <View style={[styles.statIcon, { backgroundColor: stat.color + '20' }]}>
+                <IconSymbol name={stat.icon} size={24} color={stat.color} />
               </View>
-              <Progress value={aiUsage.daily} color={colors.primary} />
-            </View>
-            <View style={styles.usageItem}>
-              <View style={styles.usageHeader}>
-                <Text style={[styles.usageLabel, { color: theme.dark ? colors.textDark : colors.text }]}>
-                  Weekly Average
-                </Text>
-                <Text style={[styles.usageValue, { color: colors.violet }]}>
-                  {aiUsage.weekly}%
-                </Text>
-              </View>
-              <Progress value={aiUsage.weekly} color={colors.violet} />
-            </View>
-            <View style={styles.usageItem}>
-              <View style={styles.usageHeader}>
-                <Text style={[styles.usageLabel, { color: theme.dark ? colors.textDark : colors.text }]}>
-                  Monthly Average
-                </Text>
-                <Text style={[styles.usageValue, { color: colors.emerald }]}>
-                  {aiUsage.monthly}%
-                </Text>
-              </View>
-              <Progress value={aiUsage.monthly} color={colors.emerald} />
-            </View>
-          </AnimatedCard>
-        </View>
-
-        <Separator />
-
-        {/* Settings */}
-        <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: theme.dark ? colors.textDark : colors.text }]}>
-            AI Features
-          </Text>
-          {settings.map((setting, index) => (
-            <AnimatedCard
-              key={setting.id}
-              variant="compact"
-              animation="fadeInRight"
-              delay={400 + index * 50}
-            >
-              <View style={styles.settingRow}>
-                <View style={[styles.settingIcon, { backgroundColor: `${colors.primary}20` }]}>
-                  <IconSymbol name={setting.icon} size={20} color={colors.primary} />
-                </View>
-                <View style={styles.settingInfo}>
-                  <Text style={[styles.settingTitle, { color: theme.dark ? colors.textDark : colors.text }]}>
-                    {setting.title}
-                  </Text>
-                  <Text style={[styles.settingDescription, { color: theme.dark ? colors.textSecondaryDark : colors.textSecondary }]}>
-                    {setting.description}
-                  </Text>
-                </View>
-                <Switch
-                  value={setting.enabled}
-                  onValueChange={() => toggleSetting(setting.id)}
-                />
-              </View>
+              <Text style={styles.statValue}>{stat.value}</Text>
+              <Text style={styles.statLabel}>{stat.label}</Text>
             </AnimatedCard>
           ))}
         </View>
 
         <Separator />
 
-        {/* Quick Links */}
+        {/* Connected Devices */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: theme.dark ? colors.textDark : colors.text }]}>
-            Quick Links
+          <Text style={styles.sectionTitle}>Connected Devices</Text>
+          {devices.map((device, index) => (
+            <Card key={device.id} style={styles.deviceCard}>
+              <View style={styles.deviceHeader}>
+                <View style={styles.deviceIcon}>
+                  <IconSymbol
+                    name={
+                      device.type === 'ios'
+                        ? 'iphone'
+                        : device.type === 'android'
+                        ? 'smartphone'
+                        : device.type === 'web'
+                        ? 'globe'
+                        : 'desktopcomputer'
+                    }
+                    size={24}
+                    color={colors.primary}
+                  />
+                </View>
+                <View style={{ flex: 1 }}>
+                  <View style={styles.deviceTitleRow}>
+                    <Text style={styles.deviceName}>{device.name}</Text>
+                    {device.isCurrentDevice && <Badge variant="success">Current</Badge>}
+                  </View>
+                  <Text style={styles.deviceMeta}>
+                    Last active: {new Date(device.lastActive).toLocaleDateString()}
+                  </Text>
+                </View>
+              </View>
+            </Card>
+          ))}
+        </View>
+
+        <Separator />
+
+        {/* Settings */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Settings</Text>
+          {settings.map((setting, index) => (
+            <Card key={setting.id} style={styles.settingCard}>
+              <View style={styles.settingContent}>
+                <View style={styles.settingIcon}>
+                  <IconSymbol name={setting.icon} size={20} color={colors.primary} />
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.settingTitle}>{setting.title}</Text>
+                  <Text style={styles.settingDescription}>{setting.description}</Text>
+                </View>
+                <Switch value={setting.enabled} onValueChange={() => toggleSetting(setting.id)} />
+              </View>
+            </Card>
+          ))}
+        </View>
+
+        <Separator />
+
+        {/* Quick Actions */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Quick Actions</Text>
+          
+          <Pressable style={styles.actionButton} onPress={handleSyncNow}>
+            <IconSymbol name="arrow.triangle.2.circlepath" size={20} color={colors.primary} />
+            <Text style={styles.actionButtonText}>Sync Now</Text>
+            <IconSymbol name="chevron.right" size={16} color={colors.textSecondary} />
+          </Pressable>
+
+          <Pressable
+            style={styles.actionButton}
+            onPress={() => router.push('/(tabs)/startup-summary' as any)}
+          >
+            <IconSymbol name="clock.arrow.circlepath" size={20} color={colors.info} />
+            <Text style={styles.actionButtonText}>View Startup Summary</Text>
+            <IconSymbol name="chevron.right" size={16} color={colors.textSecondary} />
+          </Pressable>
+
+          <Pressable
+            style={styles.actionButton}
+            onPress={() => router.push('/(tabs)/privacy' as any)}
+          >
+            <IconSymbol name="lock.shield.fill" size={20} color={colors.warning} />
+            <Text style={styles.actionButtonText}>Privacy & Security</Text>
+            <IconSymbol name="chevron.right" size={16} color={colors.textSecondary} />
+          </Pressable>
+
+          <Pressable
+            style={styles.actionButton}
+            onPress={() => router.push('/(tabs)/ai-config' as any)}
+          >
+            <IconSymbol name="cpu" size={20} color={colors.violet} />
+            <Text style={styles.actionButtonText}>AI Configuration</Text>
+            <IconSymbol name="chevron.right" size={16} color={colors.textSecondary} />
+          </Pressable>
+        </View>
+
+        <Separator />
+
+        {/* Logout */}
+        <View style={styles.section}>
+          <Button variant="destructive" onPress={handleLogout}>
+            <IconSymbol name="arrow.right.square.fill" size={20} color={colors.primaryForeground} />
+            <Text style={{ marginLeft: 8 }}>Logout</Text>
+          </Button>
+        </View>
+
+        <View style={styles.footer}>
+          <Text style={styles.footerText}>PVA+ v1.0.0</Text>
+          <Text style={styles.footerText}>
+            Last synced: {syncService.getSyncState().lastSync || 'Never'}
           </Text>
-          <AnimatedCard
-            variant="compact"
-            interactive
-            onPress={() => router.push('/(tabs)/integrations')}
-            animation="fadeInUp"
-            delay={600}
-          >
-            <View style={styles.linkRow}>
-              <IconSymbol name="link.circle" size={24} color={colors.primary} />
-              <Text style={[styles.linkText, { color: theme.dark ? colors.textDark : colors.text }]}>
-                Manage Integrations
-              </Text>
-              <IconSymbol name="chevron.right" size={20} color={theme.dark ? colors.textMutedDark : colors.textMuted} />
-            </View>
-          </AnimatedCard>
-          <AnimatedCard
-            variant="compact"
-            interactive
-            onPress={() => router.push('/(tabs)/privacy')}
-            animation="fadeInUp"
-            delay={650}
-          >
-            <View style={styles.linkRow}>
-              <IconSymbol name="lock.shield" size={24} color={colors.success} />
-              <Text style={[styles.linkText, { color: theme.dark ? colors.textDark : colors.text }]}>
-                Privacy & Security
-              </Text>
-              <IconSymbol name="chevron.right" size={20} color={theme.dark ? colors.textMutedDark : colors.textMuted} />
-            </View>
-          </AnimatedCard>
-          <AnimatedCard
-            variant="compact"
-            interactive
-            onPress={() => router.push('/(tabs)/ai-dashboard' as any)}
-            animation="fadeInUp"
-            delay={700}
-          >
-            <View style={styles.linkRow}>
-              <IconSymbol name="chart.bar.xaxis" size={24} color={colors.indigo} />
-              <Text style={[styles.linkText, { color: theme.dark ? colors.textDark : colors.text }]}>
-                AI Dashboard
-              </Text>
-              <IconSymbol name="chevron.right" size={20} color={theme.dark ? colors.textMutedDark : colors.textMuted} />
-            </View>
-          </AnimatedCard>
-          <AnimatedCard
-            variant="compact"
-            interactive
-            onPress={() => router.push('/(tabs)/digital-body-language')}
-            animation="fadeInUp"
-            delay={750}
-          >
-            <View style={styles.linkRow}>
-              <IconSymbol name="brain" size={24} color={colors.violet} />
-              <Text style={[styles.linkText, { color: theme.dark ? colors.textDark : colors.text }]}>
-                Digital Body Language
-              </Text>
-              <IconSymbol name="chevron.right" size={20} color={theme.dark ? colors.textMutedDark : colors.textMuted} />
-            </View>
-          </AnimatedCard>
-          <AnimatedCard
-            variant="compact"
-            interactive
-            onPress={() => router.push('/(tabs)/ui-showcase')}
-            animation="fadeInUp"
-            delay={800}
-          >
-            <View style={styles.linkRow}>
-              <IconSymbol name="paintbrush" size={24} color={colors.rose} />
-              <Text style={[styles.linkText, { color: theme.dark ? colors.textDark : colors.text }]}>
-                UI Components Showcase
-              </Text>
-              <IconSymbol name="chevron.right" size={20} color={theme.dark ? colors.textMutedDark : colors.textMuted} />
-            </View>
-          </AnimatedCard>
         </View>
-
-        {/* Action Buttons */}
-        <View style={styles.section}>
-          <Button variant="outline" fullWidth onPress={() => console.log('Edit profile')}>
-            Edit Profile
-          </Button>
-          <Button variant="destructive" fullWidth onPress={() => console.log('Sign out')}>
-            Sign Out
-          </Button>
-        </View>
-
-        {/* Bottom Padding */}
-        <View style={{ height: 100 }} />
       </ScrollView>
     </>
   );
@@ -376,57 +314,99 @@ export default function ProfileScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: colors.background,
   },
-  contentContainer: {
-    paddingHorizontal: 20,
-    paddingTop: 20,
+  content: {
+    padding: 16,
+    paddingBottom: 100,
   },
-  profileHeader: {
-    flexDirection: 'row',
+  profileCard: {
     alignItems: 'center',
+    padding: 24,
+    marginBottom: 16,
   },
   avatarContainer: {
     position: 'relative',
-    marginRight: 16,
+    marginBottom: 16,
   },
   avatar: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    backgroundColor: colors.primary + '20',
     alignItems: 'center',
     justifyContent: 'center',
+    borderWidth: 3,
+    borderColor: colors.primary,
   },
-  avatarText: {
-    fontSize: 28,
-    fontWeight: '700',
-    color: colors.primaryForeground,
-  },
-  statusBadge: {
+  onlineIndicator: {
     position: 'absolute',
-    bottom: 2,
-    right: 2,
-    width: 16,
-    height: 16,
-    borderRadius: 8,
+    bottom: 4,
+    right: 4,
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    backgroundColor: colors.success,
     borderWidth: 3,
     borderColor: colors.card,
   },
-  profileInfo: {
-    flex: 1,
-  },
-  profileName: {
-    fontSize: 22,
+  name: {
+    fontSize: 24,
     fontWeight: '700',
+    color: colors.text,
     marginBottom: 4,
-    letterSpacing: -0.5,
   },
-  profileEmail: {
-    fontSize: 14,
-    marginBottom: 8,
+  email: {
+    fontSize: 16,
+    color: colors.textSecondary,
+    marginBottom: 12,
   },
-  badgeRow: {
+  providerBadge: {
     flexDirection: 'row',
-    gap: 8,
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    backgroundColor: colors.secondary,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  providerText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: colors.text,
+    textTransform: 'capitalize',
+  },
+  statsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 12,
+    marginBottom: 24,
+  },
+  statCard: {
+    width: '48%',
+    padding: 16,
+    alignItems: 'center',
+  },
+  statIcon: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 12,
+  },
+  statValue: {
+    fontSize: 28,
+    fontWeight: '700',
+    color: colors.text,
+    marginBottom: 4,
+  },
+  statLabel: {
+    fontSize: 12,
+    color: colors.textSecondary,
+    textAlign: 'center',
   },
   section: {
     marginBottom: 24,
@@ -434,88 +414,92 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 20,
     fontWeight: '700',
+    color: colors.text,
     marginBottom: 16,
-    letterSpacing: -0.5,
   },
-  statsGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 12,
-  },
-  statCard: {
-    width: '48%',
-    alignItems: 'center',
+  deviceCard: {
     padding: 16,
-  },
-  statIcon: {
-    width: 48,
-    height: 48,
-    borderRadius: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
     marginBottom: 12,
   },
-  statValue: {
-    fontSize: 24,
-    fontWeight: '700',
+  deviceHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  deviceIcon: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: colors.primary + '20',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  deviceTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
     marginBottom: 4,
-    letterSpacing: -0.5,
   },
-  statLabel: {
-    fontSize: 12,
-    textAlign: 'center',
-  },
-  usageItem: {
-    marginBottom: 20,
-  },
-  usageHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  usageLabel: {
-    fontSize: 15,
-    fontWeight: '600',
-  },
-  usageValue: {
+  deviceName: {
     fontSize: 16,
-    fontWeight: '700',
+    fontWeight: '600',
+    color: colors.text,
   },
-  settingRow: {
+  deviceMeta: {
+    fontSize: 14,
+    color: colors.textSecondary,
+  },
+  settingCard: {
+    padding: 16,
+    marginBottom: 12,
+  },
+  settingContent: {
     flexDirection: 'row',
     alignItems: 'center',
+    gap: 12,
   },
   settingIcon: {
     width: 40,
     height: 40,
-    borderRadius: 10,
+    borderRadius: 20,
+    backgroundColor: colors.primary + '20',
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 12,
-  },
-  settingInfo: {
-    flex: 1,
   },
   settingTitle: {
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: '600',
-    marginBottom: 2,
-    letterSpacing: -0.2,
+    color: colors.text,
+    marginBottom: 4,
   },
   settingDescription: {
-    fontSize: 13,
-    lineHeight: 18,
+    fontSize: 14,
+    color: colors.textSecondary,
   },
-  linkRow: {
+  actionButton: {
     flexDirection: 'row',
     alignItems: 'center',
+    backgroundColor: colors.card,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: colors.border,
+    padding: 16,
+    marginBottom: 12,
     gap: 12,
   },
-  linkText: {
+  actionButtonText: {
     flex: 1,
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: '600',
-    letterSpacing: -0.2,
+    color: colors.text,
+  },
+  footer: {
+    alignItems: 'center',
+    paddingVertical: 24,
+  },
+  footerText: {
+    fontSize: 12,
+    color: colors.textMuted,
+    marginBottom: 4,
   },
 });

@@ -79,6 +79,9 @@ export default function TabLayout() {
         }}
       >
         <Stack.Screen name="(home)" />
+        <Stack.Screen name="auth/login" options={{ headerShown: false }} />
+        <Stack.Screen name="auth/signup" options={{ headerShown: false }} />
+        <Stack.Screen name="startup-summary" options={{ headerShown: false }} />
         <Stack.Screen name="integrations" />
         <Stack.Screen name="voice" />
         <Stack.Screen name="problem-solver" />

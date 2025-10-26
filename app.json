@@ -1,7 +1,8 @@
+
 {
   "expo": {
-    "name": "Natively",
-    "slug": "Natively",
+    "name": "PVA+",
+    "slug": "pva-plus",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/natively-dark.png",
@@ -14,9 +15,16 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.anonymous.Natively",
+      "bundleIdentifier": "com.pvaplus.app",
       "infoPlist": {
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSMicrophoneUsageDescription": "PVA+ needs access to your microphone for voice commands and voice assistant features.",
+        "NSCameraUsageDescription": "PVA+ needs access to your camera for video calls and document scanning.",
+        "NSLocationWhenInUseUsageDescription": "PVA+ needs your location to provide travel recommendations and location-based reminders.",
+        "NSCalendarsUsageDescription": "PVA+ needs access to your calendar to schedule meetings and manage events.",
+        "NSRemindersUsageDescription": "PVA+ needs access to your reminders to help you stay organized.",
+        "NSContactsUsageDescription": "PVA+ needs access to your contacts to help you communicate with others.",
+        "NSUserNotificationsUsageDescription": "PVA+ needs to send you notifications for reminders, meetings, and important updates."
       }
     },
     "android": {
@@ -25,7 +33,19 @@
         "backgroundColor": "#000000"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.anonymous.Natively"
+      "package": "com.pvaplus.app",
+      "permissions": [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.CAMERA",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.READ_CALENDAR",
+        "android.permission.WRITE_CALENDAR",
+        "android.permission.READ_CONTACTS",
+        "android.permission.VIBRATE",
+        "android.permission.RECEIVE_BOOT_COMPLETED",
+        "android.permission.SCHEDULE_EXACT_ALARM"
+      ]
     },
     "web": {
       "favicon": "./assets/images/final_quest_240x240.png",
@@ -34,14 +54,32 @@
     "plugins": [
       "expo-font",
       "expo-router",
-      "expo-web-browser"
+      "expo-web-browser",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/images/natively-dark.png",
+          "color": "#0ea5e9",
+          "sounds": [],
+          "mode": "production"
+        }
+      ]
     ],
-    "scheme": "natively",
+    "scheme": "pvaplus",
     "experiments": {
       "typedRoutes": true
     },
     "extra": {
-      "router": {}
+      "router": {},
+      "eas": {
+        "projectId": "your-project-id"
+      }
+    },
+    "notification": {
+      "icon": "./assets/images/natively-dark.png",
+      "color": "#0ea5e9",
+      "androidMode": "default",
+      "androidCollapsedTitle": "PVA+ Assistant"
     }
   }
 }
