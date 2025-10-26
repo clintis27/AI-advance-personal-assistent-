@@ -1,8 +1,10 @@
+
 import React from 'react';
 import { Platform } from 'react-native';
 import { NativeTabs, Icon, Label } from 'expo-router/unstable-native-tabs';
 import { Stack } from 'expo-router';
 import FloatingTabBar, { TabBarItem } from '@/components/FloatingTabBar';
+import { colors } from '@/styles/commonStyles';
 
 export default function TabLayout() {
   // Define the tabs configuration
@@ -12,6 +14,18 @@ export default function TabLayout() {
       route: '/(tabs)/(home)/',
       icon: 'house.fill',
       label: 'Home',
+    },
+    {
+      name: 'email',
+      route: '/(tabs)/email',
+      icon: 'envelope.fill',
+      label: 'Email',
+    },
+    {
+      name: 'meetings',
+      route: '/(tabs)/meetings',
+      icon: 'calendar',
+      label: 'Meetings',
     },
     {
       name: 'profile',
@@ -29,6 +43,14 @@ export default function TabLayout() {
           <Icon sf="house.fill" drawable="ic_home" />
           <Label>Home</Label>
         </NativeTabs.Trigger>
+        <NativeTabs.Trigger name="email">
+          <Icon sf="envelope.fill" drawable="ic_email" />
+          <Label>Email</Label>
+        </NativeTabs.Trigger>
+        <NativeTabs.Trigger name="meetings">
+          <Icon sf="calendar" drawable="ic_calendar" />
+          <Label>Meetings</Label>
+        </NativeTabs.Trigger>
         <NativeTabs.Trigger name="profile">
           <Icon sf="person.fill" drawable="ic_profile" />
           <Label>Profile</Label>
@@ -43,10 +65,12 @@ export default function TabLayout() {
       <Stack
         screenOptions={{
           headerShown: false,
-          animation: 'none', // Remove fade animation to prevent black screen flash
+          animation: 'none',
         }}
       >
         <Stack.Screen name="(home)" />
+        <Stack.Screen name="email" />
+        <Stack.Screen name="meetings" />
         <Stack.Screen name="profile" />
       </Stack>
       <FloatingTabBar tabs={tabs} />
