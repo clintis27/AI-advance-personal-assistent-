@@ -258,8 +258,29 @@ export default function ProfileScreen() {
                 <IconSymbol name="chart.line.uptrend.xyaxis" size={22} color="#95E1D3" />
               </View>
               <View style={styles.menuContent}>
-                <Text style={styles.menuTitle}>Digital Body Language</Text>
-                <Text style={styles.menuSubtitle}>Behavior insights and patterns</Text>
+                <Text style={styles.menuTitle}>Daily Routine</Text>
+                <Text style={styles.menuSubtitle}>Schedule and patterns</Text>
+              </View>
+              <IconSymbol
+                name="chevron.right"
+                size={20}
+                color={colors.textSecondary}
+                style={styles.menuChevron}
+              />
+            </Pressable>
+          </Animated.View>
+
+          <Animated.View entering={FadeInDown.duration(400).delay(450)}>
+            <Pressable
+              style={styles.menuItem}
+              onPress={() => router.push('/(tabs)/behavior')}
+            >
+              <View style={[styles.menuIconContainer, { backgroundColor: colors.warning + '20' }]}>
+                <IconSymbol name="brain" size={22} color={colors.warning} />
+              </View>
+              <View style={styles.menuContent}>
+                <Text style={styles.menuTitle}>Behavior Intelligence</Text>
+                <Text style={styles.menuSubtitle}>Digital body language & ML</Text>
               </View>
               <IconSymbol
                 name="chevron.right"
@@ -274,7 +295,7 @@ export default function ProfileScreen() {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>About</Text>
 
-          <Animated.View entering={FadeInDown.duration(400).delay(450)}>
+          <Animated.View entering={FadeInDown.duration(400).delay(500)}>
             <Pressable style={styles.menuItem}>
               <View style={[styles.menuIconContainer, { backgroundColor: colors.textSecondary + '20' }]}>
                 <IconSymbol name="info.circle.fill" size={22} color={colors.textSecondary} />
@@ -292,7 +313,7 @@ export default function ProfileScreen() {
             </Pressable>
           </Animated.View>
 
-          <Animated.View entering={FadeInDown.duration(400).delay(500)}>
+          <Animated.View entering={FadeInDown.duration(400).delay(550)}>
             <Pressable style={styles.menuItem}>
               <View style={[styles.menuIconContainer, { backgroundColor: colors.textSecondary + '20' }]}>
                 <IconSymbol name="doc.text.fill" size={22} color={colors.textSecondary} />

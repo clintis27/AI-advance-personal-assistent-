@@ -1,0 +1,226 @@
+
+{
+  "tracking": {
+    "enabled": true,
+    "granularity": "standard",
+    "retentionDays": {
+      "activities": 30,
+      "patterns": -1,
+      "moods": 7,
+      "events": 30
+    },
+    "batchInterval": 3600,
+    "categories": [
+      "email",
+      "calendar",
+      "tasks",
+      "meetings",
+      "communication",
+      "focus",
+      "breaks"
+    ]
+  },
+  "machineLearning": {
+    "enabled": true,
+    "models": {
+      "intentPrediction": {
+        "enabled": true,
+        "confidenceThreshold": 0.7,
+        "updateFrequency": "daily"
+      },
+      "moodDetection": {
+        "enabled": true,
+        "confidenceThreshold": 0.65,
+        "updateFrequency": "hourly"
+      },
+      "taskPrioritization": {
+        "enabled": true,
+        "confidenceThreshold": 0.75,
+        "updateFrequency": "daily"
+      },
+      "scheduleOptimization": {
+        "enabled": true,
+        "confidenceThreshold": 0.8,
+        "updateFrequency": "daily"
+      }
+    },
+    "trainingSchedule": {
+      "frequency": "daily",
+      "time": "02:00",
+      "minDataPoints": 100
+    }
+  },
+  "eventDetection": {
+    "enabled": true,
+    "triggers": [
+      {
+        "id": "device_unlock",
+        "name": "Device Unlocked",
+        "type": "device",
+        "enabled": true,
+        "action": "show_priority_tasks",
+        "cooldown": 300
+      },
+      {
+        "id": "urgent_email",
+        "name": "Urgent Email Received",
+        "type": "email",
+        "enabled": true,
+        "action": "smart_notification",
+        "cooldown": 60,
+        "conditions": {
+          "priority": "high",
+          "keywords": ["urgent", "asap", "important"]
+        }
+      },
+      {
+        "id": "meeting_starting",
+        "name": "Meeting Starting Soon",
+        "type": "calendar",
+        "enabled": true,
+        "action": "prepare_briefing",
+        "cooldown": 900,
+        "conditions": {
+          "minutesBefore": 15
+        }
+      },
+      {
+        "id": "location_office",
+        "name": "Arrived at Office",
+        "type": "location",
+        "enabled": false,
+        "action": "start_work_mode",
+        "cooldown": 1800
+      },
+      {
+        "id": "focus_time",
+        "name": "Focus Time Block",
+        "type": "time",
+        "enabled": true,
+        "action": "enable_dnd",
+        "cooldown": 3600,
+        "conditions": {
+          "timeRanges": [
+            { "start": "09:00", "end": "12:00" },
+            { "start": "14:00", "end": "17:00" }
+          ]
+        }
+      }
+    ]
+  },
+  "userProfiling": {
+    "enabled": true,
+    "preferences": {
+      "workingHours": {
+        "start": "09:00",
+        "end": "17:00",
+        "timezone": "auto"
+      },
+      "breaks": {
+        "frequency": 120,
+        "duration": 15,
+        "autoSuggest": true
+      },
+      "notifications": {
+        "urgentOnly": false,
+        "quietHours": {
+          "enabled": true,
+          "start": "22:00",
+          "end": "07:00"
+        },
+        "channels": ["push", "email"]
+      },
+      "tasks": {
+        "preferredDuration": 60,
+        "maxConcurrent": 3,
+        "prioritization": "ai-suggested"
+      }
+    },
+    "autonomy": {
+      "level": "semi-autonomous",
+      "autoApproveThreshold": 0.9,
+      "requireConfirmationAbove": 0.5,
+      "maxAutonomousActions": 10,
+      "riskTolerance": "medium"
+    }
+  },
+  "analytics": {
+    "enabled": true,
+    "metrics": [
+      {
+        "id": "active_hours",
+        "name": "Daily Active Hours",
+        "type": "duration",
+        "aggregation": "sum"
+      },
+      {
+        "id": "task_completion",
+        "name": "Task Completion Rate",
+        "type": "percentage",
+        "aggregation": "average"
+      },
+      {
+        "id": "response_time",
+        "name": "Average Response Time",
+        "type": "duration",
+        "aggregation": "average"
+      },
+      {
+        "id": "focus_score",
+        "name": "Focus Score",
+        "type": "score",
+        "aggregation": "average"
+      }
+    ],
+    "insights": {
+      "enabled": true,
+      "frequency": "daily",
+      "categories": [
+        "productivity",
+        "wellbeing",
+        "communication",
+        "time-management"
+      ]
+    }
+  },
+  "privacy": {
+    "dataEncryption": true,
+    "localStorageOnly": true,
+    "cloudSync": false,
+    "anonymization": true,
+    "dataExport": true,
+    "rightToDelete": true,
+    "consentRequired": true
+  },
+  "performance": {
+    "caching": {
+      "enabled": true,
+      "ttl": 3600,
+      "maxSize": 100
+    },
+    "batchProcessing": {
+      "enabled": true,
+      "batchSize": 50,
+      "interval": 300
+    },
+    "optimization": {
+      "compressData": true,
+      "lazyLoading": true,
+      "prefetch": false
+    }
+  },
+  "ui": {
+    "animations": true,
+    "refreshInterval": 60,
+    "chartType": "line",
+    "theme": "auto",
+    "compactMode": false
+  },
+  "experimental": {
+    "voiceToneAnalysis": false,
+    "biometricIntegration": false,
+    "crossDeviceSync": false,
+    "teamInsights": false,
+    "predictiveScheduling": false
+  }
+}
