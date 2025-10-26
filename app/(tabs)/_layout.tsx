@@ -16,10 +16,10 @@ export default function TabLayout() {
       label: 'Home',
     },
     {
-      name: 'voice',
-      route: '/(tabs)/voice',
-      icon: 'waveform',
-      label: 'Voice',
+      name: 'integrations',
+      route: '/(tabs)/integrations',
+      icon: 'link.circle.fill',
+      label: 'Integrations',
     },
     {
       name: 'agent',
@@ -49,9 +49,9 @@ export default function TabLayout() {
           <Icon sf="house.fill" drawable="ic_home" />
           <Label>Home</Label>
         </NativeTabs.Trigger>
-        <NativeTabs.Trigger name="voice">
-          <Icon sf="waveform" drawable="ic_voice" />
-          <Label>Voice</Label>
+        <NativeTabs.Trigger name="integrations">
+          <Icon sf="link.circle.fill" drawable="ic_integrations" />
+          <Label>Integrations</Label>
         </NativeTabs.Trigger>
         <NativeTabs.Trigger name="agent">
           <Icon sf="person.crop.circle.badge.checkmark" drawable="ic_agent" />
@@ -79,6 +79,7 @@ export default function TabLayout() {
         }}
       >
         <Stack.Screen name="(home)" />
+        <Stack.Screen name="integrations" />
         <Stack.Screen name="voice" />
         <Stack.Screen name="problem-solver" />
         <Stack.Screen name="travel" />
@@ -87,6 +88,7 @@ export default function TabLayout() {
         <Stack.Screen name="agent" />
         <Stack.Screen name="routine" />
         <Stack.Screen name="privacy" />
+        <Stack.Screen name="ai-config" />
         <Stack.Screen name="profile" />
       </Stack>
       <FloatingTabBar tabs={tabs} />
