@@ -39,8 +39,8 @@ interface FloatingTabBarProps {
 
 export default function FloatingTabBar({
   tabs,
-  containerWidth = 240,
-  borderRadius = 20,
+  containerWidth = screenWidth - 40,
+  borderRadius = 24,
   bottomMargin
 }: FloatingTabBarProps) {
   const router = useRouter();
@@ -87,9 +87,9 @@ export default function FloatingTabBar({
   React.useEffect(() => {
     if (activeTabIndex >= 0) {
       animatedValue.value = withSpring(activeTabIndex, {
-        damping: 25,
-        stiffness: 150,
-        mass: 0.8,
+        damping: 20,
+        stiffness: 140,
+        mass: 0.7,
       });
     }
   }, [activeTabIndex, animatedValue]);
@@ -120,29 +120,23 @@ export default function FloatingTabBar({
       ...Platform.select({
         ios: {
           backgroundColor: theme.dark
-            ? 'rgba(15, 15, 15, 0.85)'
-            : 'rgba(255, 255, 255, 0.85)',
-          borderWidth: 1,
-          borderColor: theme.dark ? colors.borderDark : colors.border,
+            ? 'rgba(26, 26, 26, 0.95)'
+            : 'rgba(255, 255, 255, 0.95)',
         },
         android: {
           backgroundColor: theme.dark
-            ? 'rgba(15, 15, 15, 0.95)'
-            : 'rgba(255, 255, 255, 0.95)',
-          elevation: 8,
-          borderWidth: 1,
-          borderColor: theme.dark ? colors.borderDark : colors.border,
+            ? 'rgba(26, 26, 26, 0.98)'
+            : 'rgba(255, 255, 255, 0.98)',
+          elevation: 12,
         },
         web: {
           backgroundColor: theme.dark
-            ? 'rgba(15, 15, 15, 0.95)'
-            : 'rgba(255, 255, 255, 0.95)',
-          backdropFilter: 'blur(12px)',
+            ? 'rgba(26, 26, 26, 0.98)'
+            : 'rgba(255, 255, 255, 0.98)',
+          backdropFilter: 'blur(20px)',
           boxShadow: theme.dark
-            ? '0 8px 32px rgba(0, 0, 0, 0.5)'
-            : '0 8px 32px rgba(0, 0, 0, 0.1)',
-          borderWidth: 1,
-          borderColor: theme.dark ? colors.borderDark : colors.border,
+            ? '0 -4px 24px rgba(0, 0, 0, 0.6)'
+            : '0 -4px 24px rgba(0, 0, 0, 0.08)',
         },
       }),
     },
@@ -154,8 +148,8 @@ export default function FloatingTabBar({
       ...styles.indicator,
       backgroundColor: theme.dark
         ? colors.secondaryDark
-        : colors.secondary,
-      width: `${(100 / tabs.length) - 3}%`,
+        : colors.backgroundSecondary,
+      width: `${(100 / tabs.length) - 4}%`,
     },
   };
 
@@ -165,11 +159,11 @@ export default function FloatingTabBar({
         styles.container,
         {
           width: containerWidth,
-          marginBottom: bottomMargin ?? (Platform.OS === 'ios' ? 10 : 20)
+          marginBottom: bottomMargin ?? (Platform.OS === 'ios' ? 12 : 16)
         }
       ]}>
         <BlurView
-          intensity={Platform.OS === 'web' ? 0 : 80}
+          intensity={Platform.OS === 'web' ? 0 : 90}
           style={[dynamicStyles.blurContainer, { borderRadius }]}
         >
           <View style={dynamicStyles.background} />
@@ -188,14 +182,14 @@ export default function FloatingTabBar({
                   <View style={styles.tabContent}>
                     <IconSymbol
                       name={tab.icon}
-                      size={22}
+                      size={24}
                       color={isActive ? colors.primary : (theme.dark ? colors.textMutedDark : colors.textMuted)}
                     />
                     <Text
                       style={[
                         styles.tabLabel,
                         { color: theme.dark ? colors.textMutedDark : colors.textMuted },
-                        isActive && { color: colors.primary, fontWeight: '600' },
+                        isActive && { color: colors.primary, fontWeight: '700' },
                       ]}
                     >
                       {tab.label}
@@ -232,14 +226,14 @@ const styles = StyleSheet.create({
   },
   indicator: {
     position: 'absolute',
-    top: 8,
+    top: 6,
     left: 8,
-    bottom: 8,
-    borderRadius: 14,
+    bottom: 6,
+    borderRadius: 18,
   },
   tabsContainer: {
     flexDirection: 'row',
-    height: 60,
+    height: 68,
     alignItems: 'center',
     paddingHorizontal: 8,
   },
@@ -247,17 +241,17 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 8,
+    paddingVertical: 10,
   },
   tabContent: {
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 2,
+    gap: 4,
   },
   tabLabel: {
     fontSize: 11,
     fontWeight: '500',
     marginTop: 2,
-    letterSpacing: -0.2,
+    letterSpacing: -0.1,
   },
 });

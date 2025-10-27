@@ -145,11 +145,11 @@ export default function HomeScreen() {
 
   const quickActions: QuickAction[] = [
     { id: '1', title: 'Voice', icon: 'mic.fill', color: colors.primary, route: '/(tabs)/voice' },
-    { id: '2', title: 'Travel', icon: 'airplane.departure', color: colors.info, route: '/(tabs)/travel' },
-    { id: '3', title: 'Meetings', icon: 'calendar', color: colors.warning, route: '/(tabs)/meetings' },
-    { id: '4', title: 'Email', icon: 'envelope.fill', color: colors.error, route: '/(tabs)/email' },
-    { id: '5', title: 'Agent', icon: 'person.crop.circle.badge.checkmark', color: colors.violet, route: '/(tabs)/agent' },
-    { id: '6', title: 'Behavior', icon: 'brain.head.profile', color: colors.emerald, route: '/(tabs)/behavior' },
+    { id: '2', title: 'Travel', icon: 'airplane.departure', color: colors.secondary, route: '/(tabs)/travel' },
+    { id: '3', title: 'Meetings', icon: 'calendar', color: colors.primary, route: '/(tabs)/meetings' },
+    { id: '4', title: 'Email', icon: 'envelope.fill', color: colors.secondary, route: '/(tabs)/email' },
+    { id: '5', title: 'Agent', icon: 'person.crop.circle.badge.checkmark', color: colors.primary, route: '/(tabs)/agent' },
+    { id: '6', title: 'Behavior', icon: 'brain.head.profile', color: colors.secondary, route: '/(tabs)/behavior' },
   ];
 
   const getPriorityColor = (priority: string) => {
@@ -184,7 +184,7 @@ export default function HomeScreen() {
   };
 
   const renderHeaderRight = () => (
-    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, marginRight: 16 }}>
+    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16, marginRight: 20 }}>
       {syncState && (
         <Pressable onPress={handleSync}>
           <View style={{ position: 'relative' }}>
@@ -223,7 +223,7 @@ export default function HomeScreen() {
   );
 
   const renderHeaderLeft = () => (
-    <View style={{ marginLeft: 16 }}>
+    <View style={{ marginLeft: 20 }}>
       <Text style={styles.greeting}>
         {user ? `Hi, ${user.name.split(' ')[0]}` : 'Welcome'}
       </Text>
@@ -238,13 +238,14 @@ export default function HomeScreen() {
           headerShown: true,
           headerTransparent: false,
           headerStyle: {
-            backgroundColor: theme.colors.background,
+            backgroundColor: theme.dark ? colors.backgroundDark : colors.background,
           },
+          headerShadowVisible: false,
           headerLeft: renderHeaderLeft,
           headerRight: renderHeaderRight,
         }}
       />
-      <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+      <ScrollView style={[styles.container, { backgroundColor: theme.dark ? colors.backgroundDark : colors.background }]} contentContainerStyle={styles.content}>
         {/* AI Status */}
         <Animated.View entering={FadeInDown.delay(100)}>
           <AIStatusIndicator />
@@ -277,19 +278,20 @@ export default function HomeScreen() {
             {quickActions.map((action, index) => (
               <Pressable
                 key={action.id}
-                style={styles.quickActionCard}
+                style={({ pressed }) => [
+                  styles.quickActionCard,
+                  pressed && styles.quickActionCardPressed,
+                ]}
                 onPress={() => handleQuickActionPress(action.route)}
               >
-                <View style={[styles.quickActionIcon, { backgroundColor: action.color + '20' }]}>
-                  <IconSymbol name={action.icon} size={28} color={action.color} />
+                <View style={[styles.quickActionIcon, { backgroundColor: action.color }]}>
+                  <IconSymbol name={action.icon} size={24} color={colors.primaryForeground} />
                 </View>
                 <Text style={styles.quickActionTitle}>{action.title}</Text>
               </Pressable>
             ))}
           </View>
         </Animated.View>
-
-        <Separator />
 
         {/* Predicted Tasks */}
         <Animated.View entering={FadeInDown.delay(300)} style={styles.section}>
@@ -322,8 +324,6 @@ export default function HomeScreen() {
           ))}
         </Animated.View>
 
-        <Separator />
-
         {/* Email Summary */}
         <Animated.View entering={FadeInDown.delay(500)} style={styles.section}>
           <Text style={styles.sectionTitle}>Email Summary</Text>
@@ -347,14 +347,12 @@ export default function HomeScreen() {
             <Button
               variant="outline"
               onPress={() => router.push('/(tabs)/email' as any)}
-              style={{ marginTop: 16 }}
+              style={{ marginTop: 20 }}
             >
               View All Emails
             </Button>
           </Card>
         </Animated.View>
-
-        <Separator />
 
         {/* Upcoming Meetings */}
         <Animated.View entering={FadeInDown.delay(600)} style={styles.section}>
@@ -368,14 +366,14 @@ export default function HomeScreen() {
                 <View style={{ flex: 1 }}>
                   <Text style={styles.meetingTitle}>{meeting.title}</Text>
                   <View style={styles.meetingMeta}>
-                    <Text style={styles.meetingMetaText}>
-                      <IconSymbol name="clock.fill" size={12} color={colors.textSecondary} />{' '}
-                      {meeting.time} • {meeting.duration}
-                    </Text>
-                    <Text style={styles.meetingMetaText}>
-                      <IconSymbol name="person.2.fill" size={12} color={colors.textSecondary} />{' '}
-                      {meeting.attendees} attendees
-                    </Text>
+                    <View style={styles.meetingMetaItem}>
+                      <IconSymbol name="clock.fill" size={12} color={colors.textSecondary} />
+                      <Text style={styles.meetingMetaText}>{meeting.time} • {meeting.duration}</Text>
+                    </View>
+                    <View style={styles.meetingMetaItem}>
+                      <IconSymbol name="person.2.fill" size={12} color={colors.textSecondary} />
+                      <Text style={styles.meetingMetaText}>{meeting.attendees} attendees</Text>
+                    </View>
                   </View>
                 </View>
               </View>
@@ -390,22 +388,22 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
   },
   content: {
-    padding: 16,
+    padding: 20,
     paddingBottom: 100,
   },
   greeting: {
-    fontSize: 24,
+    fontSize: 28,
     fontWeight: '700',
     color: colors.text,
+    letterSpacing: -1,
   },
   syncBadge: {
     position: 'absolute',
-    top: -4,
-    right: -4,
-    backgroundColor: colors.error,
+    top: -6,
+    right: -6,
+    backgroundColor: colors.primary,
     borderRadius: 10,
     minWidth: 20,
     height: 20,
@@ -420,9 +418,9 @@ const styles = StyleSheet.create({
   },
   notificationBadge: {
     position: 'absolute',
-    top: -4,
-    right: -4,
-    backgroundColor: colors.error,
+    top: -6,
+    right: -6,
+    backgroundColor: colors.primary,
     borderRadius: 10,
     minWidth: 20,
     height: 20,
@@ -436,7 +434,7 @@ const styles = StyleSheet.create({
     color: colors.primaryForeground,
   },
   offlineCard: {
-    marginBottom: 16,
+    marginBottom: 20,
     backgroundColor: colors.warning + '10',
     borderColor: colors.warning,
   },
@@ -463,7 +461,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   section: {
-    marginBottom: 24,
+    marginBottom: 32,
   },
   sectionHeader: {
     flexDirection: 'row',
@@ -472,10 +470,11 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   sectionTitle: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: '700',
     color: colors.text,
     marginBottom: 16,
+    letterSpacing: -0.8,
   },
   quickActionsGrid: {
     flexDirection: 'row',
@@ -486,26 +485,29 @@ const styles = StyleSheet.create({
     width: '31%',
     aspectRatio: 1,
     backgroundColor: colors.card,
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: colors.border,
+    borderRadius: 20,
     padding: 16,
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 8,
+    gap: 10,
+  },
+  quickActionCardPressed: {
+    opacity: 0.7,
+    transform: [{ scale: 0.98 }],
   },
   quickActionIcon: {
     width: 56,
     height: 56,
-    borderRadius: 28,
+    borderRadius: 16,
     alignItems: 'center',
     justifyContent: 'center',
   },
   quickActionTitle: {
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: '600',
     color: colors.text,
     textAlign: 'center',
+    letterSpacing: -0.2,
   },
   taskCard: {
     marginBottom: 12,
@@ -526,6 +528,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: colors.text,
     flex: 1,
+    letterSpacing: -0.3,
   },
   taskDescription: {
     fontSize: 14,
@@ -546,7 +549,7 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
   },
   emailCard: {
-    padding: 20,
+    padding: 24,
   },
   emailRow: {
     flexDirection: 'row',
@@ -557,34 +560,36 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   emailCount: {
-    fontSize: 32,
+    fontSize: 36,
     fontWeight: '700',
     color: colors.text,
     marginBottom: 4,
+    letterSpacing: -1.5,
   },
   emailLabel: {
     fontSize: 12,
     color: colors.textSecondary,
     textAlign: 'center',
+    fontWeight: '500',
   },
   emailDivider: {
     width: 1,
-    height: 40,
+    height: 50,
     backgroundColor: colors.border,
   },
   meetingCard: {
     marginBottom: 12,
-    padding: 16,
+    padding: 18,
   },
   meetingHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
+    gap: 14,
   },
   meetingIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 48,
+    height: 48,
+    borderRadius: 14,
     backgroundColor: colors.primary + '20',
     alignItems: 'center',
     justifyContent: 'center',
@@ -593,14 +598,20 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     color: colors.text,
-    marginBottom: 4,
+    marginBottom: 6,
+    letterSpacing: -0.3,
   },
   meetingMeta: {
+    flexDirection: 'column',
+    gap: 4,
+  },
+  meetingMetaItem: {
     flexDirection: 'row',
-    gap: 12,
+    alignItems: 'center',
+    gap: 6,
   },
   meetingMetaText: {
-    fontSize: 12,
+    fontSize: 13,
     color: colors.textSecondary,
   },
 });
