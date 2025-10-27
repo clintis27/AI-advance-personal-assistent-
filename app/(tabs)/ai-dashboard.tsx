@@ -254,6 +254,13 @@ export default function AIDashboardScreen() {
             >
               Behavior AI
             </Button>
+            <Button
+              variant="outline"
+              onPress={() => router.push('/(tabs)/ai-examples')}
+              style={styles.actionButton}
+            >
+              AI Examples
+            </Button>
           </View>
         </Animated.View>
 
