@@ -10,6 +10,10 @@
 import { useCallback, useState, useRef } from 'react';
 import { SecureStorage } from '@/utils/secureStorage';
 
+// Falls back to this app's own deployed proxy (api/openai.ts) when no custom
+// endpoint has been configured in AI Config, so chat works out of the box.
+const DEFAULT_OPENAI_ENDPOINT = 'https://ai-advance-personal-assistant.vercel.app/api/openai';
+
 export interface OpenAIMessage {
   role: 'system' | 'user' | 'assistant';
   content: string;
@@ -60,12 +64,8 @@ export function useOpenAI() {
     setState({ status: 'loading', data: null, error: null });
     
     try {
-      // Get API endpoint from secure storage
-      const apiEndpoint = await SecureStorage.getItem('openai_endpoint');
-      
-      if (!apiEndpoint) {
-        throw new Error('OpenAI endpoint not configured. Please set up in AI Config.');
-      }
+      // Get API endpoint from secure storage, falling back to the built-in proxy
+      const apiEndpoint = (await SecureStorage.getItem('openai_endpoint')) || DEFAULT_OPENAI_ENDPOINT;
 
       // Create abort controller for cancellation
       const controller = new AbortController();
