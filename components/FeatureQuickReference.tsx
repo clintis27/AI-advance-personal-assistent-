@@ -1,12 +1,12 @@
 
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
-import { IconSymbol } from '@/components/IconSymbol';
+import { IconSymbol, IconSymbolName } from '@/components/IconSymbol';
 import { colors } from '@/styles/commonStyles';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 
 interface QuickTip {
-  icon: string;
+  icon: IconSymbolName;
   title: string;
   description: string;
   color: string;

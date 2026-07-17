@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, ScrollView, Platform, Pressable, Dimensions } from "react-native";
 import { Stack } from "expo-router";
-import { IconSymbol } from "@/components/IconSymbol";
+import { IconSymbol, IconSymbolName } from "@/components/IconSymbol";
 import { colors } from "@/styles/commonStyles";
 import Animated, { FadeInDown, FadeInUp } from "react-native-reanimated";
 
@@ -12,7 +12,7 @@ interface BehaviorMetric {
   value: string;
   change: number;
   trend: 'up' | 'down' | 'stable';
-  icon: string;
+  icon: IconSymbolName;
   color: string;
 }
 

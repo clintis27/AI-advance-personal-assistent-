@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/Button";
 import { ScrollView, Pressable, StyleSheet, View, Text, Platform, Alert } from "react-native";
 import * as Haptics from "expo-haptics";
 import React, { useState, useEffect } from "react";
-import { IconSymbol } from "@/components/IconSymbol";
+import { IconSymbol, IconSymbolName } from "@/components/IconSymbol";
 import { authService } from "@/services/authService";
 import { syncService } from "@/services/syncService";
 import { notificationService } from "@/services/notificationService";
@@ -47,7 +47,7 @@ interface Meeting {
 interface QuickAction {
   id: string;
   title: string;
-  icon: string;
+  icon: IconSymbolName;
   color: string;
   route: string;
 }

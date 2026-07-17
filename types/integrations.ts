@@ -3,7 +3,9 @@
  * Type definitions for App & Platform Integrations
  */
 
-export type IntegrationCategory = 
+import { IconSymbolName } from '@/components/IconSymbol';
+
+export type IntegrationCategory =
   | 'email' 
   | 'calendar' 
   | 'social' 
@@ -19,7 +21,7 @@ export interface Integration {
   name: string;
   category: IntegrationCategory;
   description: string;
-  icon: string;
+  icon: IconSymbolName;
   color: string;
   status: IntegrationStatus;
   provider: string;

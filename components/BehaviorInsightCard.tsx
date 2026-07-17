@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { View, Text, StyleSheet, Pressable, Dimensions } from 'react-native';
-import { IconSymbol } from '@/components/IconSymbol';
+import { IconSymbol, IconSymbolName } from '@/components/IconSymbol';
 import { colors } from '@/styles/commonStyles';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 
@@ -11,7 +11,7 @@ interface BehaviorInsightCardProps {
   title: string;
   subtitle: string;
   metric?: string;
-  icon: string;
+  icon: IconSymbolName;
   color: string;
   imageUrl?: string;
   onPress?: () => void;

@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, ScrollView, Platform, Pressable, Switch } from "react-native";
 import { Stack } from "expo-router";
-import { IconSymbol } from "@/components/IconSymbol";
+import { IconSymbol, IconSymbolName } from "@/components/IconSymbol";
 import { colors } from "@/styles/commonStyles";
 import Animated, { FadeInDown } from "react-native-reanimated";
 
@@ -19,7 +19,7 @@ interface PermissionItem {
   name: string;
   description: string;
   enabled: boolean;
-  icon: string;
+  icon: IconSymbolName;
 }
 
 export default function PrivacyScreen() {

@@ -3,6 +3,8 @@
  * Type definitions for AI Problem-Solving Engine and Travel Assistant
  */
 
+import { IconSymbolName } from '@/components/IconSymbol';
+
 // Problem Solver Types
 export interface Problem {
   id: string;
@@ -31,7 +33,7 @@ export interface Solution {
 export interface ProductivityIntegration {
   id: string;
   name: string;
-  icon: string;
+  icon: IconSymbolName;
   connected: boolean;
   color: string;
   apiEndpoint?: string;

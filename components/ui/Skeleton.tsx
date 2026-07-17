@@ -1,6 +1,6 @@
 
 import React, { useEffect } from 'react';
-import { View, StyleSheet, ViewStyle } from 'react-native';
+import { View, StyleSheet, ViewStyle, DimensionValue } from 'react-native';
 import { useTheme } from '@react-navigation/native';
 import Animated, {
   useAnimatedStyle,
@@ -12,7 +12,7 @@ import Animated, {
 import { colors } from '@/styles/commonStyles';
 
 interface SkeletonProps {
-  width?: number | string;
+  width?: DimensionValue;
   height?: number;
   borderRadius?: number;
   style?: ViewStyle;

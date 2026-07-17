@@ -154,7 +154,7 @@ export class FeatureExtractor {
     // Device features
     const unlockStreams = streams.filter(s => s.type === 'device_unlock');
     const recentUnlocks = unlockStreams.filter(
-      u => new Date(u.timestamp) > oneHourAgo
+      u => new Date(u.unlockTime) > oneHourAgo
     );
 
     // App usage features

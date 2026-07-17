@@ -180,7 +180,7 @@ export default function LoginScreen() {
             onPress={() => handleOAuthLogin('microsoft')}
             disabled={loading}
           >
-            <IconSymbol name="microsoft.logo" size={24} color={colors.text} />
+            <IconSymbol name="app.fill" size={24} color={colors.text} />
             <Text style={styles.oauthButtonText}>Continue with Microsoft</Text>
           </Pressable>
         </Animated.View>

@@ -1,6 +1,6 @@
 
 import "react-native-reanimated";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useFonts } from "expo-font";
 import { Stack, router } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
@@ -36,6 +36,7 @@ export default function RootLayout() {
   });
   const [appReady, setAppReady] = useState(false);
   const [shouldShowStartupSummary, setShouldShowStartupSummary] = useState(false);
+  const appReadyRef = useRef(appReady);
 
   // Initialize app on startup
   useEffect(() => {
@@ -43,6 +44,12 @@ export default function RootLayout() {
       initializeApp();
     }
   }, [loaded]);
+
+  // Keep a ref in sync so the AppState listener below always reads the latest value
+  // instead of the `appReady = false` it captured when the listener was registered.
+  useEffect(() => {
+    appReadyRef.current = appReady;
+  }, [appReady]);
 
   // Monitor app state changes (foreground/background)
   useEffect(() => {
@@ -157,7 +164,7 @@ export default function RootLayout() {
       // App came to foreground
       console.log('App came to foreground');
 
-      if (appReady && authService.isAuthenticated()) {
+      if (appReadyRef.current && authService.isAuthenticated()) {
         // Check for missed updates
         const shouldShowSummary = await checkForMissedUpdates();
         

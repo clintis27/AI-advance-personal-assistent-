@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, ScrollView, Platform, Pressable } from "react-native";
 import { Stack } from "expo-router";
-import { IconSymbol } from "@/components/IconSymbol";
+import { IconSymbol, IconSymbolName } from "@/components/IconSymbol";
 import { colors } from "@/styles/commonStyles";
 import Animated, { FadeInDown } from "react-native-reanimated";
 
@@ -12,7 +12,7 @@ interface RoutinePattern {
   activity: string;
   frequency: number;
   confidence: number;
-  icon: string;
+  icon: IconSymbolName;
   color: string;
 }
 
@@ -22,7 +22,7 @@ interface BehaviorInsight {
   description: string;
   metric: string;
   trend: 'up' | 'down' | 'stable';
-  icon: string;
+  icon: IconSymbolName;
 }
 
 interface ScheduleItem {

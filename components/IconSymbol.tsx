@@ -17,7 +17,7 @@ const MAPPING = {
 
   // Navigation & Home
   "house.fill": "home",
-  "house": "home-outlined",
+  "house": "cottage",
   "arrow.left": "arrow-back",
   "arrow.right": "arrow-forward",
   "arrow.up": "arrow-upward",
@@ -31,11 +31,11 @@ const MAPPING = {
 
   // Communication & Social
   "paperplane.fill": "send",
-  "paperplane": "send-outlined",
+  "paperplane": "outgoing-mail",
   "envelope.fill": "mail",
   "envelope": "mail-outline",
   "phone.fill": "phone",
-  "phone": "phone-outlined",
+  "phone": "phone-in-talk",
   "message.fill": "chat",
   "message": "chat-bubble-outline",
   "bell.fill": "notifications",
@@ -69,7 +69,7 @@ const MAPPING = {
 
   // Media & Content
   "photo.fill": "image",
-  "photo": "image-outlined",
+  "photo": "image",
   "camera.fill": "camera-alt",
   "camera": "camera-alt",
   "video.fill": "videocam",
@@ -86,7 +86,7 @@ const MAPPING = {
   "gearshape.fill": "settings",
   "slider.horizontal.3": "tune",
   "info.circle.fill": "info",
-  "info.circle": "info-outlined",
+  "info.circle": "info-outline",
   "exclamationmark.triangle.fill": "warning",
   "exclamationmark.triangle": "warning-amber",
   "questionmark.circle.fill": "help",
@@ -114,7 +114,7 @@ const MAPPING = {
 
   // Shopping & Commerce
   "cart.fill": "shopping-cart",
-  "cart": "shopping-cart-outlined",
+  "cart": "add-shopping-cart",
   "creditcard.fill": "credit-card",
   "creditcard": "credit-card",
   "dollarsign.circle.fill": "monetization-on",
@@ -156,11 +156,101 @@ const MAPPING = {
   "arrow.up.arrow.down": "sort",
 
   // Visibility & Display
+  "eye": "visibility",
   "eye.fill": "visibility",
   "eye.slash.fill": "visibility-off",
   "lightbulb.fill": "lightbulb",
   "moon.fill": "dark-mode",
   "sun.max.fill": "light-mode",
+
+  // Travel & Places
+  "airplane": "flight",
+  "airplane.circle.fill": "flight",
+  "airplane.departure": "flight-takeoff",
+  "bed.double.fill": "bed",
+
+  // Brands & Logos
+  "apple.logo": "apple",
+  "app.fill": "apps",
+  "g.circle.fill": "g-translate",
+
+  // Communication (extended)
+  "at": "alternate-email",
+  "envelope.badge.fill": "mark-email-unread",
+  "bell.badge.fill": "notifications-active",
+  "bubble.left.and.bubble.right.fill": "forum",
+  "text.bubble.fill": "chat-bubble",
+  "phone.badge.plus": "phone-forwarded",
+  "phone.bubble.left.fill": "phone-callback",
+  "person.wave.2": "waving-hand",
+  "person.wave.2.fill": "waving-hand",
+
+  // AI & Technology (extended)
+  "brain": "psychology",
+  "brain.head.profile": "psychology",
+  "cpu": "memory",
+  "cylinder.split.1x2.fill": "storage",
+  "externaldrive.fill": "sd-storage",
+  "mic": "mic-none",
+  "mic.fill": "mic",
+  "waveform": "graphic-eq",
+  "waveform.badge.plus": "graphic-eq",
+  "waveform.circle": "graphic-eq",
+  "waveform.circle.fill": "graphic-eq",
+  "speaker.wave.2": "volume-up",
+  "speaker.wave.3": "volume-up",
+  "speaker.wave.3.fill": "volume-up",
+  "recordingtape": "voicemail",
+  "wifi.slash": "wifi-off",
+  "wand.and.stars": "auto-fix-high",
+  "sparkles": "auto-awesome",
+
+  // Actions & Controls (extended)
+  "arrow.right.square.fill": "exit-to-app",
+  "arrow.triangle.2.circlepath": "autorenew",
+  "clock.arrow.circlepath": "history",
+  "calendar.badge.clock": "event-note",
+  "calendar.badge.plus": "post-add",
+  "plus.circle.fill": "add-circle",
+  "xmark.circle.fill": "cancel",
+  "checkmark.seal.fill": "verified",
+  "checkmark.shield.fill": "verified-user",
+  "lock.shield.fill": "security",
+  "key.fill": "vpn-key",
+  "bolt.fill": "bolt",
+  "target": "adjust",
+  "hand.tap": "back-hand",
+  "hand.thumbsup.fill": "thumb-up",
+  "hand.thumbsdown.fill": "thumb-down",
+  "leaf.fill": "eco",
+  "globe": "public",
+  "archivebox": "archive",
+  "tray.fill": "inbox",
+  "square.and.arrow.down.fill": "file-download",
+
+  // Lists & Grids
+  "line.3.horizontal.decrease.circle": "filter-list-alt",
+  "link.circle.fill": "link",
+  "list.bullet.circle.fill": "format-list-bulleted",
+  "list.bullet.clipboard.fill": "assignment",
+  "square.grid.2x2.fill": "grid-view",
+
+  // People & Status
+  "person.3.fill": "groups",
+  "person.badge.clock.fill": "schedule",
+  "person.badge.plus.fill": "person-add",
+  "person.crop.circle.badge.checkmark": "account-circle",
+
+  // Media (extended)
+  "play.circle.fill": "play-circle-filled",
+  "briefcase.fill": "work",
+  "bell.slash.fill": "notifications-off",
+  "cup.and.saucer.fill": "local-cafe",
+  "doc.richtext.fill": "article",
+  "list.bullet": "list",
+  "chart.bar.fill": "bar-chart",
+  "chart.line.uptrend.xyaxis": "trending-up",
+  "gearshape": "settings",
 } as Partial<
   Record<
     import("expo-symbols").SymbolViewProps["name"],

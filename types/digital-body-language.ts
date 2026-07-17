@@ -4,6 +4,8 @@
  * Comprehensive type definitions for behavioral signal tracking and state inference
  */
 
+import { IconSymbolName } from '@/components/IconSymbol';
+
 // ============================================================================
 // INPUT STREAMS
 // ============================================================================
@@ -136,7 +138,7 @@ export interface StateDefinition {
   typicalDuration: string;
   interruptibility: 'high' | 'medium' | 'low';
   color: string;
-  icon: string;
+  icon: IconSymbolName;
 }
 
 export interface StateInference {

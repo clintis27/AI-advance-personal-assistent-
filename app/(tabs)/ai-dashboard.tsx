@@ -16,16 +16,17 @@ import { Badge } from '@/components/ui/Badge';
 import { Separator } from '@/components/ui/Separator';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { colors } from '@/styles/commonStyles';
-import { aiService } from '@/services/aiService';
+import { aiService, AIServiceConfig } from '@/services/aiService';
 import { useOpenAI } from '@/hooks/useOpenAI';
 import { useLangChain } from '@/hooks/useLangChain';
 import { usePinecone } from '@/hooks/usePinecone';
+import { IconSymbolName } from '@/components/IconSymbol';
 
 interface AIServiceStatus {
   name: string;
-  endpoint: keyof typeof aiService.getConfig;
+  endpoint: keyof AIServiceConfig;
   status: 'online' | 'offline' | 'checking';
-  icon: string;
+  icon: IconSymbolName;
   color: string;
 }
 
@@ -39,7 +40,7 @@ export default function AIDashboardScreen() {
   const [services, setServices] = useState<AIServiceStatus[]>([
     { name: 'OpenAI GPT', endpoint: 'openaiEndpoint', status: 'checking', icon: 'brain', color: colors.primary },
     { name: 'LangChain', endpoint: 'langchainEndpoint', status: 'checking', icon: 'link', color: colors.violet },
-    { name: 'Pinecone', endpoint: 'pineconeEndpoint', status: 'checking', icon: 'database', color: colors.emerald },
+    { name: 'Pinecone', endpoint: 'pineconeEndpoint', status: 'checking', icon: 'cylinder.split.1x2.fill', color: colors.emerald },
     { name: 'Whisper STT', endpoint: 'whisperEndpoint', status: 'checking', icon: 'mic', color: colors.indigo },
     { name: 'ElevenLabs TTS', endpoint: 'elevenLabsEndpoint', status: 'checking', icon: 'speaker.wave.2', color: colors.pink },
   ]);

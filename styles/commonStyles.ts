@@ -14,7 +14,13 @@ export const colors = {
   cardDark: '#1a1a1a',
   cardHover: '#F8F8F8',
   cardHoverDark: '#222222',
-  
+  cardSecondary: '#F5F5F5',
+  cardSecondaryDark: '#161616',
+
+  // Highlight - subtle tinted background for callouts/status cards
+  highlight: '#FFF1EA',
+  highlightDark: '#2a1c14',
+
   // Text colors - high contrast
   text: '#1a1a1a',
   textDark: '#fafafa',
@@ -28,7 +34,12 @@ export const colors = {
   primaryLight: '#FF8C5A',
   primaryDark: '#E55A2B',
   primaryForeground: '#ffffff',
-  
+
+  // Accent - secondary vibrant color used for variety alongside primary
+  accent: '#6366f1',
+  accentLight: '#818cf8',
+  accentDark: '#4f46e5',
+
   // Secondary accent - dark/black
   secondary: '#1a1a1a',
   secondaryDark: '#2a2a2a',

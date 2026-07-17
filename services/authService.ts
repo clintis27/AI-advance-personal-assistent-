@@ -48,9 +48,8 @@ export class AuthService {
         if (this.currentSession && this.currentSession.expiresAt < Date.now()) {
           console.log('Session expired, refreshing...');
           await this.refreshSession();
-        } else {
-          await this.loadUser();
         }
+        await this.loadUser();
       }
     } catch (error) {
       console.error('Error loading session:', error);

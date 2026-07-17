@@ -3,6 +3,8 @@
  * Type definitions for Behavior & Routine Intelligence
  */
 
+import { IconSymbolName } from '@/components/IconSymbol';
+
 // Behavior Tracking Types
 export interface BehaviorMetric {
   id: string;
@@ -10,7 +12,7 @@ export interface BehaviorMetric {
   value: string;
   change: number;
   trend: 'up' | 'down' | 'stable';
-  icon: string;
+  icon: IconSymbolName;
   color: string;
   timestamp: string;
 }

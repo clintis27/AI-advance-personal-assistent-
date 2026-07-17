@@ -1,8 +1,8 @@
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { View, Text, StyleSheet, ScrollView, Platform, Pressable, Dimensions } from "react-native";
 import { Stack, useRouter } from "expo-router";
-import { IconSymbol } from "@/components/IconSymbol";
+import { IconSymbol, IconSymbolName } from "@/components/IconSymbol";
 import { colors } from "@/styles/commonStyles";
 import Animated, { FadeInDown, FadeInUp } from "react-native-reanimated";
 import {
@@ -35,6 +35,13 @@ export default function DigitalBodyLanguageScreen() {
   const [autonomyLevel, setAutonomyLevel] = useState<AutonomyLevel>('Semi-Autonomous');
   const [recommendedActions, setRecommendedActions] = useState<AssistantAction[]>([]);
   const [loading, setLoading] = useState(true);
+  const autonomyLevelRef = useRef(autonomyLevel);
+
+  // Keep a ref in sync so the setInterval below always reads the latest value
+  // instead of the autonomyLevel it captured when the interval was created.
+  useEffect(() => {
+    autonomyLevelRef.current = autonomyLevel;
+  }, [autonomyLevel]);
 
   useEffect(() => {
     loadDashboardData();
@@ -99,7 +106,7 @@ export default function DigitalBodyLanguageScreen() {
       
       const actions = ActionExecutor.getActionsForState(
         inference.currentState,
-        autonomyLevel
+        autonomyLevelRef.current
       );
       setRecommendedActions(actions);
       
@@ -163,8 +170,8 @@ export default function DigitalBodyLanguageScreen() {
     return STATE_DEFINITIONS.find(s => s.state === state);
   };
 
-  const getActionIcon = (actionType: string): string => {
-    const iconMap: Record<string, string> = {
+  const getActionIcon = (actionType: string): IconSymbolName => {
+    const iconMap: Record<string, IconSymbolName> = {
       postpone_notifications: 'bell.slash.fill',
       auto_reply: 'envelope.fill',
       suggest_break: 'cup.and.saucer.fill',

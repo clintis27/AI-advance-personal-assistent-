@@ -22,6 +22,8 @@ import * as Notifications from 'expo-notifications';
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
+    shouldShowBanner: true,
+    shouldShowList: true,
     shouldPlaySound: true,
     shouldSetBadge: true,
   }),
@@ -193,7 +195,10 @@ export class NotificationService {
           sound: true,
           priority: this.getPriorityLevel(priority),
         },
-        trigger: triggerDate,
+        trigger: {
+          type: Notifications.SchedulableTriggerInputTypes.DATE,
+          date: triggerDate,
+        },
       });
 
       console.log('Notification scheduled:', notificationId, 'for', triggerDate);

@@ -65,8 +65,8 @@ export function Input({
     {
       color: theme.dark ? colors.textDark : colors.text,
     },
-    leftIcon && styles.inputWithLeftIcon,
-    rightIcon && styles.inputWithRightIcon,
+    !!leftIcon && styles.inputWithLeftIcon,
+    !!rightIcon && styles.inputWithRightIcon,
     style,
   ];
 

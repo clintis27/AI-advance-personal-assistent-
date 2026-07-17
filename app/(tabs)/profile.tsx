@@ -1,5 +1,5 @@
 
-import { IconSymbol } from '@/components/IconSymbol';
+import { IconSymbol, IconSymbolName } from '@/components/IconSymbol';
 import React, { useState, useEffect } from 'react';
 import { ScrollView, View, Text, StyleSheet, Image, Pressable, Alert } from 'react-native';
 import { Switch } from '@/components/ui/Switch';
@@ -21,7 +21,7 @@ interface ProfileStat {
   id: string;
   label: string;
   value: string;
-  icon: string;
+  icon: IconSymbolName;
   color: string;
 }
 
@@ -29,7 +29,7 @@ interface Setting {
   id: string;
   title: string;
   description: string;
-  icon: string;
+  icon: IconSymbolName;
   enabled: boolean;
   route?: string;
 }
@@ -167,7 +167,7 @@ export default function ProfileScreen() {
                   : user?.provider === 'apple'
                   ? 'apple.logo'
                   : user?.provider === 'microsoft'
-                  ? 'microsoft.logo'
+                  ? 'app.fill'
                   : 'envelope.fill'
               }
               size={16}

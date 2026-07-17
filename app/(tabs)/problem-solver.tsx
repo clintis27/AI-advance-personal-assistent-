@@ -4,7 +4,7 @@ import { Stack } from "expo-router";
 import { colors } from "@/styles/commonStyles";
 import { View, Text, StyleSheet, ScrollView, Platform, Pressable, TextInput, Image } from "react-native";
 import React, { useState } from "react";
-import { IconSymbol } from "@/components/IconSymbol";
+import { IconSymbol, IconSymbolName } from "@/components/IconSymbol";
 
 interface Problem {
   id: string;
@@ -33,7 +33,7 @@ interface Solution {
 interface Integration {
   id: string;
   name: string;
-  icon: string;
+  icon: IconSymbolName;
   connected: boolean;
   color: string;
 }

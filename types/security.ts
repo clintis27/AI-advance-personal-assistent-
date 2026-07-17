@@ -1,6 +1,8 @@
 
 // Security, Privacy & Legal Types
 
+import { IconSymbolName } from '@/components/IconSymbol';
+
 export interface ConsentItem {
   id: string;
   service: string;
@@ -8,7 +10,7 @@ export interface ConsentItem {
   permissions: string[];
   granted: boolean;
   grantedAt?: string;
-  icon: string;
+  icon: IconSymbolName;
   color: string;
 }
 

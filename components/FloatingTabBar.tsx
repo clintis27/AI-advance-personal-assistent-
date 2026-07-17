@@ -7,10 +7,11 @@ import {
   StyleSheet,
   Platform,
   Dimensions,
+  DimensionValue,
 } from 'react-native';
 import { useRouter, usePathname } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { IconSymbol } from '@/components/IconSymbol';
+import { IconSymbol, IconSymbolName } from '@/components/IconSymbol';
 import { BlurView } from 'expo-blur';
 import { useTheme } from '@react-navigation/native';
 import Animated, {
@@ -26,7 +27,7 @@ const { width: screenWidth } = Dimensions.get('window');
 export interface TabBarItem {
   name: string;
   route: string;
-  icon: string;
+  icon: IconSymbolName;
   label: string;
 }
 
@@ -149,7 +150,7 @@ export default function FloatingTabBar({
       backgroundColor: theme.dark
         ? colors.secondaryDark
         : colors.backgroundSecondary,
-      width: `${(100 / tabs.length) - 4}%`,
+      width: `${(100 / tabs.length) - 4}%` as DimensionValue,
     },
   };
 

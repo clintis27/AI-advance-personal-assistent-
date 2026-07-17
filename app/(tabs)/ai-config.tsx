@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, Platform, Pressable, Switch, TextInput } from 'react-native';
 import { Stack } from 'expo-router';
-import { IconSymbol } from '@/components/IconSymbol';
+import { IconSymbol, IconSymbolName } from '@/components/IconSymbol';
 import { colors } from '@/styles/commonStyles';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 
@@ -12,7 +12,7 @@ interface APIConfig {
   name: string;
   enabled: boolean;
   apiKey: string;
-  icon: string;
+  icon: IconSymbolName;
   color: string;
 }
 

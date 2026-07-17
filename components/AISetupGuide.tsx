@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, Pressable } from 'react-native';
-import { IconSymbol } from '@/components/IconSymbol';
+import { IconSymbol, IconSymbolName } from '@/components/IconSymbol';
 import { colors } from '@/styles/commonStyles';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 
@@ -9,7 +9,7 @@ interface SetupStep {
   id: string;
   title: string;
   description: string;
-  icon: string;
+  icon: IconSymbolName;
   status: 'pending' | 'completed' | 'optional';
 }
 

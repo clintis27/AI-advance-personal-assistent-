@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, ScrollView, Platform, Pressable, Switch, TextInput, Alert } from "react-native";
 import { Stack } from "expo-router";
-import { IconSymbol } from "@/components/IconSymbol";
+import { IconSymbol, IconSymbolName } from "@/components/IconSymbol";
 import { colors } from "@/styles/commonStyles";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { 
@@ -20,7 +20,7 @@ interface VoiceFeature {
   id: string;
   name: string;
   description: string;
-  icon: string;
+  icon: IconSymbolName;
   enabled: boolean;
   configured: boolean;
   provider?: string;
@@ -455,7 +455,7 @@ export default function VoiceScreen() {
           {voicemails.length > 0 && (
             <Animated.View entering={FadeInDown.delay(700)} style={styles.section}>
               <View style={styles.sectionHeader}>
-                <IconSymbol name="voicemail" color={colors.accent} size={24} />
+                <IconSymbol name="recordingtape" color={colors.accent} size={24} />
                 <Text style={styles.sectionTitle}>Voicemails</Text>
               </View>
               {voicemails.map((vm) => (
