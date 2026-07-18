@@ -30,7 +30,7 @@ export class SyncService {
     lastProcessed: null,
   };
   private isOnline: boolean = true;
-  private syncInterval: NodeJS.Timeout | null = null;
+  private syncInterval: ReturnType<typeof setInterval> | null = null;
 
   private constructor() {
     this.initialize();

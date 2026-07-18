@@ -1,19 +1,34 @@
 
 import { useTheme } from "@react-navigation/native";
 import { Stack, useRouter } from "expo-router";
-import { Progress } from "@/components/ui/Progress";
 import { Badge } from "@/components/ui/Badge";
-import Animated, { FadeInDown, FadeIn } from "react-native-reanimated";
+import Animated, { FadeInDown } from "react-native-reanimated";
 import { colors } from "@/styles/commonStyles";
-import { Separator } from "@/components/ui/Separator";
-import { Card } from "@/components/ui/Card";
 import { AIStatusIndicator } from "@/components/AIStatusIndicator";
-import { AnimatedCard } from "@/components/ui/AnimatedCard";
 import { Button } from "@/components/ui/Button";
-import { ScrollView, Pressable, StyleSheet, View, Text, Platform, Alert } from "react-native";
+import { ScrollView, Pressable, StyleSheet, View, Text, Alert } from "react-native";
 import * as Haptics from "expo-haptics";
 import React, { useState, useEffect } from "react";
-import { IconSymbol, IconSymbolName } from "@/components/IconSymbol";
+import {
+  Mic,
+  PlaneTakeoff,
+  Calendar,
+  Mail,
+  Bot,
+  Brain,
+  Clock,
+  BarChart3,
+  Users,
+  Bell,
+  RefreshCw,
+  WifiOff,
+  Sparkles,
+  LucideIcon,
+} from "lucide-react-native";
+import { FloatingCard } from "@/components/v2/FloatingCard";
+import { GlassCard } from "@/components/v2/GlassCard";
+import { DetailCard } from "@/components/v2/DetailCard";
+import { GradientBadge } from "@/components/v2/GradientBadge";
 import { authService } from "@/services/authService";
 import { syncService } from "@/services/syncService";
 import { notificationService } from "@/services/notificationService";
@@ -47,7 +62,7 @@ interface Meeting {
 interface QuickAction {
   id: string;
   title: string;
-  icon: IconSymbolName;
+  icon: LucideIcon;
   color: string;
   route: string;
 }
@@ -144,12 +159,12 @@ export default function HomeScreen() {
   ]);
 
   const quickActions: QuickAction[] = [
-    { id: '1', title: 'Voice', icon: 'mic.fill', color: colors.primary, route: '/(tabs)/voice' },
-    { id: '2', title: 'Travel', icon: 'airplane.departure', color: colors.secondary, route: '/(tabs)/travel' },
-    { id: '3', title: 'Meetings', icon: 'calendar', color: colors.primary, route: '/(tabs)/meetings' },
-    { id: '4', title: 'Email', icon: 'envelope.fill', color: colors.secondary, route: '/(tabs)/email' },
-    { id: '5', title: 'Agent', icon: 'person.crop.circle.badge.checkmark', color: colors.primary, route: '/(tabs)/agent' },
-    { id: '6', title: 'Behavior', icon: 'brain.head.profile', color: colors.secondary, route: '/(tabs)/behavior' },
+    { id: '1', title: 'Voice', icon: Mic, color: colors.primary, route: '/(tabs)/voice' },
+    { id: '2', title: 'Travel', icon: PlaneTakeoff, color: colors.accent, route: '/(tabs)/travel' },
+    { id: '3', title: 'Meetings', icon: Calendar, color: colors.primary, route: '/(tabs)/meetings' },
+    { id: '4', title: 'Email', icon: Mail, color: colors.accent, route: '/(tabs)/email' },
+    { id: '5', title: 'Agent', icon: Bot, color: colors.primary, route: '/(tabs)/agent' },
+    { id: '6', title: 'Behavior', icon: Brain, color: colors.accent, route: '/(tabs)/behavior' },
   ];
 
   const getPriorityColor = (priority: string) => {
@@ -188,9 +203,9 @@ export default function HomeScreen() {
       {syncState && (
         <Pressable onPress={handleSync}>
           <View style={{ position: 'relative' }}>
-            <IconSymbol
-              name={syncState.status === 'syncing' ? 'arrow.triangle.2.circlepath' : 'arrow.triangle.2.circlepath'}
-              size={24}
+            <RefreshCw
+              size={22}
+              strokeWidth={1.75}
               color={
                 syncState.status === 'syncing'
                   ? colors.primary
@@ -211,7 +226,7 @@ export default function HomeScreen() {
       )}
       <Pressable onPress={() => router.push('/(tabs)/startup-summary' as any)}>
         <View style={{ position: 'relative' }}>
-          <IconSymbol name="bell.fill" size={24} color={colors.text} />
+          <Bell size={22} strokeWidth={1.75} color={colors.text} />
           {unreadNotifications > 0 && (
             <View style={styles.notificationBadge}>
               <Text style={styles.notificationBadgeText}>{unreadNotifications}</Text>
@@ -245,21 +260,33 @@ export default function HomeScreen() {
           headerRight: renderHeaderRight,
         }}
       />
-      <ScrollView style={[styles.container, { backgroundColor: theme.dark ? colors.backgroundDark : colors.background }]} contentContainerStyle={styles.content}>
+      <ScrollView
+        style={[styles.container, { backgroundColor: theme.dark ? colors.surfaceMutedDark : colors.surfaceMuted }]}
+        contentContainerStyle={styles.content}
+      >
         {/* AI Status */}
-        <Animated.View entering={FadeInDown.delay(100)}>
-          <AIStatusIndicator />
-        </Animated.View>
+        <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: 12 }}>
+          <Animated.View entering={FadeInDown.delay(100)} style={{ flex: 1 }}>
+            <AIStatusIndicator />
+          </Animated.View>
+          <Animated.View entering={FadeInDown.delay(120)}>
+            <GradientBadge
+              icon={<Sparkles size={20} color={colors.primaryForeground} strokeWidth={2} />}
+              size={48}
+              onPress={() => router.push('/(tabs)/agent' as any)}
+            />
+          </Animated.View>
+        </View>
 
         {/* Sync Status */}
         {syncState && syncState.status === 'offline' && (
           <Animated.View entering={FadeInDown.delay(150)}>
-            <Card style={styles.offlineCard}>
+            <GlassCard radius="lg" style={styles.offlineCard}>
               <View style={styles.offlineHeader}>
-                <IconSymbol name="wifi.slash" size={24} color={colors.warning} />
-                <Text style={styles.offlineTitle}>Offline Mode</Text>
+                <WifiOff size={20} strokeWidth={1.75} color={colors.warning} />
+                <Text style={[styles.offlineTitle, { color: theme.dark ? colors.textDark : colors.text }]}>Offline Mode</Text>
               </View>
-              <Text style={styles.offlineText}>
+              <Text style={[styles.offlineText, { color: theme.dark ? colors.textSecondaryDark : colors.textSecondary }]}>
                 You&apos;re working offline. Changes will sync when you&apos;re back online.
               </Text>
               {syncState.pendingChanges > 0 && (
@@ -267,80 +294,88 @@ export default function HomeScreen() {
                   {syncState.pendingChanges} changes pending sync
                 </Text>
               )}
-            </Card>
+            </GlassCard>
           </Animated.View>
         )}
 
         {/* Quick Actions */}
         <Animated.View entering={FadeInDown.delay(200)} style={styles.section}>
-          <Text style={styles.sectionTitle}>Quick Actions</Text>
+          <Text style={[styles.sectionTitle, { color: theme.dark ? colors.textDark : colors.text }]}>Quick Actions</Text>
           <View style={styles.quickActionsGrid}>
-            {quickActions.map((action, index) => (
-              <Pressable
-                key={action.id}
-                style={({ pressed }) => [
-                  styles.quickActionCard,
-                  pressed && styles.quickActionCardPressed,
-                ]}
-                onPress={() => handleQuickActionPress(action.route)}
-              >
-                <View style={[styles.quickActionIcon, { backgroundColor: action.color }]}>
-                  <IconSymbol name={action.icon} size={24} color={colors.primaryForeground} />
-                </View>
-                <Text style={styles.quickActionTitle}>{action.title}</Text>
-              </Pressable>
-            ))}
+            {quickActions.map((action) => {
+              const Icon = action.icon;
+              return (
+                <Pressable
+                  key={action.id}
+                  style={({ pressed }) => [
+                    styles.quickActionCard,
+                    { backgroundColor: theme.dark ? colors.cardDark : colors.card },
+                    pressed && styles.quickActionCardPressed,
+                  ]}
+                  onPress={() => handleQuickActionPress(action.route)}
+                >
+                  <View style={[styles.quickActionIcon, { backgroundColor: action.color }]}>
+                    <Icon size={22} color={colors.primaryForeground} strokeWidth={1.75} />
+                  </View>
+                  <Text style={[styles.quickActionTitle, { color: theme.dark ? colors.textDark : colors.text }]}>{action.title}</Text>
+                </Pressable>
+              );
+            })}
           </View>
         </Animated.View>
 
         {/* Predicted Tasks */}
         <Animated.View entering={FadeInDown.delay(300)} style={styles.section}>
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Predicted Tasks</Text>
+            <Text style={[styles.sectionTitle, { color: theme.dark ? colors.textDark : colors.text, marginBottom: 0 }]}>Predicted Tasks</Text>
             <Badge variant="default">AI-Powered</Badge>
           </View>
           {predictedTasks.map((task, index) => (
-            <AnimatedCard key={task.id} delay={350 + index * 50} style={styles.taskCard}>
-              <View style={styles.taskHeader}>
-                <View style={{ flex: 1 }}>
-                  <View style={styles.taskTitleRow}>
-                    <Text style={styles.taskTitle}>{task.title}</Text>
-                    <Badge variant={getPriorityVariant(task.priority)}>{task.priority}</Badge>
+            <Animated.View key={task.id} entering={FadeInDown.delay(350 + index * 50)}>
+              <FloatingCard radius="lg" style={styles.taskCard}>
+                <View style={styles.taskHeader}>
+                  <View style={{ flex: 1 }}>
+                    <View style={styles.taskTitleRow}>
+                      <Text style={[styles.taskTitle, { color: theme.dark ? colors.textDark : colors.text }]}>{task.title}</Text>
+                      <Badge variant={getPriorityVariant(task.priority)}>{task.priority}</Badge>
+                    </View>
+                    <Text style={[styles.taskDescription, { color: theme.dark ? colors.textSecondaryDark : colors.textSecondary }]}>
+                      {task.description}
+                    </Text>
                   </View>
-                  <Text style={styles.taskDescription}>{task.description}</Text>
                 </View>
-              </View>
-              <View style={styles.taskFooter}>
-                <View style={styles.taskMeta}>
-                  <IconSymbol name="clock.fill" size={14} color={colors.textSecondary} />
-                  <Text style={styles.taskMetaText}>{task.predictedTime}</Text>
+                <View style={styles.taskFooter}>
+                  <View style={styles.taskMeta}>
+                    <Clock size={13} strokeWidth={1.75} color={theme.dark ? colors.textMutedDark : colors.textSecondary} />
+                    <Text style={styles.taskMetaText}>{task.predictedTime}</Text>
+                  </View>
+                  <View style={styles.taskMeta}>
+                    <BarChart3 size={13} strokeWidth={1.75} color={theme.dark ? colors.textMutedDark : colors.textSecondary} />
+                    <Text style={styles.taskMetaText}>{task.confidence}% confidence</Text>
+                  </View>
                 </View>
-                <View style={styles.taskMeta}>
-                  <IconSymbol name="chart.bar.fill" size={14} color={colors.textSecondary} />
-                  <Text style={styles.taskMetaText}>{task.confidence}% confidence</Text>
-                </View>
-              </View>
-            </AnimatedCard>
+              </FloatingCard>
+            </Animated.View>
           ))}
         </Animated.View>
 
         {/* Email Summary */}
         <Animated.View entering={FadeInDown.delay(500)} style={styles.section}>
-          <Text style={styles.sectionTitle}>Email Summary</Text>
-          <Card style={styles.emailCard}>
+          <Text style={[styles.sectionTitle, { color: theme.dark ? colors.textDark : colors.text }]}>Email Summary</Text>
+          <FloatingCard radius="lg" style={styles.emailCard}>
             <View style={styles.emailRow}>
               <View style={styles.emailItem}>
-                <Text style={styles.emailCount}>{emailSummary.important}</Text>
+                <Text style={[styles.emailCount, { color: theme.dark ? colors.textDark : colors.text }]}>{emailSummary.important}</Text>
                 <Text style={styles.emailLabel}>Important</Text>
               </View>
-              <View style={styles.emailDivider} />
+              <View style={[styles.emailDivider, { backgroundColor: theme.dark ? colors.borderDark : colors.border }]} />
               <View style={styles.emailItem}>
-                <Text style={styles.emailCount}>{emailSummary.informational}</Text>
+                <Text style={[styles.emailCount, { color: theme.dark ? colors.textDark : colors.text }]}>{emailSummary.informational}</Text>
                 <Text style={styles.emailLabel}>Informational</Text>
               </View>
-              <View style={styles.emailDivider} />
+              <View style={[styles.emailDivider, { backgroundColor: theme.dark ? colors.borderDark : colors.border }]} />
               <View style={styles.emailItem}>
-                <Text style={styles.emailCount}>{emailSummary.unread}</Text>
+                <Text style={[styles.emailCount, { color: theme.dark ? colors.textDark : colors.text }]}>{emailSummary.unread}</Text>
                 <Text style={styles.emailLabel}>Unread</Text>
               </View>
             </View>
@@ -351,33 +386,22 @@ export default function HomeScreen() {
             >
               View All Emails
             </Button>
-          </Card>
+          </FloatingCard>
         </Animated.View>
 
         {/* Upcoming Meetings */}
         <Animated.View entering={FadeInDown.delay(600)} style={styles.section}>
-          <Text style={styles.sectionTitle}>Upcoming Meetings</Text>
-          {upcomingMeetings.map((meeting, index) => (
-            <Card key={meeting.id} style={styles.meetingCard}>
-              <View style={styles.meetingHeader}>
-                <View style={styles.meetingIcon}>
-                  <IconSymbol name="video.fill" size={20} color={colors.primary} />
-                </View>
-                <View style={{ flex: 1 }}>
-                  <Text style={styles.meetingTitle}>{meeting.title}</Text>
-                  <View style={styles.meetingMeta}>
-                    <View style={styles.meetingMetaItem}>
-                      <IconSymbol name="clock.fill" size={12} color={colors.textSecondary} />
-                      <Text style={styles.meetingMetaText}>{meeting.time} • {meeting.duration}</Text>
-                    </View>
-                    <View style={styles.meetingMetaItem}>
-                      <IconSymbol name="person.2.fill" size={12} color={colors.textSecondary} />
-                      <Text style={styles.meetingMetaText}>{meeting.attendees} attendees</Text>
-                    </View>
-                  </View>
-                </View>
-              </View>
-            </Card>
+          <Text style={[styles.sectionTitle, { color: theme.dark ? colors.textDark : colors.text }]}>Upcoming Meetings</Text>
+          {upcomingMeetings.map((meeting) => (
+            <DetailCard
+              key={meeting.id}
+              title={meeting.title}
+              subtitle={`${meeting.time} · ${meeting.duration}`}
+              stats={[
+                { key: 'attendees', icon: Users, label: `${meeting.attendees} attendees` },
+              ]}
+              style={styles.meetingCard}
+            />
           ))}
         </Animated.View>
       </ScrollView>
@@ -434,9 +458,8 @@ const styles = StyleSheet.create({
     color: colors.primaryForeground,
   },
   offlineCard: {
-    marginBottom: 20,
-    backgroundColor: colors.warning + '10',
-    borderColor: colors.warning,
+    marginTop: 16,
+    marginBottom: 4,
   },
   offlineHeader: {
     flexDirection: 'row',
@@ -490,6 +513,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.08,
+    shadowRadius: 14,
+    elevation: 3,
   },
   quickActionCardPressed: {
     opacity: 0.7,
@@ -579,39 +607,5 @@ const styles = StyleSheet.create({
   },
   meetingCard: {
     marginBottom: 12,
-    padding: 18,
-  },
-  meetingHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 14,
-  },
-  meetingIcon: {
-    width: 48,
-    height: 48,
-    borderRadius: 14,
-    backgroundColor: colors.primary + '20',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  meetingTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: colors.text,
-    marginBottom: 6,
-    letterSpacing: -0.3,
-  },
-  meetingMeta: {
-    flexDirection: 'column',
-    gap: 4,
-  },
-  meetingMetaItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-  },
-  meetingMetaText: {
-    fontSize: 13,
-    color: colors.textSecondary,
   },
 });

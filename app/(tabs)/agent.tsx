@@ -2,8 +2,30 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, ScrollView, Platform, Pressable, Switch } from "react-native";
 import { Stack } from "expo-router";
-import { IconSymbol } from "@/components/IconSymbol";
+import { useTheme } from "@react-navigation/native";
+import {
+  Settings,
+  Bot,
+  Wand2,
+  MessageSquare,
+  Video,
+  Phone,
+  Mail,
+  AudioWaveform,
+  User,
+  MessageCircle,
+  Globe,
+  ChevronRight,
+  History,
+  BadgeCheck,
+  Info,
+  Calendar,
+  Sparkles,
+  LucideIcon,
+} from "lucide-react-native";
 import { colors } from "@/styles/commonStyles";
+import { FloatingCard } from "@/components/v2/FloatingCard";
+import { GlassCard } from "@/components/v2/GlassCard";
 import Animated, { FadeInDown } from "react-native-reanimated";
 
 interface AgentStatus {
@@ -22,6 +44,7 @@ interface AgentAction {
 }
 
 export default function AgentScreen() {
+  const theme = useTheme();
   const [agentStatus, setAgentStatus] = useState<AgentStatus>({
     active: true,
     mode: 'available',
@@ -68,18 +91,18 @@ export default function AgentScreen() {
     },
   ]);
 
-  const getActionIcon = (type: string) => {
+  const getActionIcon = (type: string): LucideIcon => {
     switch (type) {
       case 'call':
-        return 'phone.fill';
+        return Phone;
       case 'message':
-        return 'message.fill';
+        return MessageSquare;
       case 'email':
-        return 'envelope.fill';
+        return Mail;
       case 'meeting':
-        return 'calendar';
+        return Calendar;
       default:
-        return 'sparkles';
+        return Sparkles;
     }
   };
 
@@ -90,7 +113,7 @@ export default function AgentScreen() {
       case 'message':
         return colors.primary;
       case 'email':
-        return colors.secondary;
+        return colors.accent;
       case 'meeting':
         return colors.warning;
       default:
@@ -131,7 +154,7 @@ export default function AgentScreen() {
       onPress={() => console.log('Agent settings')}
       style={styles.headerButtonContainer}
     >
-      <IconSymbol name="gear" color={colors.primary} size={24} />
+      <Settings color={colors.primary} size={22} strokeWidth={1.75} />
     </Pressable>
   );
 
@@ -145,7 +168,7 @@ export default function AgentScreen() {
           }}
         />
       )}
-      <View style={styles.container}>
+      <View style={[styles.container, { backgroundColor: theme.dark ? colors.surfaceMutedDark : colors.surfaceMuted }]}>
         <ScrollView
           style={styles.scrollView}
           contentContainerStyle={styles.scrollContent}
@@ -155,12 +178,12 @@ export default function AgentScreen() {
           {Platform.OS !== 'ios' && (
             <View style={styles.headerContainer}>
               <View style={styles.headerTitleRow}>
-                <Text style={styles.headerTitle}>Autonomous Agent</Text>
+                <Text style={[styles.headerTitle, { color: theme.dark ? colors.textDark : colors.text }]}>Autonomous Agent</Text>
                 <Pressable
                   onPress={() => console.log('Agent settings')}
-                  style={styles.headerButton}
+                  style={[styles.headerButton, { backgroundColor: theme.dark ? colors.cardDark : colors.card }]}
                 >
-                  <IconSymbol name="gear" color={colors.primary} size={24} />
+                  <Settings color={colors.primary} size={22} strokeWidth={1.75} />
                 </Pressable>
               </View>
             </View>
@@ -168,7 +191,10 @@ export default function AgentScreen() {
 
           {/* Agent Status Card */}
           <Animated.View entering={FadeInDown.delay(100)} style={styles.section}>
-            <View style={[styles.card, styles.statusCard]}>
+            <FloatingCard
+              radius="xl"
+              style={[styles.statusCard, { backgroundColor: theme.dark ? colors.secondaryDark : colors.secondary }]}
+            >
               <View style={styles.statusHeader}>
                 <View style={styles.statusInfo}>
                   <View style={styles.statusRow}>
@@ -179,10 +205,10 @@ export default function AgentScreen() {
                   <Text style={styles.statusTime}>Last active: {agentStatus.lastActive}</Text>
                 </View>
                 <View style={styles.agentIconContainer}>
-                  <IconSymbol name="person.crop.circle.badge.checkmark" size={60} color={colors.primary} />
+                  <Bot size={44} color={colors.accentLight} strokeWidth={1.5} />
                 </View>
               </View>
-              
+
               <View style={styles.statusToggle}>
                 <Text style={styles.toggleLabel}>Enable Autonomous Agent</Text>
                 <Switch
@@ -195,21 +221,21 @@ export default function AgentScreen() {
                   thumbColor={colors.card}
                 />
               </View>
-            </View>
+            </FloatingCard>
           </Animated.View>
 
           {/* Agent Capabilities */}
           <Animated.View entering={FadeInDown.delay(200)} style={styles.section}>
             <View style={styles.sectionHeader}>
-              <IconSymbol name="wand.and.stars" color={colors.primary} size={24} />
-              <Text style={styles.sectionTitle}>Agent Capabilities</Text>
+              <Wand2 color={colors.primary} size={22} strokeWidth={1.75} />
+              <Text style={[styles.sectionTitle, { color: theme.dark ? colors.textDark : colors.text }]}>Agent Capabilities</Text>
             </View>
-            <View style={styles.card}>
+            <FloatingCard radius="lg" style={styles.card}>
               <View style={styles.capabilityRow}>
                 <View style={styles.capabilityInfo}>
-                  <IconSymbol name="message.fill" color={colors.primary} size={20} />
+                  <MessageSquare color={colors.primary} size={19} strokeWidth={1.75} />
                   <View style={styles.capabilityText}>
-                    <Text style={styles.capabilityTitle}>Auto-Reply Messages</Text>
+                    <Text style={[styles.capabilityTitle, { color: theme.dark ? colors.textDark : colors.text }]}>Auto-Reply Messages</Text>
                     <Text style={styles.capabilityDescription}>
                       Respond to messages when you&apos;re busy
                     </Text>
@@ -230,9 +256,9 @@ export default function AgentScreen() {
 
               <View style={styles.capabilityRow}>
                 <View style={styles.capabilityInfo}>
-                  <IconSymbol name="video.fill" color={colors.secondary} size={20} />
+                  <Video color={colors.accent} size={19} strokeWidth={1.75} />
                   <View style={styles.capabilityText}>
-                    <Text style={styles.capabilityTitle}>Join Meetings</Text>
+                    <Text style={[styles.capabilityTitle, { color: theme.dark ? colors.textDark : colors.text }]}>Join Meetings</Text>
                     <Text style={styles.capabilityDescription}>
                       Attend meetings and take notes for you
                     </Text>
@@ -253,9 +279,9 @@ export default function AgentScreen() {
 
               <View style={styles.capabilityRow}>
                 <View style={styles.capabilityInfo}>
-                  <IconSymbol name="phone.fill" color={colors.accent} size={20} />
+                  <Phone color={colors.accent} size={19} strokeWidth={1.75} />
                   <View style={styles.capabilityText}>
-                    <Text style={styles.capabilityTitle}>Handle Calls</Text>
+                    <Text style={[styles.capabilityTitle, { color: theme.dark ? colors.textDark : colors.text }]}>Handle Calls</Text>
                     <Text style={styles.capabilityDescription}>
                       Answer calls with contextual responses
                     </Text>
@@ -271,98 +297,101 @@ export default function AgentScreen() {
                   thumbColor={colors.card}
                 />
               </View>
-            </View>
+            </FloatingCard>
           </Animated.View>
 
           {/* Voice Settings */}
           <Animated.View entering={FadeInDown.delay(300)} style={styles.section}>
             <View style={styles.sectionHeader}>
-              <IconSymbol name="waveform" color={colors.accent} size={24} />
-              <Text style={styles.sectionTitle}>Voice Settings</Text>
+              <AudioWaveform color={colors.accent} size={22} strokeWidth={1.75} />
+              <Text style={[styles.sectionTitle, { color: theme.dark ? colors.textDark : colors.text }]}>Voice Settings</Text>
             </View>
-            <View style={styles.card}>
-              <Pressable 
+            <FloatingCard radius="lg" style={styles.card}>
+              <Pressable
                 style={styles.settingRow}
                 onPress={() => console.log('Voice selection')}
               >
-                <IconSymbol name="person.wave.2.fill" size={20} color={colors.textSecondary} />
+                <User size={19} strokeWidth={1.75} color={theme.dark ? colors.textMutedDark : colors.textSecondary} />
                 <View style={styles.settingTextContainer}>
-                  <Text style={styles.settingTitle}>Voice Profile</Text>
+                  <Text style={[styles.settingTitle, { color: theme.dark ? colors.textDark : colors.text }]}>Voice Profile</Text>
                   <Text style={styles.settingValue}>Professional Male</Text>
                 </View>
-                <IconSymbol name="chevron.right" size={16} color={colors.textSecondary} />
+                <ChevronRight size={16} strokeWidth={1.75} color={theme.dark ? colors.textMutedDark : colors.textSecondary} />
               </Pressable>
 
               <View style={styles.divider} />
 
-              <Pressable 
+              <Pressable
                 style={styles.settingRow}
                 onPress={() => console.log('Response style')}
               >
-                <IconSymbol name="text.bubble.fill" size={20} color={colors.textSecondary} />
+                <MessageCircle size={19} strokeWidth={1.75} color={theme.dark ? colors.textMutedDark : colors.textSecondary} />
                 <View style={styles.settingTextContainer}>
-                  <Text style={styles.settingTitle}>Response Style</Text>
+                  <Text style={[styles.settingTitle, { color: theme.dark ? colors.textDark : colors.text }]}>Response Style</Text>
                   <Text style={styles.settingValue}>Concise & Friendly</Text>
                 </View>
-                <IconSymbol name="chevron.right" size={16} color={colors.textSecondary} />
+                <ChevronRight size={16} strokeWidth={1.75} color={theme.dark ? colors.textMutedDark : colors.textSecondary} />
               </Pressable>
 
               <View style={styles.divider} />
 
-              <Pressable 
+              <Pressable
                 style={styles.settingRow}
                 onPress={() => console.log('Language settings')}
               >
-                <IconSymbol name="globe" size={20} color={colors.textSecondary} />
+                <Globe size={19} strokeWidth={1.75} color={theme.dark ? colors.textMutedDark : colors.textSecondary} />
                 <View style={styles.settingTextContainer}>
-                  <Text style={styles.settingTitle}>Language</Text>
+                  <Text style={[styles.settingTitle, { color: theme.dark ? colors.textDark : colors.text }]}>Language</Text>
                   <Text style={styles.settingValue}>English (US)</Text>
                 </View>
-                <IconSymbol name="chevron.right" size={16} color={colors.textSecondary} />
+                <ChevronRight size={16} strokeWidth={1.75} color={theme.dark ? colors.textMutedDark : colors.textSecondary} />
               </Pressable>
-            </View>
+            </FloatingCard>
           </Animated.View>
 
           {/* Recent Actions */}
           <Animated.View entering={FadeInDown.delay(400)} style={styles.section}>
             <View style={styles.sectionHeader}>
-              <IconSymbol name="clock.arrow.circlepath" color={colors.secondary} size={24} />
-              <Text style={styles.sectionTitle}>Recent Actions</Text>
+              <History color={theme.dark ? colors.textMutedDark : colors.secondary} size={22} strokeWidth={1.75} />
+              <Text style={[styles.sectionTitle, { color: theme.dark ? colors.textDark : colors.text }]}>Recent Actions</Text>
             </View>
-            {recentActions.map((action) => (
-              <Pressable
-                key={action.id}
-                style={styles.card}
-                onPress={() => console.log('Action details:', action.id)}
-              >
-                <View style={styles.actionHeader}>
-                  <View style={[styles.actionIconContainer, { backgroundColor: getActionColor(action.type) + '20' }]}>
-                    <IconSymbol name={getActionIcon(action.type)} size={20} color={getActionColor(action.type)} />
-                  </View>
-                  <View style={[styles.statusBadge, { backgroundColor: getStatusColor(action.status) }]}>
-                    <Text style={styles.statusBadgeText}>{action.status}</Text>
-                  </View>
-                </View>
-                <Text style={styles.actionDescription}>{action.description}</Text>
-                <View style={styles.actionFooter}>
-                  <Text style={styles.actionTime}>{action.timestamp}</Text>
-                  <View style={styles.confidenceContainer}>
-                    <IconSymbol name="checkmark.seal.fill" size={14} color={colors.accent} />
-                    <Text style={styles.confidenceText}>{action.confidence}% confident</Text>
-                  </View>
-                </View>
-              </Pressable>
-            ))}
+            {recentActions.map((action) => {
+              const ActionIcon = getActionIcon(action.type);
+              return (
+                <Pressable key={action.id} onPress={() => console.log('Action details:', action.id)}>
+                  <FloatingCard radius="lg" style={styles.card}>
+                    <View style={styles.actionHeader}>
+                      <View style={[styles.actionIconContainer, { backgroundColor: getActionColor(action.type) + '20' }]}>
+                        <ActionIcon size={19} strokeWidth={1.75} color={getActionColor(action.type)} />
+                      </View>
+                      <View style={[styles.statusBadge, { backgroundColor: getStatusColor(action.status) }]}>
+                        <Text style={styles.statusBadgeText}>{action.status}</Text>
+                      </View>
+                    </View>
+                    <Text style={[styles.actionDescription, { color: theme.dark ? colors.textDark : colors.text }]}>{action.description}</Text>
+                    <View style={styles.actionFooter}>
+                      <Text style={styles.actionTime}>{action.timestamp}</Text>
+                      <View style={styles.confidenceContainer}>
+                        <BadgeCheck size={14} strokeWidth={1.75} color={colors.accent} />
+                        <Text style={styles.confidenceText}>{action.confidence}% confident</Text>
+                      </View>
+                    </View>
+                  </FloatingCard>
+                </Pressable>
+              );
+            })}
           </Animated.View>
 
           {/* Info Banner */}
           <Animated.View entering={FadeInDown.delay(500)} style={styles.section}>
-            <View style={styles.infoBanner}>
-              <IconSymbol name="info.circle.fill" size={20} color={colors.info} />
-              <Text style={styles.infoBannerText}>
-                Your agent learns from your communication style and adapts responses to match your tone and preferences.
-              </Text>
-            </View>
+            <GlassCard radius="lg" style={styles.infoBanner}>
+              <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: 12 }}>
+                <Info size={19} strokeWidth={1.75} color={colors.info} />
+                <Text style={[styles.infoBannerText, { color: theme.dark ? colors.textDark : colors.text }]}>
+                  Your agent learns from your communication style and adapts responses to match your tone and preferences.
+                </Text>
+              </View>
+            </GlassCard>
           </Animated.View>
 
           <View style={styles.bottomPadding} />
@@ -422,15 +451,12 @@ const styles = StyleSheet.create({
     color: colors.text,
   },
   card: {
-    backgroundColor: colors.card,
-    borderRadius: 12,
+    borderRadius: 20,
     padding: 16,
     marginBottom: 12,
-    boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.06)',
-    elevation: 2,
   },
   statusCard: {
-    backgroundColor: colors.highlight,
+    marginBottom: 0,
   },
   statusHeader: {
     flexDirection: 'row',
@@ -454,18 +480,18 @@ const styles = StyleSheet.create({
   },
   statusTitle: {
     fontSize: 14,
-    color: colors.textSecondary,
+    color: colors.textSecondaryDark,
     fontWeight: '600',
   },
   statusMode: {
     fontSize: 24,
     fontWeight: '700',
-    color: colors.text,
+    color: colors.textDark,
     marginBottom: 4,
   },
   statusTime: {
     fontSize: 13,
-    color: colors.textSecondary,
+    color: colors.textSecondaryDark,
   },
   agentIconContainer: {
     marginLeft: 16,
@@ -476,12 +502,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingTop: 16,
     borderTopWidth: 1,
-    borderTopColor: colors.border,
+    borderTopColor: colors.glassBorderDark,
   },
   toggleLabel: {
     fontSize: 16,
     fontWeight: '600',
-    color: colors.text,
+    color: colors.textDark,
   },
   capabilityRow: {
     flexDirection: 'row',
@@ -583,16 +609,7 @@ const styles = StyleSheet.create({
     color: colors.accent,
     fontWeight: '600',
   },
-  infoBanner: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: 12,
-    backgroundColor: colors.info + '15',
-    borderRadius: 12,
-    padding: 16,
-    borderLeftWidth: 4,
-    borderLeftColor: colors.info,
-  },
+  infoBanner: {},
   infoBannerText: {
     flex: 1,
     fontSize: 14,

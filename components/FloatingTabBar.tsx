@@ -9,7 +9,7 @@ import {
   Dimensions,
   DimensionValue,
 } from 'react-native';
-import { useRouter, usePathname } from 'expo-router';
+import { useRouter, usePathname, Href } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { IconSymbol, IconSymbolName } from '@/components/IconSymbol';
 import { BlurView } from 'expo-blur';
@@ -96,7 +96,7 @@ export default function FloatingTabBar({
   }, [activeTabIndex, animatedValue]);
 
   const handleTabPress = (route: string) => {
-    router.push(route);
+    router.push(route as Href);
   };
 
   const indicatorStyle = useAnimatedStyle(() => {

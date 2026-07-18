@@ -1,27 +1,47 @@
 
-import { IconSymbol, IconSymbolName } from '@/components/IconSymbol';
 import React, { useState, useEffect } from 'react';
-import { ScrollView, View, Text, StyleSheet, Image, Pressable, Alert } from 'react-native';
+import { ScrollView, View, Text, StyleSheet, Pressable, Alert } from 'react-native';
 import { Switch } from '@/components/ui/Switch';
 import { useTheme } from '@react-navigation/native';
 import { Stack, useRouter } from 'expo-router';
 import { colors } from '@/styles/commonStyles';
-import { AnimatedCard } from '@/components/ui/AnimatedCard';
-import { Progress } from '@/components/ui/Progress';
 import { Separator } from '@/components/ui/Separator';
 import { Button } from '@/components/ui/Button';
-import { Badge } from '@/components/ui/Badge';
-import { Card } from '@/components/ui/Card';
 import { authService } from '@/services/authService';
 import { syncService } from '@/services/syncService';
 import { User, UserDevice } from '@/types/auth';
 import * as Haptics from 'expo-haptics';
+import {
+  Settings as SettingsIcon,
+  UserCircle,
+  BadgeCheck,
+  CheckCircle2,
+  Calendar,
+  Mail,
+  PlaneTakeoff,
+  Bell,
+  Mic,
+  RefreshCw,
+  WifiOff,
+  Smartphone,
+  Globe,
+  Monitor,
+  History,
+  ShieldCheck,
+  Cpu,
+  ChevronRight,
+  LogOut,
+  LucideIcon,
+} from 'lucide-react-native';
+import { FloatingCard } from '@/components/v2/FloatingCard';
+import { StatCard } from '@/components/v2/StatCard';
+import { DetailCard } from '@/components/v2/DetailCard';
 
 interface ProfileStat {
   id: string;
   label: string;
   value: string;
-  icon: IconSymbolName;
+  icon: LucideIcon;
   color: string;
 }
 
@@ -29,7 +49,7 @@ interface Setting {
   id: string;
   title: string;
   description: string;
-  icon: IconSymbolName;
+  icon: LucideIcon;
   enabled: boolean;
   route?: string;
 }
@@ -54,10 +74,10 @@ export default function ProfileScreen() {
   };
 
   const [stats] = useState<ProfileStat[]>([
-    { id: '1', label: 'Tasks Completed', value: '127', icon: 'checkmark.circle.fill', color: colors.success },
-    { id: '2', label: 'Meetings Scheduled', value: '43', icon: 'calendar', color: colors.info },
-    { id: '3', label: 'Emails Processed', value: '892', icon: 'envelope.fill', color: colors.warning },
-    { id: '4', label: 'Travel Bookings', value: '12', icon: 'airplane.departure', color: colors.violet },
+    { id: '1', label: 'Tasks Completed', value: '127', icon: CheckCircle2, color: colors.success },
+    { id: '2', label: 'Meetings Scheduled', value: '43', icon: Calendar, color: colors.info },
+    { id: '3', label: 'Emails Processed', value: '892', icon: Mail, color: colors.warning },
+    { id: '4', label: 'Travel Bookings', value: '12', icon: PlaneTakeoff, color: colors.violet },
   ]);
 
   const [settings, setSettings] = useState<Setting[]>([
@@ -65,28 +85,28 @@ export default function ProfileScreen() {
       id: '1',
       title: 'Push Notifications',
       description: 'Receive notifications for important updates',
-      icon: 'bell.fill',
+      icon: Bell,
       enabled: true,
     },
     {
       id: '2',
       title: 'Voice Assistant',
       description: 'Enable voice commands and responses',
-      icon: 'mic.fill',
+      icon: Mic,
       enabled: true,
     },
     {
       id: '3',
       title: 'Auto-Sync',
       description: 'Automatically sync data across devices',
-      icon: 'arrow.triangle.2.circlepath',
+      icon: RefreshCw,
       enabled: true,
     },
     {
       id: '4',
       title: 'Offline Mode',
       description: 'Work offline and sync later',
-      icon: 'wifi.slash',
+      icon: WifiOff,
       enabled: false,
     },
   ]);
@@ -133,7 +153,7 @@ export default function ProfileScreen() {
 
   const renderHeaderRight = () => (
     <Pressable onPress={() => router.push('/(tabs)/ai-config' as any)} style={{ marginRight: 16 }}>
-      <IconSymbol name="gearshape.fill" size={24} color={colors.text} />
+      <SettingsIcon size={22} strokeWidth={1.75} color={colors.text} />
     </Pressable>
   );
 
@@ -148,145 +168,137 @@ export default function ProfileScreen() {
           headerRight: renderHeaderRight,
         }}
       />
-      <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+      <ScrollView
+        style={[styles.container, { backgroundColor: theme.dark ? colors.surfaceMutedDark : colors.surfaceMuted }]}
+        contentContainerStyle={styles.content}
+      >
         {/* Profile Header */}
-        <AnimatedCard delay={100} style={styles.profileCard}>
+        <FloatingCard
+          radius="xl"
+          style={[styles.profileCard, { backgroundColor: theme.dark ? colors.secondaryDark : colors.secondary }]}
+        >
           <View style={styles.avatarContainer}>
             <View style={styles.avatar}>
-              <IconSymbol name="person.fill" size={48} color={colors.primary} />
+              <UserCircle size={48} color={colors.accentLight} strokeWidth={1.5} />
             </View>
-            <View style={styles.onlineIndicator} />
+            <View
+              style={[
+                styles.onlineIndicator,
+                { borderColor: theme.dark ? colors.secondaryDark : colors.secondary },
+              ]}
+            />
           </View>
           <Text style={styles.name}>{user?.name || 'User'}</Text>
           <Text style={styles.email}>{user?.email || 'user@example.com'}</Text>
           <View style={styles.providerBadge}>
-            <IconSymbol
-              name={
-                user?.provider === 'google'
-                  ? 'g.circle.fill'
-                  : user?.provider === 'apple'
-                  ? 'apple.logo'
-                  : user?.provider === 'microsoft'
-                  ? 'app.fill'
-                  : 'envelope.fill'
-              }
-              size={16}
-              color={colors.text}
-            />
+            <BadgeCheck size={15} strokeWidth={1.75} color={colors.textDark} />
             <Text style={styles.providerText}>
               {user?.provider === 'email' ? 'Email' : user?.provider || 'Email'}
             </Text>
           </View>
-        </AnimatedCard>
+        </FloatingCard>
 
         {/* Stats */}
         <View style={styles.statsGrid}>
-          {stats.map((stat, index) => (
-            <AnimatedCard key={stat.id} delay={200 + index * 50} style={styles.statCard}>
-              <View style={[styles.statIcon, { backgroundColor: stat.color + '20' }]}>
-                <IconSymbol name={stat.icon} size={24} color={stat.color} />
-              </View>
-              <Text style={styles.statValue}>{stat.value}</Text>
-              <Text style={styles.statLabel}>{stat.label}</Text>
-            </AnimatedCard>
-          ))}
+          {stats.map((stat) => {
+            const StatIcon = stat.icon;
+            return (
+              <StatCard
+                key={stat.id}
+                value={stat.value}
+                label={stat.label}
+                cluster={[{ key: stat.id, icon: StatIcon, color: stat.color }]}
+                style={styles.statCardItem}
+              />
+            );
+          })}
         </View>
 
         <Separator />
 
         {/* Connected Devices */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Connected Devices</Text>
-          {devices.map((device, index) => (
-            <Card key={device.id} style={styles.deviceCard}>
-              <View style={styles.deviceHeader}>
-                <View style={styles.deviceIcon}>
-                  <IconSymbol
-                    name={
-                      device.type === 'ios'
-                        ? 'iphone'
-                        : device.type === 'android'
-                        ? 'smartphone'
-                        : device.type === 'web'
-                        ? 'globe'
-                        : 'desktopcomputer'
-                    }
-                    size={24}
-                    color={colors.primary}
-                  />
-                </View>
-                <View style={{ flex: 1 }}>
-                  <View style={styles.deviceTitleRow}>
-                    <Text style={styles.deviceName}>{device.name}</Text>
-                    {device.isCurrentDevice && <Badge variant="success">Current</Badge>}
-                  </View>
-                  <Text style={styles.deviceMeta}>
-                    Last active: {new Date(device.lastActive).toLocaleDateString()}
-                  </Text>
-                </View>
-              </View>
-            </Card>
-          ))}
+          <Text style={[styles.sectionTitle, { color: theme.dark ? colors.textDark : colors.text }]}>Connected Devices</Text>
+          {devices.map((device) => {
+            const DeviceIcon =
+              device.type === 'web' ? Globe : device.type === 'desktop' ? Monitor : Smartphone;
+            return (
+              <DetailCard
+                key={device.id}
+                title={device.name}
+                subtitle={`Last active: ${new Date(device.lastActive).toLocaleDateString()}`}
+                stats={[
+                  { key: 'type', icon: DeviceIcon, label: device.type },
+                  ...(device.isCurrentDevice
+                    ? [{ key: 'current', icon: CheckCircle2, label: 'Current device' }]
+                    : []),
+                ]}
+                style={styles.deviceCard}
+              />
+            );
+          })}
         </View>
 
         <Separator />
 
         {/* Settings */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Settings</Text>
-          {settings.map((setting, index) => (
-            <Card key={setting.id} style={styles.settingCard}>
-              <View style={styles.settingContent}>
-                <View style={styles.settingIcon}>
-                  <IconSymbol name={setting.icon} size={20} color={colors.primary} />
+          <Text style={[styles.sectionTitle, { color: theme.dark ? colors.textDark : colors.text }]}>Settings</Text>
+          {settings.map((setting) => {
+            const SettingIcon = setting.icon;
+            return (
+              <FloatingCard key={setting.id} radius="lg" style={styles.settingCard}>
+                <View style={styles.settingContent}>
+                  <View style={styles.settingIcon}>
+                    <SettingIcon size={18} strokeWidth={1.75} color={colors.primary} />
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <Text style={[styles.settingTitle, { color: theme.dark ? colors.textDark : colors.text }]}>{setting.title}</Text>
+                    <Text style={styles.settingDescription}>{setting.description}</Text>
+                  </View>
+                  <Switch value={setting.enabled} onValueChange={() => toggleSetting(setting.id)} />
                 </View>
-                <View style={{ flex: 1 }}>
-                  <Text style={styles.settingTitle}>{setting.title}</Text>
-                  <Text style={styles.settingDescription}>{setting.description}</Text>
-                </View>
-                <Switch value={setting.enabled} onValueChange={() => toggleSetting(setting.id)} />
-              </View>
-            </Card>
-          ))}
+              </FloatingCard>
+            );
+          })}
         </View>
 
         <Separator />
 
         {/* Quick Actions */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Quick Actions</Text>
-          
-          <Pressable style={styles.actionButton} onPress={handleSyncNow}>
-            <IconSymbol name="arrow.triangle.2.circlepath" size={20} color={colors.primary} />
-            <Text style={styles.actionButtonText}>Sync Now</Text>
-            <IconSymbol name="chevron.right" size={16} color={colors.textSecondary} />
+          <Text style={[styles.sectionTitle, { color: theme.dark ? colors.textDark : colors.text }]}>Quick Actions</Text>
+
+          <Pressable onPress={handleSyncNow}>
+            <FloatingCard radius="lg" style={styles.actionButton}>
+              <RefreshCw size={19} strokeWidth={1.75} color={colors.primary} />
+              <Text style={[styles.actionButtonText, { color: theme.dark ? colors.textDark : colors.text }]}>Sync Now</Text>
+              <ChevronRight size={16} strokeWidth={1.75} color={colors.textSecondary} />
+            </FloatingCard>
           </Pressable>
 
-          <Pressable
-            style={styles.actionButton}
-            onPress={() => router.push('/(tabs)/startup-summary' as any)}
-          >
-            <IconSymbol name="clock.arrow.circlepath" size={20} color={colors.info} />
-            <Text style={styles.actionButtonText}>View Startup Summary</Text>
-            <IconSymbol name="chevron.right" size={16} color={colors.textSecondary} />
+          <Pressable onPress={() => router.push('/(tabs)/startup-summary' as any)}>
+            <FloatingCard radius="lg" style={styles.actionButton}>
+              <History size={19} strokeWidth={1.75} color={colors.info} />
+              <Text style={[styles.actionButtonText, { color: theme.dark ? colors.textDark : colors.text }]}>View Startup Summary</Text>
+              <ChevronRight size={16} strokeWidth={1.75} color={colors.textSecondary} />
+            </FloatingCard>
           </Pressable>
 
-          <Pressable
-            style={styles.actionButton}
-            onPress={() => router.push('/(tabs)/privacy' as any)}
-          >
-            <IconSymbol name="lock.shield.fill" size={20} color={colors.warning} />
-            <Text style={styles.actionButtonText}>Privacy & Security</Text>
-            <IconSymbol name="chevron.right" size={16} color={colors.textSecondary} />
+          <Pressable onPress={() => router.push('/(tabs)/privacy' as any)}>
+            <FloatingCard radius="lg" style={styles.actionButton}>
+              <ShieldCheck size={19} strokeWidth={1.75} color={colors.warning} />
+              <Text style={[styles.actionButtonText, { color: theme.dark ? colors.textDark : colors.text }]}>Privacy & Security</Text>
+              <ChevronRight size={16} strokeWidth={1.75} color={colors.textSecondary} />
+            </FloatingCard>
           </Pressable>
 
-          <Pressable
-            style={styles.actionButton}
-            onPress={() => router.push('/(tabs)/ai-config' as any)}
-          >
-            <IconSymbol name="cpu" size={20} color={colors.violet} />
-            <Text style={styles.actionButtonText}>AI Configuration</Text>
-            <IconSymbol name="chevron.right" size={16} color={colors.textSecondary} />
+          <Pressable onPress={() => router.push('/(tabs)/ai-config' as any)}>
+            <FloatingCard radius="lg" style={styles.actionButton}>
+              <Cpu size={19} strokeWidth={1.75} color={colors.violet} />
+              <Text style={[styles.actionButtonText, { color: theme.dark ? colors.textDark : colors.text }]}>AI Configuration</Text>
+              <ChevronRight size={16} strokeWidth={1.75} color={colors.textSecondary} />
+            </FloatingCard>
           </Pressable>
         </View>
 
@@ -295,7 +307,7 @@ export default function ProfileScreen() {
         {/* Logout */}
         <View style={styles.section}>
           <Button variant="destructive" onPress={handleLogout}>
-            <IconSymbol name="arrow.right.square.fill" size={20} color={colors.primaryForeground} />
+            <LogOut size={18} strokeWidth={1.75} color={colors.primaryForeground} />
             <Text style={{ marginLeft: 8 }}>Logout</Text>
           </Button>
         </View>
@@ -333,11 +345,11 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     borderRadius: 50,
-    backgroundColor: colors.primary + '20',
+    backgroundColor: colors.glassTintDark,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 3,
-    borderColor: colors.primary,
+    borderColor: colors.accent,
   },
   onlineIndicator: {
     position: 'absolute',
@@ -348,17 +360,16 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     backgroundColor: colors.success,
     borderWidth: 3,
-    borderColor: colors.card,
   },
   name: {
     fontSize: 24,
     fontWeight: '700',
-    color: colors.text,
+    color: colors.textDark,
     marginBottom: 4,
   },
   email: {
     fontSize: 16,
-    color: colors.textSecondary,
+    color: colors.textSecondaryDark,
     marginBottom: 12,
   },
   providerBadge: {
@@ -367,15 +378,15 @@ const styles = StyleSheet.create({
     gap: 6,
     paddingHorizontal: 12,
     paddingVertical: 6,
-    backgroundColor: colors.secondary,
+    backgroundColor: colors.glassTintDark,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: colors.glassBorderDark,
   },
   providerText: {
     fontSize: 12,
     fontWeight: '600',
-    color: colors.text,
+    color: colors.textDark,
     textTransform: 'capitalize',
   },
   statsGrid: {
@@ -384,29 +395,8 @@ const styles = StyleSheet.create({
     gap: 12,
     marginBottom: 24,
   },
-  statCard: {
+  statCardItem: {
     width: '48%',
-    padding: 16,
-    alignItems: 'center',
-  },
-  statIcon: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 12,
-  },
-  statValue: {
-    fontSize: 28,
-    fontWeight: '700',
-    color: colors.text,
-    marginBottom: 4,
-  },
-  statLabel: {
-    fontSize: 12,
-    color: colors.textSecondary,
-    textAlign: 'center',
   },
   section: {
     marginBottom: 24,
@@ -418,39 +408,9 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   deviceCard: {
-    padding: 16,
     marginBottom: 12,
   },
-  deviceHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-  },
-  deviceIcon: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: colors.primary + '20',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  deviceTitleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    marginBottom: 4,
-  },
-  deviceName: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: colors.text,
-  },
-  deviceMeta: {
-    fontSize: 14,
-    color: colors.textSecondary,
-  },
   settingCard: {
-    padding: 16,
     marginBottom: 12,
   },
   settingContent: {
@@ -479,10 +439,6 @@ const styles = StyleSheet.create({
   actionButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.card,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: colors.border,
     padding: 16,
     marginBottom: 12,
     gap: 12,

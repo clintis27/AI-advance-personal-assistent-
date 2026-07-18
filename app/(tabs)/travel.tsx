@@ -1,10 +1,29 @@
 
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { Stack } from "expo-router";
+import { useTheme } from "@react-navigation/native";
 import { colors } from "@/styles/commonStyles";
-import { View, Text, StyleSheet, ScrollView, Platform, Pressable, TextInput, Image } from "react-native";
+import { View, Text, StyleSheet, ScrollView, Pressable, TextInput, Image } from "react-native";
 import React, { useState } from "react";
-import { IconSymbol } from "@/components/IconSymbol";
+import {
+  PlusCircle,
+  Plane,
+  Star,
+  Clock,
+  Timer,
+  Leaf,
+  Building2,
+  TramFront,
+  Car,
+  MapPin,
+  Search,
+  DollarSign,
+  LucideIcon,
+} from "lucide-react-native";
+import { FloatingCard } from "@/components/v2/FloatingCard";
+import { StatCard } from "@/components/v2/StatCard";
+import { DetailCard } from "@/components/v2/DetailCard";
+import { GradientBadge } from "@/components/v2/GradientBadge";
 
 interface TravelIntent {
   id: string;
@@ -82,14 +101,15 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
   searchCard: {
-    backgroundColor: colors.card,
-    borderRadius: 24,
-    padding: 24,
     marginBottom: 24,
-    boxShadow: `0px 8px 24px ${colors.shadow}`,
-    elevation: 3,
+  },
+  searchRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
   },
   searchInput: {
+    flex: 1,
     backgroundColor: colors.cardSecondary,
     borderRadius: 16,
     paddingHorizontal: 16,
@@ -97,21 +117,6 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: '500',
     color: colors.text,
-    marginBottom: 12,
-  },
-  searchButton: {
-    backgroundColor: colors.primary,
-    borderRadius: 16,
-    paddingVertical: 16,
-    alignItems: 'center',
-    marginTop: 8,
-    boxShadow: `0px 6px 20px ${colors.shadow}`,
-    elevation: 3,
-  },
-  searchButtonText: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: colors.card,
   },
   sectionHeader: {
     flexDirection: 'row',
@@ -127,12 +132,9 @@ const styles = StyleSheet.create({
     letterSpacing: -0.3,
   },
   featuredCard: {
-    backgroundColor: colors.card,
-    borderRadius: 28,
     overflow: 'hidden',
     marginBottom: 16,
-    boxShadow: `0px 12px 32px ${colors.shadow}`,
-    elevation: 4,
+    padding: 0,
   },
   featuredImage: {
     width: '100%',
@@ -187,12 +189,7 @@ const styles = StyleSheet.create({
     color: colors.textMuted,
   },
   card: {
-    backgroundColor: colors.card,
-    borderRadius: 20,
-    padding: 20,
     marginBottom: 16,
-    boxShadow: `0px 6px 20px ${colors.shadow}`,
-    elevation: 2,
   },
   cardHeader: {
     flexDirection: 'row',
@@ -249,39 +246,7 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   optionCard: {
-    backgroundColor: colors.cardSecondary,
-    borderRadius: 16,
-    padding: 16,
     marginBottom: 12,
-  },
-  optionHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  optionProvider: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: colors.text,
-  },
-  optionPrice: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: colors.primary,
-  },
-  optionDetails: {
-    gap: 6,
-  },
-  optionDetailRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  optionDetailText: {
-    fontSize: 13,
-    fontWeight: '500',
-    color: colors.textSecondary,
   },
   statsGrid: {
     flexDirection: 'row',
@@ -289,31 +254,14 @@ const styles = StyleSheet.create({
     gap: 12,
     marginBottom: 24,
   },
-  statCard: {
+  statCardItem: {
     flex: 1,
     minWidth: '47%',
-    backgroundColor: colors.card,
-    borderRadius: 20,
-    padding: 20,
-    boxShadow: `0px 6px 20px ${colors.shadow}`,
-    elevation: 2,
-  },
-  statLabel: {
-    fontSize: 12,
-    fontWeight: '500',
-    color: colors.textSecondary,
-    marginBottom: 8,
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-  },
-  statValue: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: colors.text,
   },
 });
 
 export default function TravelScreen() {
+  const theme = useTheme();
   const [destination, setDestination] = useState('');
   const [travelIntents] = useState<TravelIntent[]>([
     {
@@ -397,23 +345,19 @@ export default function TravelScreen() {
     }
   };
 
-  const getTypeIcon = (type: string) => {
+  const getTypeIcon = (type: string): LucideIcon => {
     switch (type) {
       case 'flight':
-        return 'airplane';
+        return Plane;
       case 'hotel':
-        return 'building.2';
+        return Building2;
       case 'train':
-        return 'tram';
+        return TramFront;
       case 'car':
-        return 'car';
+        return Car;
       default:
-        return 'mappin';
+        return MapPin;
     }
-  };
-
-  const getSustainabilityColor = () => {
-    return colors.success;
   };
 
   const handleSearch = () => {
@@ -426,7 +370,7 @@ export default function TravelScreen() {
 
   const renderHeaderRight = () => (
     <Pressable style={{ marginRight: 16 }}>
-      <IconSymbol name="plus.circle.fill" size={28} color={colors.primary} />
+      <PlusCircle size={26} strokeWidth={1.75} color={colors.primary} />
     </Pressable>
   );
 
@@ -439,7 +383,7 @@ export default function TravelScreen() {
           headerRight: renderHeaderRight,
         }}
       />
-      <View style={styles.container}>
+      <View style={[styles.container, { backgroundColor: theme.dark ? colors.surfaceMutedDark : colors.surfaceMuted }]}>
         <ScrollView
           style={{ flex: 1 }}
           contentContainerStyle={styles.scrollContent}
@@ -447,15 +391,15 @@ export default function TravelScreen() {
         >
           {/* Header */}
           <Animated.View entering={FadeInDown.duration(600).delay(100)} style={styles.header}>
-            <Text style={styles.title}>Travel Assistant</Text>
-            <Text style={styles.subtitle}>
+            <Text style={[styles.title, { color: theme.dark ? colors.textDark : colors.text }]}>Travel Assistant</Text>
+            <Text style={[styles.subtitle, { color: theme.dark ? colors.textSecondaryDark : colors.textSecondary }]}>
               Intelligent travel planning powered by AI. We detect your travel needs and find the best options.
             </Text>
           </Animated.View>
 
           {/* Featured Destination */}
           <Animated.View entering={FadeInDown.duration(600).delay(200)}>
-            <View style={styles.featuredCard}>
+            <FloatingCard radius="xl" style={styles.featuredCard}>
               <Image
                 source={{ uri: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80' }}
                 style={styles.featuredImage}
@@ -465,71 +409,63 @@ export default function TravelScreen() {
                 <View style={styles.featuredBadge}>
                   <Text style={styles.featuredBadgeText}>Trending</Text>
                 </View>
-                <Text style={styles.featuredTitle}>Takin&apos; it back.</Text>
-                <Text style={styles.featuredDescription}>
+                <Text style={[styles.featuredTitle, { color: theme.dark ? colors.textDark : colors.text }]}>Takin&apos; it back.</Text>
+                <Text style={[styles.featuredDescription, { color: theme.dark ? colors.textSecondaryDark : colors.textSecondary }]}>
                   We are always happy to share with you. Now is the time for the gift.
                 </Text>
                 <View style={styles.featuredMeta}>
                   <View style={styles.metaItem}>
-                    <IconSymbol name="airplane" size={14} color={colors.textMuted} />
+                    <Plane size={13} strokeWidth={1.75} color={colors.textMuted} />
                     <Text style={styles.metaText}>3h 30m</Text>
                   </View>
                   <View style={styles.metaItem}>
-                    <IconSymbol name="star.fill" size={14} color={colors.textMuted} />
+                    <Star size={13} strokeWidth={1.75} color={colors.textMuted} />
                     <Text style={styles.metaText}>4.8</Text>
                   </View>
                 </View>
               </View>
-            </View>
+            </FloatingCard>
           </Animated.View>
 
           {/* Search */}
           <Animated.View entering={FadeInDown.duration(600).delay(300)}>
-            <View style={styles.searchCard}>
-              <TextInput
-                style={styles.searchInput}
-                placeholder="Where do you want to go?"
-                placeholderTextColor={colors.textMuted}
-                value={destination}
-                onChangeText={setDestination}
-              />
-              <Pressable style={styles.searchButton} onPress={handleSearch}>
-                <Text style={styles.searchButtonText}>Search Destinations</Text>
-              </Pressable>
-            </View>
+            <FloatingCard radius="xl" style={styles.searchCard}>
+              <View style={styles.searchRow}>
+                <TextInput
+                  style={styles.searchInput}
+                  placeholder="Where do you want to go?"
+                  placeholderTextColor={colors.textMuted}
+                  value={destination}
+                  onChangeText={setDestination}
+                />
+                <GradientBadge
+                  icon={<Search size={20} color={colors.primaryForeground} strokeWidth={2} />}
+                  size={48}
+                  onPress={handleSearch}
+                />
+              </View>
+            </FloatingCard>
           </Animated.View>
 
           {/* Trip Dashboard */}
           <Animated.View entering={FadeInDown.duration(600).delay(400)}>
             <View style={styles.sectionHeader}>
-              <Text style={styles.sectionTitle}>Current Trip</Text>
+              <Text style={[styles.sectionTitle, { color: theme.dark ? colors.textDark : colors.text }]}>Current Trip</Text>
             </View>
             <View style={styles.statsGrid}>
-              <View style={styles.statCard}>
-                <Text style={styles.statLabel}>Flight Status</Text>
-                <Text style={styles.statValue}>{tripDashboard.flightStatus}</Text>
-              </View>
-              <View style={styles.statCard}>
-                <Text style={styles.statLabel}>Weather</Text>
-                <Text style={styles.statValue}>{tripDashboard.weather}</Text>
-              </View>
-              <View style={styles.statCard}>
-                <Text style={styles.statLabel}>Temperature</Text>
-                <Text style={styles.statValue}>{tripDashboard.temperature}</Text>
-              </View>
-              <View style={styles.statCard}>
-                <Text style={styles.statLabel}>Local Time</Text>
-                <Text style={styles.statValue}>{tripDashboard.localTime}</Text>
-              </View>
+              <StatCard value={tripDashboard.flightStatus} label="Flight status" style={styles.statCardItem} />
+              <StatCard value={tripDashboard.weather} label="Weather" style={styles.statCardItem} />
+              <StatCard value={tripDashboard.temperature} label="Temperature" style={styles.statCardItem} />
+              <StatCard value={tripDashboard.localTime} label="Local time" style={styles.statCardItem} />
             </View>
           </Animated.View>
 
           {/* Detected Travel Intents */}
           <Animated.View entering={FadeInDown.duration(600).delay(500)}>
             <View style={styles.sectionHeader}>
-              <Text style={styles.sectionTitle}>Detected Travel Plans</Text>
+              <Text style={[styles.sectionTitle, { color: theme.dark ? colors.textDark : colors.text }]}>Detected Travel Plans</Text>
             </View>
-            <View style={styles.card}>
+            <FloatingCard radius="lg" style={styles.card}>
               {travelIntents.map((intent, index) => (
                 <View
                   key={intent.id}
@@ -539,7 +475,7 @@ export default function TravelScreen() {
                   ]}
                 >
                   <View style={styles.intentHeader}>
-                    <Text style={styles.intentDestination}>{intent.destination}</Text>
+                    <Text style={[styles.intentDestination, { color: theme.dark ? colors.textDark : colors.text }]}>{intent.destination}</Text>
                     <View
                       style={[
                         styles.badge,
@@ -579,61 +515,41 @@ export default function TravelScreen() {
                   </View>
                 </View>
               ))}
-            </View>
+            </FloatingCard>
           </Animated.View>
 
           {/* Travel Options */}
           <Animated.View entering={FadeInDown.duration(600).delay(600)}>
             <View style={styles.sectionHeader}>
-              <Text style={styles.sectionTitle}>Recommended Options</Text>
+              <Text style={[styles.sectionTitle, { color: theme.dark ? colors.textDark : colors.text }]}>Recommended Options</Text>
             </View>
-            {travelOptions.map((option) => (
-              <View key={option.id} style={styles.optionCard}>
-                <View style={styles.optionHeader}>
-                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-                    <IconSymbol
-                      name={getTypeIcon(option.type)}
-                      size={20}
-                      color={colors.primary}
-                    />
-                    <Text style={styles.optionProvider}>{option.provider}</Text>
-                  </View>
-                  <Text style={styles.optionPrice}>
-                    ${option.price} {option.currency}
-                  </Text>
-                </View>
-                <View style={styles.optionDetails}>
-                  {option.departureTime && (
-                    <View style={styles.optionDetailRow}>
-                      <IconSymbol name="clock" size={14} color={colors.textSecondary} />
-                      <Text style={styles.optionDetailText}>
-                        {option.departureTime} - {option.arrivalTime}
-                      </Text>
-                    </View>
-                  )}
-                  {option.duration && (
-                    <View style={styles.optionDetailRow}>
-                      <IconSymbol name="timer" size={14} color={colors.textSecondary} />
-                      <Text style={styles.optionDetailText}>{option.duration}</Text>
-                    </View>
-                  )}
-                  {option.rating && (
-                    <View style={styles.optionDetailRow}>
-                      <IconSymbol name="star.fill" size={14} color={colors.textSecondary} />
-                      <Text style={styles.optionDetailText}>{option.rating} rating</Text>
-                    </View>
-                  )}
-                  {option.sustainability && (
-                    <View style={styles.optionDetailRow}>
-                      <IconSymbol name="leaf.fill" size={14} color={getSustainabilityColor()} />
-                      <Text style={[styles.optionDetailText, { color: getSustainabilityColor() }]}>
-                        {option.sustainability} sustainability
-                      </Text>
-                    </View>
-                  )}
-                </View>
-              </View>
-            ))}
+            {travelOptions.map((option) => {
+              const stats: { key: string; icon: LucideIcon; label: string }[] = [
+                { key: 'type', icon: getTypeIcon(option.type), label: option.type },
+                { key: 'price', icon: DollarSign, label: `${option.price} ${option.currency}` },
+              ];
+              if (option.departureTime) {
+                stats.push({ key: 'time', icon: Clock, label: `${option.departureTime} - ${option.arrivalTime}` });
+              }
+              if (option.duration) {
+                stats.push({ key: 'duration', icon: Timer, label: option.duration });
+              }
+              if (option.rating) {
+                stats.push({ key: 'rating', icon: Star, label: `${option.rating} rating` });
+              }
+              if (option.sustainability) {
+                stats.push({ key: 'sustainability', icon: Leaf, label: `${option.sustainability} sustainability` });
+              }
+              return (
+                <DetailCard
+                  key={option.id}
+                  title={option.provider}
+                  subtitle={option.name}
+                  stats={stats}
+                  style={styles.optionCard}
+                />
+              );
+            })}
           </Animated.View>
         </ScrollView>
       </View>

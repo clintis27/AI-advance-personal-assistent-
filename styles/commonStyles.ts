@@ -99,6 +99,22 @@ export const colors = {
   rose: '#f43f5e',
   roseLight: '#fb7185',
   roseDark: '#e11d48',
+
+  // --- V2 restyle: warm muted backdrop + glass cards (Orizon-inspired) ---
+  surfaceMuted: '#E8E3DA',
+  surfaceMutedDark: '#17140F',
+  glassTint: 'rgba(255, 255, 255, 0.55)',
+  glassTintDark: 'rgba(255, 255, 255, 0.08)',
+  glassBorder: 'rgba(255, 255, 255, 0.65)',
+  glassBorderDark: 'rgba(255, 255, 255, 0.14)',
+};
+
+// Radii scale for the v2 floating-card system
+export const radii = {
+  xl: 26,
+  lg: 20,
+  md: 16,
+  sm: 12,
 };
 
 export const buttonStyles = StyleSheet.create({

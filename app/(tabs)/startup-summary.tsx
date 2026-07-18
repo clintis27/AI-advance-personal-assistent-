@@ -43,7 +43,7 @@ export default function StartupSummaryScreen() {
 
   const handleContinue = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    router.replace('/(tabs)/(home)/');
+    router.replace('/(tabs)/(home)');
   };
 
   if (loading) {

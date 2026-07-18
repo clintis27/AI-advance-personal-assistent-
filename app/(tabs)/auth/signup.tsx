@@ -53,7 +53,7 @@ export default function SignupScreen() {
       await syncService.syncNow();
       
       Alert.alert('Success', 'Account created successfully!');
-      router.replace('/(tabs)/(home)/');
+      router.replace('/(tabs)/(home)');
     } catch (error) {
       console.error('Signup error:', error);
       Alert.alert('Error', error instanceof Error ? error.message : 'Failed to create account');

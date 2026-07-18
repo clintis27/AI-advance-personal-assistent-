@@ -42,7 +42,7 @@ export default function LoginScreen() {
       await syncService.syncNow();
       
       Alert.alert('Success', 'Welcome back!');
-      router.replace('/(tabs)/(home)/');
+      router.replace('/(tabs)/(home)');
     } catch (error) {
       console.error('Login error:', error);
       Alert.alert('Error', error instanceof Error ? error.message : 'Failed to login');
@@ -62,7 +62,7 @@ export default function LoginScreen() {
       await syncService.syncNow();
       
       Alert.alert('Success', 'Welcome!');
-      router.replace('/(tabs)/(home)/');
+      router.replace('/(tabs)/(home)');
     } catch (error) {
       console.error('OAuth login error:', error);
       Alert.alert('Error', error instanceof Error ? error.message : 'Failed to login');
